@@ -1,3 +1,234 @@
 <resources>
+    <!-- 应用名称 -->
     <string name="app_name">MoYan</string>
+
+    <!-- 通用文本 -->
+    <string name="loading">加载中...</string>
+    <string name="submit">提交</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确认</string>
+    <string name="delete">删除</string>
+    <string name="edit">编辑</string>
+    <string name="save">保存</string>
+    <string name="back">返回</string>
+    <string name="more">更多</string>
+    <string name="refresh">刷新</string>
+    <string name="retry">重试</string>
+    <string name="no_data">暂无数据</string>
+    <string name="network_error">网络连接失败，请检查网络设置</string>
+    <string name="server_error">服务器开小差了，请稍后再试</string>
+
+    <!-- 登录/注册界面 -->
+    <string name="login_title">登录</string>
+    <string name="signup_title">注册</string>
+    <string name="phone_hint">请输入手机号</string>
+    <string name="nickname_hint">请输入昵称</string>
+    <string name="password_hint">请输入密码</string>
+    <string name="confirm_password_hint">请确认密码</string>
+    <string name="login_btn">登录</string>
+    <string name="signup_btn">注册</string>
+    <string name="goto_signup">还没有账号？立即注册</string>
+    <string name="goto_login">已有账号？去登录</string>
+    <string name="login_success">登录成功</string>
+    <string name="signup_success">注册成功</string>
+    <string name="phone_invalid">请输入11位手机号</string>
+    <string name="nickname_invalid">昵称长度应为2-20个字符</string>
+    <string name="password_invalid">密码长度至少为6位</string>
+    <string name="password_not_match">两次输入的密码不一致</string>
+
+    <!-- 首页 -->
+    <string name="home_title">首页</string>
+    <string name="search_hint">搜索帖子或用户...</string>
+    <string name="search_id_hint">输入用户ID搜索</string>
+    <string name="hot_topic">今日热点话题</string>
+    <string name="create_post">发布帖子</string>
+    <string name="recommend_posts">推荐帖子</string>
+    <string name="view_all">查看全部</string>
+    <string name="newbie_post">新人帖</string>
+    <string name="anonymous_post">匿名帖</string>
+
+    <!-- 搜索页 -->
+    <string name="search_title">搜索</string>
+    <string name="search_post">搜索帖子</string>
+    <string name="search_user">搜索用户</string>
+    <string name="search_by_id">按ID搜索</string>
+    <string name="search_by_keyword">按关键词搜索</string>
+    <string name="search_result">搜索结果</string>
+    <string name="no_search_result">未找到相关内容</string>
+    <string name="recent_searches">最近搜索</string>
+    <string name="clear_history">清空历史</string>
+
+    <!-- 话题详情页 -->
+    <string name="topic_detail_title">话题详情</string>
+    <string name="post_list">帖子列表</string>
+    <string name="sort_by_time">按时间排序</string>
+    <string name="sort_by_hot">按热度排序</string>
+    <string name="no_posts">暂无帖子，快来发布第一个吧~</string>
+
+    <!-- 帖子详情页 -->
+    <string name="post_detail_title">帖子详情</string>
+    <string name="author">作者</string>
+    <string name="anonymous_user">匿名用户</string>
+    <string name="publish_time">发布时间</string>
+    <string name="view_count">浏览 %d 次</string>
+    <string name="comment_list">评论列表</string>
+    <string name="comment_hint">写下你的评论...</string>
+    <string name="comment_anonymous">匿名评论</string>
+    <string name="comment_realname">实名评论</string>
+    <string name="send_comment">发送评论</string>
+    <string name="no_comments">暂无评论，来抢沙发吧~</string>
+    <string name="reply">回复</string>
+    <string name="like">点赞</string>
+    <string name="share">分享</string>
+    <string name="report">举报</string>
+    <string name="tip">打赏</string>
+    <string name="rate">评分</string>
+
+    <!-- 评分相关 -->
+    <string name="rate_title">评分</string>
+    <string name="tag_accuracy">标签准确度</string>
+    <string name="article_score">文章质量评分</string>
+    <string name="rate_comment">评价（选填）</string>
+    <string name="rate_comment_hint">分享你的看法...</string>
+    <string name="rate_submit">提交评分</string>
+    <string name="rated_already">您已经对此帖评分过了</string>
+
+    <!-- 打赏相关 -->
+    <string name="tip_title">打赏作者</string>
+    <string name="tip_amount">打赏金额</string>
+    <string name="tip_amount_hint">请输入金额</string>
+    <string name="tip_confirm">确认打赏</string>
+    <string name="tip_success">打赏成功，感谢您的支持！</string>
+    <string name="insufficient_balance">余额不足</string>
+
+    <!-- 互动区 -->
+    <string name="interaction_title">今日互动</string>
+    <string name="daily_task">今日互动任务</string>
+    <string name="task_continuation">续写任务</string>
+    <string name="task_rewrite">改写任务</string>
+    <string name="task_optimize">优化任务</string>
+    <string name="task_content">任务内容</string>
+    <string name="submit_answer">提交回答</string>
+    <string name="answer_hint">请输入你的创作...</string>
+    <string name="answer_success">提交成功！</string>
+    <string name="task_completed">今日任务已完成</string>
+    <string name="task_score">评分：%d分</string>
+
+    <!-- 消息区 -->
+    <string name="message_title">消息</string>
+    <string name="reply_message">回复消息</string>
+    <string name="system_message">系统消息</string>
+    <string name="no_messages">暂无新消息</string>
+    <string name="message_time">刚刚</string>
+    <string name="mark_as_read">标记为已读</string>
+    <string name="delete_message">删除消息</string>
+
+    <!-- 个人主页 -->
+    <string name="profile_title">个人主页</string>
+    <string name="user_id">ID：%d</string>
+    <string name="user_nickname">昵称</string>
+    <string name="user_phone">手机号</string>
+    <string name="vip_badge">VIP会员</string>
+    <string name="vip_expire">会员到期：%s</string>
+    <string name="warning_count">违规次数：%d</string>
+    <string name="account_banned">账号已被封禁</string>
+    <string name="edit_profile">编辑资料</string>
+    <string name="my_posts">我的帖子</string>
+    <string name="my_comments">我的评论</string>
+    <string name="my_ratings">我的评分</string>
+    <string name="my_tips">我的打赏</string>
+    <string name="settings">设置</string>
+    <string name="logout">退出登录</string>
+    <string name="confirm_logout">确定要退出登录吗？</string>
+
+    <!-- 编辑资料页 -->
+    <string name="edit_profile_title">编辑资料</string>
+    <string name="avatar">头像</string>
+    <string name="change_avatar">更换头像</string>
+    <string name="nickname_label">昵称</string>
+    <string name="phone_label">手机号</string>
+    <string name="upload_avatar">上传头像</string>
+    <string name="choose_from_album">从相册选择</string>
+    <string name="take_photo">拍照</string>
+    <string name="save_success">保存成功</string>
+    <string name="nickname_exists">昵称已存在</string>
+
+    <!-- 创建帖子页 -->
+    <string name="create_post_title">发布帖子</string>
+    <string name="post_title_hint">请输入标题（最多100字）</string>
+    <string name="post_content_hint">请输入内容...</string>
+    <string name="post_tags_hint">添加标签（用逗号分隔）</string>
+    <string name="post_anonymous">匿名发布</string>
+    <string name="post_realname">实名发布</string>
+    <string name="post_as_newbie">标记为新人帖</string>
+    <string name="publish">发布</string>
+    <string name="publish_success">发布成功，等待审核</string>
+    <string name="publish_failed">发布失败，请稍后再试</string>
+    <string name="title_empty">标题不能为空</string>
+    <string name="content_empty">内容不能为空</string>
+
+    <!-- 举报相关 -->
+    <string name="report_title">举报</string>
+    <string name="report_reason_hint">请填写举报原因（选填）</string>
+    <string name="report_reason_spam">垃圾广告</string>
+    <string name="report_reason_abuse">人身攻击</string>
+    <string name="report_reason_porn">色情低俗</string>
+    <string name="report_reason_illegal">违法信息</string>
+    <string name="report_reason_other">其他原因</string>
+    <string name="report_submit">提交举报</string>
+    <string name="report_success">举报成功，我们会尽快处理</string>
+    <string name="report_failed">举报失败，请勿重复举报</string>
+
+    <!-- 状态和提示 -->
+    <string name="pending_approval">审核中</string>
+    <string name="approved">已通过</string>
+    <string name="rejected">已拒绝</string>
+    <string name="reported_pending">已举报待处理</string>
+    <string name="post_removed">内容已被删除</string>
+    <string name="need_login">请先登录</string>
+    <string name="permission_denied">权限不足</string>
+
+    <!-- 时间格式 -->
+    <string name="time_just_now">刚刚</string>
+    <string name="time_minutes_ago">%d分钟前</string>
+    <string name="time_hours_ago">%d小时前</string>
+    <string name="time_yesterday">昨天</string>
+    <string name="time_days_ago">%d天前</string>
+
+    <!-- 评分星级文本 -->
+    <string name="star_1">很差</string>
+    <string name="star_2">较差</string>
+    <string name="star_3">一般</string>
+    <string name="star_4">良好</string>
+    <string name="star_5">优秀</string>
+
+    <!-- 错误消息 -->
+    <string name="error_unknown">未知错误，请稍后再试</string>
+    <string name="error_network">网络连接失败</string>
+    <string name="error_timeout">请求超时</string>
+    <string name="error_data_parse">数据解析失败</string>
+    <string name="error_phone_exists">手机号已注册</string>
+    <string name="error_nickname_exists">昵称已被占用</string>
+    <string name="error_login_failed">登录失败，请检查手机号和密码</string>
+    <string name="error_user_not_found">用户不存在</string>
+    <string name="error_account_banned">账号已被封禁，请联系管理员</string>
+    <string name="error_content_sensitive">内容包含敏感词，请修改后重试</string>
+
+    <!-- 启动页 -->
+    <string name="app_welcome">欢迎来到文学交流社区</string>
+    <string name="loading_data">正在加载数据...</string>
+    <string name="auto_login">自动登录中...</string>
+
+    <!-- 菜单项 -->
+    <string name="menu_home">首页</string>
+    <string name="menu_interaction">互动</string>
+    <string name="menu_message">消息</string>
+    <string name="menu_profile">我的</string>
+
+    <!-- 对话框 -->
+    <string name="dialog_title_tip">提示</string>
+    <string name="dialog_title_warning">警告</string>
+    <string name="dialog_title_error">错误</string>
+    <string name="dialog_btn_ok">确定</string>
+    <string name="dialog_btn_cancel">取消</string>
 </resources>
