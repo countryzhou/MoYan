@@ -1,0 +1,13 @@
+app/src/main/java/com/androidcourse/myapplication/
+├── MainActivity.java
+├── HomeFragment.java
+├── PostFragment.java
+├── MsgFragment.java
+└── MineFragment.java
+
+app/src/main/res/layout/
+├── activity_main.xml
+├── fragment_home.xml
+├── fragment_post.xml
+├── fragment_msg.xml
+└── fragment_mine.xml
