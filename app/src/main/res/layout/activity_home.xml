@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:background="@color/white"
-        android:elevation="8dp"
+        android:elevation="4dp"
         android:importantForAccessibility="no"
         android:orientation="vertical">
 
@@ -279,7 +279,7 @@
         android:contentDescription="@string/write_post"
         android:src="@drawable/ic_edit"
         app:backgroundTint="@color/primary_blue"
-        app:elevation="6dp"
+        app:elevation="12dp"
         app:fabSize="normal"
         app:tint="@color/white" />
 
