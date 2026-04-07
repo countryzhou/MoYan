@@ -38,7 +38,6 @@
 
     <!-- 首页 -->
     <string name="home_title">首页</string>
-    <string name="search_hint">搜索帖子或用户...</string>
     <string name="search_id_hint">输入用户ID搜索</string>
     <string name="hot_topic">今日热点话题</string>
     <string name="create_post">发布帖子</string>
@@ -46,6 +45,27 @@
     <string name="view_all">查看全部</string>
     <string name="newbie_post">新人帖</string>
     <string name="anonymous_post">匿名帖</string>
+    <string name="search_hint">搜索信息</string>
+    <string name="search">搜索</string>
+    <string name="home">首页</string>
+    <string name="explore">探索</string>
+    <string name="messages">消息</string>
+    <string name="profile">我的</string>
+    <string name="write_post">写帖子</string>
+
+
+    <!-- 新闻内容示例 -->
+    <string name="news_title_1">如果你不能激励自己完成基本任务，你就不是…</string>
+    <string name="news_title_2">仅凭 10 分钟的空闲时间，您可以做的最有成效的事情</string>
+    <string name="news_title_3">设计趋势：如何通过极简主义提升用户体验</string>
+    <string name="trend_title_1">首款阿斯顿马丁 DBS Superleggera 亮相上海国际E3汽车展</string>
+    <string name="author_name">王小明</string>
+    <string name="studio_name">奥达玛工作室</string>
+    <string name="time_12h">12小时前</string>
+    <string name="time_24h">24小时前</string>
+    <string name="comment_count">28</string>
+
+
 
     <!-- 搜索页 -->
     <string name="search_title">搜索</string>
