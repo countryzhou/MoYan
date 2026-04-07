@@ -9,12 +9,12 @@
 
     <!-- 模拟手机视口容器 -->
     <LinearLayout
-        android:layout_width="375dp"
-        android:layout_height="812dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:background="@color/white"
-        android:importantForAccessibility="no"
         android:elevation="8dp"
+        android:importantForAccessibility="no"
         android:orientation="vertical">
 
         <!-- 头部区域 (Header) -->
@@ -77,7 +77,7 @@
             </LinearLayout>
         </FrameLayout>
 
-        <!-- 可滚动内容区域 - 使用 LinearLayout + weight 实现底部固定 -->
+        <!-- 可滚动内容区域 - 占据剩余空间 -->
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
@@ -266,21 +266,21 @@
 
         </LinearLayout>
 
-        <!-- 浮动操作按钮 (FAB) -->
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_write"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="112dp"
-            android:src="@drawable/ic_edit"
-            android:contentDescription="@string/write_post"
-            app:backgroundTint="@color/primary_blue"
-            app:tint="@color/white"
-            app:elevation="6dp"
-            app:fabSize="normal" />
-
     </LinearLayout>
+
+    <!-- 浮动操作按钮 (FAB) - 相对于整个屏幕定位 -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_write"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="112dp"
+        android:contentDescription="@string/write_post"
+        android:src="@drawable/ic_edit"
+        app:backgroundTint="@color/primary_blue"
+        app:elevation="6dp"
+        app:fabSize="normal"
+        app:tint="@color/white" />
 
 </FrameLayout>
