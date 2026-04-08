@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_base"
@@ -98,7 +99,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="32dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:translationX="0dp">
+
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_trend_cards"
@@ -107,41 +110,19 @@
                         android:orientation="horizontal"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
+                        android:translationX="16dp"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/item_trend_card" />
 
-                    <!-- 分页指示点 -->
+                    <!-- 动态分页指示点容器 -->
                     <LinearLayout
+                        android:id="@+id/dot_indicator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="16dp"
-                        android:orientation="horizontal">
-
-                        <View
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
-                            android:layout_marginEnd="4dp"
-                            android:background="@drawable/bg_dot_active" />
-
-                        <View
-                            android:layout_width="6dp"
-                            android:layout_height="6dp"
-                            android:layout_marginEnd="4dp"
-                            android:background="@drawable/bg_dot_inactive" />
-
-                        <View
-                            android:layout_width="6dp"
-                            android:layout_height="6dp"
-                            android:layout_marginEnd="4dp"
-                            android:background="@drawable/bg_dot_inactive" />
-
-                        <View
-                            android:layout_width="6dp"
-                            android:layout_height="6dp"
-                            android:background="@drawable/bg_dot_inactive" />
-
-                    </LinearLayout>
+                        android:orientation="horizontal"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
@@ -187,11 +168,15 @@
             android:weightSum="4">
 
             <LinearLayout
+                android:id="@+id/nav_home"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -220,11 +205,15 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/nav_explore"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -235,11 +224,15 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/nav_messages"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -250,11 +243,15 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/nav_profile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -268,7 +265,6 @@
 
     </LinearLayout>
 
-    <!-- 浮动操作按钮 (FAB) - 相对于整个屏幕定位 -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_write"
         android:layout_width="wrap_content"
