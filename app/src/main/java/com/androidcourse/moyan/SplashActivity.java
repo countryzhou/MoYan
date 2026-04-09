@@ -69,7 +69,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void jumpToLogin() {
-        Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+        Intent intent = new Intent(SplashActivity.this, MessageActivity.class);
         startActivity(intent);
         finish();
     }
