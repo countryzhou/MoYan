@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_base"
+    android:background="@color/white"
     tools:context=".MainActivity">
 
     <!-- 模拟手机视口容器 -->
@@ -172,11 +172,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless">
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -209,11 +209,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless">
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -228,11 +228,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless">
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -247,11 +247,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless">
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="24dp"
