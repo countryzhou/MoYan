@@ -27,4 +27,18 @@
 
     <!-- 表面/卡片颜色 -->
     <color name="surface">#FFF8F9FA</color>
+
+    <!-- 文章详情页专用颜色 -->
+    <color name="post_title">#FF000000</color>
+    <color name="post_content">#FF000000</color>
+    <color name="author_name">#FF0A0A0A</color>
+    <color name="follow_btn_bg">#FFED6461</color>
+    <color name="followed_btn_bg">#FFCCCCCC</color>
+    <color name="reply_count">#FFED6461</color>
+    <color name="comment_input_hint">#FFABAFB3</color>
+    <color name="comment_input_bg">#FFF0F0F0</color>
+    <color name="search_bg">#FFF5F5F5</color>
+    <color name="divider">#FFE0E0E0</color>
+    <color name="bottom_bar_bg">#FFFFFFFF</color>
+    <color name="like_icon_border">#FFABAFB3</color>
 </resources>

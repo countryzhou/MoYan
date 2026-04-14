@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 关注颜色选择器-res/color/selector_follow_text_color.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 已关注状态文字颜色 -->
+    <item android:color="#666666" android:state_selected="true" />
+    <!-- 按下状态文字颜色 -->
+    <item android:color="#FFFFFF" android:state_pressed="true" />
+    <!-- 默认文字颜色 -->
+    <item android:color="#FFFFFF" />
+</selector>

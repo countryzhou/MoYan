@@ -66,7 +66,25 @@
     <string name="time_24h">24小时前</string>
     <string name="comment_count">28</string>
 
+    <!-- 文章详情页文本 -->
+    <string name="follow">关注</string>
+    <string name="followed">已关注</string>
+    <string name="reply_unit">回复</string>
+    <string name="time_ago">1小时前</string>
+    <string name="comments_title">评论</string>
+    <string name="share_title">分享文章</string>
+    <string name="follow_success">已关注</string>
+    <string name="unfollow_success">已取消关注</string>
+    <string name="comment_success">评论成功</string>
+    <string name="comment_empty_hint">请输入评论内容</string>
+    <string name="more_options">更多选项</string>
 
+    <!-- 示例文章数据 -->
+    <string name="sample_post_title">林丹豪宅曝光，价值7000万！</string>
+    <string name="sample_post_content">北京时间1月10日消息，林丹在老家福建的别墅曝光，这套豪宅位于富人区，均价11万！而从面积来看，在600-800平方米，因此，这套豪宅在7000万人民币左右。当然，豪宅内部装修也相当豪华，就像是皇宫一样。当然，林丹打了20年球，靠打球的收入就超过2亿。因此，7000万对林丹来说不算什么。</string>
+    <string name="sample_author_name">郭敬明</string>
+    <string name="sample_comment_user">我是胖罗</string>
+    <string name="sample_comment_content">桑巴军团球星云集，大罗、小罗、阿德里亚诺等巨星闪耀。大罗是70后，小罗和阿德都是80后，但如今，他们身材彻底走样，早已经没有了往昔的风采。</string>
 
     <!-- 搜索页 -->
     <string name="search_title">搜索</string>

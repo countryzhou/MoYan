@@ -43,4 +43,6 @@ dependencies {
 
     //new客户端用了gson库
     implementation 'com.google.code.gson:gson:2.10.1'
+    // CircleImageView 依赖
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 }

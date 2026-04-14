@@ -5,4 +5,37 @@
     <dimen name="avatar_size">40dp</dimen>
     <dimen name="fab_margin">24dp</dimen>
     <dimen name="fab_bottom_offset">112dp</dimen>
+
+    <!-- 文章详情页尺寸 -->
+    <dimen name="status_bar_height">83dp</dimen>
+    <dimen name="post_image_height">247dp</dimen>
+    <dimen name="post_title_size">18sp</dimen>
+    <dimen name="post_content_size">14sp</dimen>
+    <dimen name="post_content_line_spacing">2dp</dimen>
+    <dimen name="author_name_size">16sp</dimen>
+    <dimen name="follow_btn_width">73dp</dimen>
+    <dimen name="follow_btn_height">30dp</dimen>
+    <dimen name="follow_btn_radius">15dp</dimen>
+    <dimen name="avatar_size_small">34dp</dimen>
+    <dimen name="avatar_size_comment">36dp</dimen>
+    <dimen name="search_box_width">120dp</dimen>
+    <dimen name="search_box_height">26dp</dimen>
+    <dimen name="search_box_radius">13dp</dimen>
+    <dimen name="comment_input_width">160dp</dimen>
+    <dimen name="comment_input_height">32dp</dimen>
+    <dimen name="comment_input_radius">16dp</dimen>
+    <dimen name="bottom_bar_height">71dp</dimen>
+    <dimen name="back_icon_size">24dp</dimen>
+    <dimen name="share_icon_width">20dp</dimen>
+    <dimen name="share_icon_height">16dp</dimen>
+    <dimen name="like_icon_size">15dp</dimen>
+    <dimen name="like_icon_large">24dp</dimen>
+    <dimen name="comment_icon_size">20dp</dimen>
+    <dimen name="more_icon_size">20dp</dimen>
+    <dimen name="divider_height">1dp</dimen>
+    <dimen name="interaction_padding_vertical">15dp</dimen>
+    <dimen name="author_layout_padding_bottom">15dp</dimen>
+    <dimen name="comment_padding_vertical">12dp</dimen>
+    <dimen name="comment_padding_horizontal">12dp</dimen>
+
 </resources>
