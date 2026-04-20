@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import com.androidcourse.moyan.model.LoginResponse;
 import com.androidcourse.moyan.network.SocketClient;
 import com.google.gson.Gson;
@@ -18,7 +17,7 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText etPhone, etCode;
+    private EditText etPhone, etPassword;  // 修改：etCode -> etPassword
     private Button btnLogin;
     private TextView tvGoRegister;
     private ProgressBar progressBar;
@@ -34,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initViews() {
         etPhone = findViewById(R.id.et_phone);
-        etCode = findViewById(R.id.et_code);
+        etPassword = findViewById(R.id.et_password);  // 修改：使用密码输入框
         btnLogin = findViewById(R.id.btn_login);
         tvGoRegister = findViewById(R.id.tv_go_register);
         progressBar = findViewById(R.id.progress_bar);
@@ -43,7 +42,6 @@ public class LoginActivity extends AppCompatActivity {
     private void setupListeners() {
         btnLogin.setOnClickListener(v -> performLogin());
         tvGoRegister.setOnClickListener(v -> {
-            // 跳转到注册页面
             Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
             startActivity(intent);
         });
@@ -51,30 +49,31 @@ public class LoginActivity extends AppCompatActivity {
 
     private void performLogin() {
         String phone = etPhone.getText().toString().trim();
-        String code = etCode.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();  // 修改：获取密码
 
         // 输入校验
         if (phone.isEmpty()) {
             Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (code.isEmpty()) {
-            Toast.makeText(this, "请输入验证码", Toast.LENGTH_SHORT).show();
+        if (password.isEmpty()) {
+            Toast.makeText(this, "请输入密码", Toast.LENGTH_SHORT).show();
             return;
         }
         if (phone.length() != 11) {
             Toast.makeText(this, "请输入11位手机号", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (password.length() < 6) {
+            Toast.makeText(this, "密码长度不能少于6位", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // 显示加载状态
         setLoading(true);
 
-
-
-
         // 构建请求JSON
-        String jsonRequest = buildLoginJson(phone, code);
+        String jsonRequest = buildLoginJson(phone, password);
 
         // 在子线程中发送请求
         new Thread(() -> {
@@ -86,25 +85,23 @@ public class LoginActivity extends AppCompatActivity {
                 handleLoginResponse(response);
             });
         }).start();
-
     }
 
-
-
-    private String buildLoginJson(String phone, String code) {
+    // 修改：使用password代替code
+    private String buildLoginJson(String phone, String password) {
         try {
             JSONObject request = new JSONObject();
             request.put("action", "login");
 
             JSONObject params = new JSONObject();
             params.put("phone", phone);
-            params.put("code", code);
+            params.put("password", password);  // 修改：code -> password
             request.put("params", params);
 
             return request.toString();
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"action\":\"login\",\"params\":{\"phone\":\"" + phone + "\",\"code\":\"" + code + "\"}}";
+            return "{\"action\":\"login\",\"params\":{\"phone\":\"" + phone + "\",\"password\":\"" + password + "\"}}";
         }
     }
 
@@ -117,14 +114,20 @@ public class LoginActivity extends AppCompatActivity {
                 // 登录成功
                 Toast.makeText(this, "登录成功！欢迎 " + loginRes.getData().getNickname(), Toast.LENGTH_LONG).show();
 
-                // TODO: 保存用户信息到 SharedPreferences
-                // TODO: 跳转到主页 HomeActivity
+                // 保存用户信息到 SharedPreferences
+                //saveUserInfo(loginRes.getData());
+
+                // 跳转到主页
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
 
             } else {
                 // 登录失败
                 String errorMsg = loginRes.getMsg();
                 if (errorMsg == null || errorMsg.isEmpty()) {
-                    errorMsg = "登录失败，请检查手机号和验证码";
+                    errorMsg = "登录失败，请检查手机号和密码";
                 }
                 Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show();
             }
@@ -134,7 +137,16 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-
+    // 新增：保存用户信息
+//    private void saveUserInfo(LoginResponse.UserData userData) {
+//        android.content.SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
+//        android.content.SharedPreferences.Editor editor = sp.edit();
+//        editor.putInt("userId", userData.getUserId());
+//        editor.putString("phone", userData.getPhone());
+//        editor.putString("nickname", userData.getNickname());
+//        editor.putString("avatarUrl", userData.getAvatarUrl());
+//        editor.apply();
+//    }
 
     private void setLoading(boolean isLoading) {
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);

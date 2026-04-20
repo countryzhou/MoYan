@@ -78,138 +78,107 @@ code = 1 表示失败
 
 六、API 接口详细说明
 【1】用户登录
-action：login
-请求示例：
-{"action":"login","params":{"phone":"13800138000","code":"123456"}}
-响应示例：
-{"code":0,"msg":"success","data":{"userId":1,"nickname":"张三","phone":"13800138000"}}
+请求：{"action":"login","params":{"phone":"13800138000","password":"123456"}}
+说明：password为明文密码，长度6-20位
+响应：{"code":0,"msg":"登录成功","data":{"userId":1,"phone":"13800138000","nickname":"张三","avatarUrl":"","warningCount":0,"isBanned":false}}
+
 
 【2】用户注册
-action：register
-请求示例：
-{"action":"register","params":{"phone":"13800138000","nickname":"张三"}}
-响应示例：
-{"code":0,"msg":"success","data":{"userId":1,"nickname":"张三","phone":"13800138000"}}
+请求：{"action":"register","params":{"phone":"13800138000","password":"123456","nickname":"张三"}}
+说明：password为明文密码，长度6-20位；nickname长度2-20位
+响应：{"code":0,"msg":"注册成功","data":{"userId":1,"phone":"13800138000","nickname":"张三","avatarUrl":""}}
 
-【3】获取用户信息
-action：getUserInfo
-请求示例：
-{"action":"getUserInfo","params":{"userId":1}}
-响应示例：
-{"code":0,"msg":"success","data":{"userId":1,"nickname":"张三","phone":"13800138000","avatarUrl":null}}
 
-【4】修改昵称
-action：updateNickname
-请求示例：
-{"action":"updateNickname","params":{"userId":1,"nickname":"新昵称"}}
-响应示例：
-{"code":0,"msg":"success","data":null}
+【3】修改密码（新增）
+请求：{"action":"updatePassword","params":{"userId":1,"oldPassword":"123456","newPassword":"654321"}}
+说明：新密码长度6-20位
+响应：{"code":0,"msg":"密码修改成功","data":null}
 
-【5】修改头像
-action：updateAvatar
-请求示例：
-{"action":"updateAvatar","params":{"userId":1,"avatarUrl":"http://图片地址"}}
-响应示例：
-{"code":0,"msg":"success","data":null}
 
-【6】发布帖子
-action：createPost
-请求示例：
-{"action":"createPost","params":{"userId":1,"isAnonymous":false,"title":"标题","content":"内容","tags":"诗歌,现代诗"}}
-响应示例：
-{"code":0,"msg":"success","data":123}
-data 是帖子ID
+【4】获取用户信息
+请求：{"action":"getUserInfo","params":{"userId":1}}
+响应：{"code":0,"msg":"success","data":{"userId":1,"phone":"13800138000","nickname":"张三","avatarUrl":"http://...","warningCount":0,"isBanned":false}}
 
-【7】获取帖子列表（首页推荐流）
-action：getPostList
-请求示例：
-{"action":"getPostList","params":{"page":1,"size":20}}
-响应示例：
-{"code":0,"msg":"success","data":[{"postId":1,"title":"标题","content":"内容","userId":1,"nickname":"张三","likeCount":10,"replyCount":5}]}
 
-【8】获取帖子详情
-action：getPostDetail
-请求示例：
-{"action":"getPostDetail","params":{"postId":1,"userId":1}}
-响应示例：
-{"code":0,"msg":"success","data":{"postId":1,"title":"标题","content":"内容","replies":[{"replyId":1,"content":"回复内容","userId":2,"nickname":"李四"}]}}
+【5】修改昵称
+请求：{"action":"updateNickname","params":{"userId":1,"nickname":"新昵称"}}
+响应：{"code":0,"msg":"success","data":null}
 
-【9】搜索帖子
-action：searchPosts
-请求示例：
-{"action":"searchPosts","params":{"keyword":"关键词","tag":"标签","sortBy":"time","page":1}}
-响应示例：
-{"code":0,"msg":"success","data":[{"postId":1,"title":"标题","content":"内容"}]}
 
-【10】发布回复
-action：createReply
-请求示例：
-{"action":"createReply","params":{"postId":1,"userId":1,"isAnonymous":false,"content":"回复内容"}}
-响应示例：
-{"code":0,"msg":"success","data":456}
-data 是回复ID
+【6】修改头像
+请求：{"action":"updateAvatar","params":{"userId":1,"avatarUrl":"http://图片地址"}}
+响应：{"code":0,"msg":"success","data":null}
 
-【11】获取回复列表
-action：getReplies
-请求示例：
-{"action":"getReplies","params":{"postId":1,"page":1}}
-响应示例：
-{"code":0,"msg":"success","data":[{"replyId":1,"content":"回复内容","userId":2,"nickname":"李四","likeCount":3}]}
 
-【12】给帖子评分
-action：ratePost
-请求示例：
-{"action":"ratePost","params":{"postId":1,"userId":1,"tagAccuracy":4,"articleScore":5,"comment":"写得很好"}}
-说明：tagAccuracy 和 articleScore 都是1-5分
-响应示例：
-{"code":0,"msg":"success","data":null}
+【7】发布帖子
+请求：{"action":"createPost","params":{"userId":1,"isAnonymous":false,"title":"标题","content":"内容","tags":"诗歌,现代诗"}}
+响应：{"code":0,"msg":"success","data":123}  （data是帖子ID）
 
-【13】打赏帖子
-action：tipPost
-请求示例：
-{"action":"tipPost","params":{"postId":1,"fromUserId":1,"amount":10}}
+
+【8】获取帖子列表（首页推荐流）
+请求：{"action":"getPostList","params":{"page":1,"size":20,"userId":1}}
+说明：userId可选，用于判断当前用户是否已点赞
+响应：{"code":0,"msg":"success","data":[{"postId":1,"title":"标题",...}]}
+
+
+【9】获取帖子详情
+请求：{"action":"getPostDetail","params":{"postId":1,"userId":1}}
+说明：userId可选，用于判断当前用户是否已点赞/评分
+响应：{"code":0,"msg":"success","data":{"postId":1,"title":"标题","content":"内容","replies":[...]}}
+
+
+【10】搜索帖子
+请求：{"action":"searchPosts","params":{"keyword":"关键词","tag":"标签","sortBy":"time","page":1}}
+说明：sortBy可选值：time（最新）、hot（最热）、score（最高分）
+响应：{"code":0,"msg":"success","data":[帖子列表]}
+
+
+【11】发布回复
+请求：{"action":"createReply","params":{"postId":1,"userId":1,"isAnonymous":false,"content":"回复内容"}}
+响应：{"code":0,"msg":"success","data":456}  （data是回复ID）
+
+
+【12】获取回复列表
+请求：{"action":"getReplies","params":{"postId":1,"page":1}}
+响应：{"code":0,"msg":"success","data":[{"replyId":1,"content":"回复内容",...}]}
+
+
+【13】给帖子评分
+请求：{"action":"ratePost","params":{"postId":1,"userId":1,"tagAccuracy":4,"articleScore":5,"comment":"评论"}}
+说明：tagAccuracy和articleScore都是1-5分
+响应：{"code":0,"msg":"success","data":null}
+
+
+【14】打赏帖子
+请求：{"action":"tipPost","params":{"postId":1,"fromUserId":1,"amount":10}}
 说明：金额单位元，平台抽成8%
+响应：{"code":0,"msg":"success","data":null}
 
-响应示例：
-{"code":0,"msg":"success","data":null}
 
-【14】举报内容
-action：report
-请求示例：
-{"action":"report","params":{"reporterId":1,"targetType":1,"targetId":1,"reason":"举报原因"}}
+【15】举报内容
+请求：{"action":"report","params":{"reporterId":1,"targetType":1,"targetId":1,"reason":"举报原因"}}
 说明：targetType=1表示帖子，2表示回复
-响应示例：
-{"code":0,"msg":"success","data":null}
+响应：{"code":0,"msg":"success","data":null}
 
-【15】获取今日互动任务
-action：getTodayTask
-请求示例：
-{"action":"getTodayTask","params":{}}
-响应示例：
-{"code":0,"msg":"success","data":{"taskId":1,"taskType":1,"title":"续写任务","content":"原文内容"}}
 
-【16】提交任务回答
-action：submitTaskAnswer
-请求示例：
-{"action":"submitTaskAnswer","params":{"taskId":1,"userId":1,"content":"回答内容"}}
-响应示例：
-{"code":0,"msg":"success","data":789}
-data 是回答ID
+【16】获取今日互动任务
+请求：{"action":"getTodayTask","params":{}}
+响应：{"code":0,"msg":"success","data":{"taskId":1,"taskType":1,"title":"续写任务","content":"原文内容"}}
 
-【17】获取任务优质回答
-action：getTopAnswers
-请求示例：
-{"action":"getTopAnswers","params":{"taskId":1,"limit":3}}
-响应示例：
-{"code":0,"msg":"success","data":[{"answerId":1,"content":"回答内容","score":45}]}
 
-【18】检查是否已提交今日任务
-action：hasSubmitted
-请求示例：
-{"action":"hasSubmitted","params":{"taskId":1,"userId":1}}
-响应示例：
-{"code":0,"msg":"success","data":true}
-data = true 已提交，false 未提交
+【17】提交任务回答
+请求：{"action":"submitTaskAnswer","params":{"taskId":1,"userId":1,"content":"回答内容"}}
+响应：{"code":0,"msg":"success","data":789}  （data是回答ID）
+
+
+【18】获取任务优质回答
+请求：{"action":"getTopAnswers","params":{"taskId":1,"limit":3}}
+响应：{"code":0,"msg":"success","data":[{"answerId":1,"content":"回答内容","score":45}]}
+
+
+【19】检查是否已提交今日任务
+请求：{"action":"hasSubmitted","params":{"taskId":1,"userId":1}}
+响应：{"code":0,"msg":"success","data":true}  （true已提交/false未提交）
 
 
 七、配置文件说明
