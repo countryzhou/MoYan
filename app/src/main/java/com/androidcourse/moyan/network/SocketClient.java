@@ -8,7 +8,7 @@ import java.net.Socket;
 
 public class SocketClient {
     // TODO: 改成你电脑的实际IP地址
-    private static final String SERVER_IP = "192.168.***.***";  // 必须修改
+    private static final String SERVER_IP = "10.0.2.2";  // 必须修改
     private static final int SERVER_PORT = 8888;
 
     private static SocketClient instance;

@@ -10,11 +10,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-// TODO: 等服务端搭好后，取消下面这些 import 的注释
-// import com.androidcourse.moyan.model.LoginResponse;
-// import com.androidcourse.moyan.network.SocketClient;
-// import com.google.gson.Gson;
-// import org.json.JSONObject;
+
+import com.androidcourse.moyan.model.LoginResponse;
+import com.androidcourse.moyan.network.SocketClient;
+import com.google.gson.Gson;
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -70,30 +70,9 @@ public class LoginActivity extends AppCompatActivity {
         // 显示加载状态
         setLoading(true);
 
-        // ========== 方式一：Mock 模式（当前使用，不需要服务端） ==========
-        new Thread(() -> {
-            try {
-                // 模拟网络延迟
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
-            runOnUiThread(() -> {
-                setLoading(false);
 
-                // 模拟登录逻辑：手机号以 1 开头且验证码为 123456 就成功
-                if (phone.startsWith("1") && code.equals("123456")) {
-                    Toast.makeText(this, "登录成功！", Toast.LENGTH_LONG).show();
-                    // TODO: 跳转到主页 HomeActivity
-                } else {
-                    Toast.makeText(this, "登录失败：手机号或验证码错误", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }).start();
-        // ===============================================================
 
-        /* ========== 方式二：真实网络请求（等服务端搭好后，删除上面的 Mock 代码，取消下面注释） ==========
         // 构建请求JSON
         String jsonRequest = buildLoginJson(phone, code);
 
@@ -107,10 +86,10 @@ public class LoginActivity extends AppCompatActivity {
                 handleLoginResponse(response);
             });
         }).start();
-        ======================================================================================= */
+
     }
 
-    /* ========== 等服务端搭好后，取消下面这些方法的注释 ==========
+
 
     private String buildLoginJson(String phone, String code) {
         try {
@@ -155,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    ================================================================= */
+
 
     private void setLoading(boolean isLoading) {
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
