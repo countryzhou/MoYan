@@ -41,7 +41,6 @@
                     android:layout_weight="1">
 
                     <EditText
-                        android:id="@+id/et_search"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:layout_gravity="center_vertical"
@@ -68,7 +67,6 @@
 
                 <!-- 头像 -->
                 <ImageView
-                    android:id="@+id/iv_avatar"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:background="@drawable/bg_avatar"
@@ -155,13 +153,20 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_news_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_news_card" />
+                    <!-- 新闻条目 1 -->
+                    <include
+                        android:id="@+id/newsItem1"
+                        layout="@layout/item_news_card" />
+
+                    <!-- 新闻条目 2 -->
+                    <include
+                        android:id="@+id/newsItem2"
+                        layout="@layout/item_news_card" />
+
+                    <!-- 新闻条目 3 -->
+                    <include
+                        android:id="@+id/newsItem3"
+                        layout="@layout/item_news_card" />
 
                 </LinearLayout>
 
@@ -189,7 +194,6 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:id="@+id/nav_home"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_nav_active"
@@ -216,7 +220,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/nav_explore"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -232,7 +235,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/nav_messages"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -248,7 +250,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/nav_profile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
