@@ -24,7 +24,7 @@ public class SearchResultActivity extends AppCompatActivity {
     private List<SearchResult> searchResults;
 
     // 分类标签
-    private TextView tv_all, tv_user, tv_product, tv_image, tv_ask;
+    private TextView tv_all, tv_user, tv_product, tv_image;
     // 子分类标签
     private TextView tv_comprehensive, tv_latest, tv_account, tv_photo, tv_avatar;
 
@@ -43,7 +43,6 @@ public class SearchResultActivity extends AppCompatActivity {
         tv_user = findViewById(R.id.tv_user);
         tv_product = findViewById(R.id.tv_product);
         tv_image = findViewById(R.id.tv_image);
-        tv_ask = findViewById(R.id.tv_ask);
 
         // 子分类标签
         tv_comprehensive = findViewById(R.id.tv_comprehensive);
@@ -118,7 +117,6 @@ public class SearchResultActivity extends AppCompatActivity {
         tv_user.setOnClickListener(categoryListener);
         tv_product.setOnClickListener(categoryListener);
         tv_image.setOnClickListener(categoryListener);
-        tv_ask.setOnClickListener(categoryListener);
     }
 
     private void setSubCategoryClickListeners() {
@@ -141,7 +139,6 @@ public class SearchResultActivity extends AppCompatActivity {
         tv_user.setTextColor(getResources().getColor(R.color.black));
         tv_product.setTextColor(getResources().getColor(R.color.black));
         tv_image.setTextColor(getResources().getColor(R.color.black));
-        tv_ask.setTextColor(getResources().getColor(R.color.black));
     }
 
     private void resetSubCategoryTags() {
