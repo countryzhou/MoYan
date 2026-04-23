@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- 顶部搜索栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <TextView
+            android:id="@+id/tv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="&lt;"
+            android:textSize="24sp"
+            android:textColor="#333333"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/bg_search_bar"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="搜索内容"
+                android:background="@null"
+                android:textSize="16sp"
+                android:maxLines="1"/>
+
+            <ImageView
+                android:id="@+id/iv_clear"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_delete_single"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- 分类标签栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="#F8F8F8">
+
+        <TextView
+            android:id="@+id/tv_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="全部"
+            android:textSize="16sp"
+            android:textColor="#FF0000"
+            android:layout_marginEnd="24dp"/>
+
+        <TextView
+            android:id="@+id/tv_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="用户"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:layout_marginEnd="24dp"/>
+
+        <TextView
+            android:id="@+id/tv_product"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="商品"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:layout_marginEnd="24dp"/>
+
+        <TextView
+            android:id="@+id/tv_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="图片"
+            android:textSize="16sp"
+            android:textColor="#333333"/>
+
+    </LinearLayout>
+
+    <!-- 子分类标签栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:id="@+id/tv_comprehensive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="综合"
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:layout_marginEnd="20dp"/>
+
+        <TextView
+            android:id="@+id/tv_latest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="最新"
+            android:textSize="14sp"
+            android:textColor="#999999"
+            android:layout_marginEnd="20dp"/>
+
+        <TextView
+            android:id="@+id/tv_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="账号本人"
+            android:textSize="14sp"
+            android:textColor="#999999"
+            android:layout_marginEnd="20dp"/>
+
+        <TextView
+            android:id="@+id/tv_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="照片"
+            android:textSize="14sp"
+            android:textColor="#999999"
+            android:layout_marginEnd="20dp"/>
+
+        <TextView
+            android:id="@+id/tv_avatar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="头像"
+            android:textSize="14sp"
+            android:textColor="#999999"/>
+
+    </LinearLayout>
+
+    <!-- 搜索结果列表 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_search_result"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F8F8F8"/>
+
+</LinearLayout>
