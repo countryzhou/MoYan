@@ -38,10 +38,6 @@
             android:exported="false" />
 
         <activity
-            android:name=".network.SearchResultActivity"
-            android:exported="false" />
-
-        <activity
             android:name=".TopicdetailActivity"
             android:exported="false" />
 
