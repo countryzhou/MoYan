@@ -10,6 +10,10 @@ android {
         }
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId "com.androidcourse.moyan"
         minSdk 24
@@ -18,14 +22,25 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // 默认配置
+        buildConfigField("boolean", "IS_DEBUG", "true")  // 默认为调试模式
     }
 
     buildTypes {
+        debug {
+            // Debug 构建：使用 Mock 模式
+            buildConfigField("boolean", "IS_DEBUG", "true")
+
+            debuggable = true
+        }
+
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // Release 构建：使用真实网络请求
+            buildConfigField("boolean", "IS_DEBUG", "false")
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
