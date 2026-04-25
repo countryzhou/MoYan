@@ -3,63 +3,72 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="32dp"
+    android:padding="24dp"
     android:gravity="center">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="注册"
-        android:textSize="36sp"
+        android:text="注册账号"
+        android:textSize="28sp"
         android:textStyle="bold"
-        android:layout_marginBottom="48dp" />
+        android:layout_marginBottom="32dp" />
 
     <EditText
         android:id="@+id/et_phone"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:hint="手机号"
         android:inputType="phone"
-        android:padding="16dp"
+        android:maxLength="11"
         android:layout_marginBottom="16dp" />
 
     <EditText
         android:id="@+id/et_nickname"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:hint="昵称"
-        android:inputType="text"
-        android:padding="16dp"
+        android:maxLength="20"
         android:layout_marginBottom="16dp" />
 
+    <!-- 新增：密码输入框 -->
     <EditText
-        android:id="@+id/et_code"
+        android:id="@+id/et_password"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:hint="验证码"
-        android:inputType="number"
-        android:padding="16dp"
+        android:layout_height="wrap_content"
+        android:hint="密码（不少于6位）"
+        android:inputType="textPassword"
         android:layout_marginBottom="16dp" />
+
+    <!-- 新增：确认密码输入框 -->
+    <EditText
+        android:id="@+id/et_confirm_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="确认密码"
+        android:inputType="textPassword"
+        android:layout_marginBottom="24dp" />
 
     <Button
         android:id="@+id/btn_register"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:text="注册"
-        android:textSize="18sp" />
+        android:layout_height="wrap_content"
+        android:text="注册" />
 
     <TextView
         android:id="@+id/tv_go_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="已有账号？去登录"
+        android:text="已有账号？立即登录"
         android:textColor="@android:color/holo_blue_dark"
-        android:layout_marginTop="24dp" />
+        android:layout_marginTop="16dp"
+        android:padding="8dp" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:layout_marginTop="16dp" />
+
 </LinearLayout>

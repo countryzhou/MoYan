@@ -24,13 +24,13 @@
         android:layout_marginBottom="16dp" />
 
     <EditText
-        android:id="@+id/et_code"
+        android:id="@+id/et_password"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:hint="验证码"
-        android:inputType="number"
-        android:padding="16dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:hint="密码"
+        android:inputType="textPassword"
+        android:padding="16dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
