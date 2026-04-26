@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.androidcourse.moyan.R;
-import com.androidcourse.moyan.SearchResultAdapter;
-import com.androidcourse.moyan.SearchResultAdapter.SearchResult;
+import com.androidcourse.moyan.adapter.SearchResultAdapter;
+import com.androidcourse.moyan.adapter.SearchResultAdapter.SearchResult;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.androidcourse.moyan.R;
-import com.androidcourse.moyan.SearchHistoryAdapter;
+import com.androidcourse.moyan.adapter.SearchHistoryAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
