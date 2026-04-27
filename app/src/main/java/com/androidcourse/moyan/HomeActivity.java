@@ -1,375 +1,340 @@
 package com.androidcourse.moyan;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
-import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.androidcourse.moyan.adapter.*;
+import com.androidcourse.moyan.model.*;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
+    // UI组件
+    private EditText etSearch;
+    private ImageView ivAvatar;
     private RecyclerView rvTrendCards;
-    private LinearLayout dotIndicator;
-    private LinearLayout navHome, navExplore, navMessages, navProfile;
+    private RecyclerView rvNewsList;
     private FloatingActionButton fabWrite;
 
-    private TrendCardAdapter adapter;
-    private List<TrendCardItem> trendList;
-    private final Handler handler = new Handler(Looper.getMainLooper());
-    private int currentPosition = 0;
-    private boolean isScrolling = false;
-    private PagerSnapHelper snapHelper;
+    // 底部导航栏
+    private LinearLayout navHome, navExplore, navMessages, navProfile;
 
-    // 内部数据类
-    private static class TrendCardItem {
-        String title, author, commentCount, time;
-        int imageRes;
-        TrendCardItem(String title, String author, String commentCount, String time, int imageRes) {
-            this.title = title;
-            this.author = author;
-            this.commentCount = commentCount;
-            this.time = time;
-            this.imageRes = imageRes;
-        }
-    }
+    // 适配器
+    private TrendCardAdapter trendCardAdapter;
+    private NewsAdapter newsAdapter;
 
-    // 内部 Adapter - 实现无限循环
-    private class TrendCardAdapter extends RecyclerView.Adapter<TrendCardAdapter.ViewHolder> {
-        private final List<TrendCardItem> list;
-        private final int REAL_COUNT;
+    // 数据源
+    private List<TrendCard> trendCardList;
+    private List<NewsItem> newsList;
 
-        TrendCardAdapter(List<TrendCardItem> list) {
-            this.list = list;
-            this.REAL_COUNT = list == null ? 0 : list.size();
-        }
+    // 用于在主线程更新UI
+    private Handler mainHandler;
 
-        @Override
-        public int getItemCount() {
-            // 返回一个很大的数，实现无限循环
-            return REAL_COUNT == 0 ? 0 : Integer.MAX_VALUE;
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return position % REAL_COUNT;
-        }
-
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_trend_card, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            int realPosition = position % REAL_COUNT;
-            TrendCardItem item = list.get(realPosition);
-            holder.tvTitle.setText(item.title);
-            holder.tvAuthor.setText(item.author);
-            holder.tvCommentCount.setText(item.commentCount);
-            holder.tvTime.setText(item.time);
-            holder.ivImage.setImageResource(item.imageRes);
-
-            holder.itemView.setOnClickListener(v -> {
-                Intent intent = new Intent(HomeActivity.this, PostdetailActivity.class);
-                intent.putExtra("post_title", item.title);
-                intent.putExtra("post_author", item.author);
-                startActivity(intent);
-            });
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvTitle, tvAuthor, tvCommentCount, tvTime;
-            ImageView ivImage;
-            ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                tvTitle = itemView.findViewById(R.id.tv_trend_title);
-                tvAuthor = itemView.findViewById(R.id.tv_author);
-                tvCommentCount = itemView.findViewById(R.id.tv_comment_count);
-                tvTime = itemView.findViewById(R.id.tv_time);
-                ivImage = itemView.findViewById(R.id.iv_trend_image);
-            }
-        }
-    }
+    // 当前用户ID（暂时写死，登录后从SharedPreferences获取）
+    private int currentUserId = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        mainHandler = new Handler(Looper.getMainLooper());
 
         initViews();
-        loadMockData();
-        setupTrendCarousel();
-        setupBottomNavigation();
-        setupFab();
-        setupNewsCardClickListeners();
+        setupListeners();
+
+        // 从服务器加载数据
+        loadTrendCardsFromServer();  // 加载趋势卡片
+        loadNewsListFromServer();    // 加载新闻列表
     }
 
     private void initViews() {
+        etSearch = findViewById(R.id.et_search);
+        ivAvatar = findViewById(R.id.iv_avatar);
         rvTrendCards = findViewById(R.id.rv_trend_cards);
-        dotIndicator = findViewById(R.id.dot_indicator);
+        rvNewsList = findViewById(R.id.rv_news_list);
+        fabWrite = findViewById(R.id.fab_write);
+
         navHome = findViewById(R.id.nav_home);
         navExplore = findViewById(R.id.nav_explore);
         navMessages = findViewById(R.id.nav_messages);
         navProfile = findViewById(R.id.nav_profile);
-        fabWrite = findViewById(R.id.fab_write);
     }
 
-    private void loadMockData() {
-        trendList = new ArrayList<>();
-        trendList.add(new TrendCardItem("全新BMW M2震撼登场，性能再升级", "BMW官方", "128", "2小时前", R.drawable.img_car_placeholder));
-        trendList.add(new TrendCardItem("特斯拉Cybertruck终于交付！", "特斯拉中国", "256", "5小时前", R.drawable.img_car_placeholder));
-        trendList.add(new TrendCardItem("奔驰发布全新E级，科技感十足", "奔驰汽车", "89", "昨天", R.drawable.img_car_placeholder));
-        trendList.add(new TrendCardItem("奥迪Q6 e-tron亮相，纯电新选择", "奥迪官方", "67", "昨天", R.drawable.img_car_placeholder));
+    private void setupListeners() {
+        // 搜索框
+        etSearch.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, SearchActivity.class);
+            startActivity(intent);
+        });
+        etSearch.setFocusable(false);
+
+        // 头像
+        ivAvatar.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
+
+        // 写帖子
+        fabWrite.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, EditprofileActivity.class);
+            startActivity(intent);
+        });
+
+        // 底部导航
+        navHome.setOnClickListener(v -> refreshData());
+        navExplore.setOnClickListener(v -> {
+            startActivity(new Intent(HomeActivity.this, InteractionActivity.class));
+            finish();
+        });
+        navMessages.setOnClickListener(v -> {
+            startActivity(new Intent(HomeActivity.this, MessageActivity.class));
+            finish();
+        });
+        navProfile.setOnClickListener(v -> {
+            startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+            finish();
+        });
     }
 
-    private void setupTrendCarousel() {
-        if (trendList == null || trendList.isEmpty()) {
-            if (dotIndicator != null) {
-                dotIndicator.setVisibility(View.GONE);
+    /**
+     * 从服务器加载趋势卡片
+     * 接口：getPostList 获取热门帖子，前4个作为趋势卡片
+     */
+    private void loadTrendCardsFromServer() {
+        new Thread(() -> {
+            try {
+                // 构建请求JSON
+                JSONObject request = new JSONObject();
+                request.put("action", "getPostList");
+
+                JSONObject params = new JSONObject();
+                params.put("page", 1);
+                params.put("size", 4);  // 只要前4条
+                params.put("userId", currentUserId);
+                request.put("params", params);
+
+                // 发送请求
+                String response = sendSocketRequest(request.toString());
+                JSONObject jsonResponse = new JSONObject(response);
+
+                if (jsonResponse.getInt("code") == 0) {
+                    // 解析帖子数据
+                    JSONArray posts = jsonResponse.getJSONArray("data");
+                    List<TrendCard> cards = new ArrayList<>();
+
+                    for (int i = 0; i < posts.length(); i++) {
+                        JSONObject post = posts.getJSONObject(i);
+                        TrendCard card = new TrendCard(
+                                post.getString("title"),
+                                post.getString("content"),
+                                R.drawable.img_car_placeholder
+                        );
+                        // 保存帖子ID，用于点击跳转
+                        card.setPostId(post.getInt("postId"));
+                        cards.add(card);
+                    }
+
+                    // 如果服务器没有数据，使用默认数据
+                    if (cards.isEmpty()) {
+                        cards = getDefaultTrendCards();
+                    }
+
+                    final List<TrendCard> finalCards = cards;
+                    mainHandler.post(() -> displayTrendCards(finalCards));
+                } else {
+                    // 请求失败，使用默认数据
+                    mainHandler.post(() -> displayTrendCards(getDefaultTrendCards()));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                // 出错时使用默认数据
+                mainHandler.post(() -> displayTrendCards(getDefaultTrendCards()));
             }
-            return;
-        }
+        }).start();
+    }
 
-        // 使用 LinearLayoutManager
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+    /**
+     * 从服务器加载新闻列表
+     * 接口：getPostList 获取帖子列表（分页）
+     */
+    private void loadNewsListFromServer() {
+        new Thread(() -> {
+            try {
+                // 构建请求JSON
+                JSONObject request = new JSONObject();
+                request.put("action", "getPostList");
+
+                JSONObject params = new JSONObject();
+                params.put("page", 1);
+                params.put("size", 20);  // 每页20条
+                params.put("userId", currentUserId);
+                request.put("params", params);
+
+                // 发送请求
+                String response = sendSocketRequest(request.toString());
+                JSONObject jsonResponse = new JSONObject(response);
+
+                if (jsonResponse.getInt("code") == 0) {
+                    // 解析帖子数据
+                    JSONArray posts = jsonResponse.getJSONArray("data");
+                    List<NewsItem> news = new ArrayList<>();
+
+                    for (int i = 0; i < posts.length(); i++) {
+                        JSONObject post = posts.getJSONObject(i);
+                        NewsItem item = new NewsItem(
+                                post.getInt("postId"),
+                                post.getString("title"),
+                                post.getString("content"),
+                                post.getString("nickname"),  // 作者昵称
+                                post.getLong("createTime"),
+                                R.drawable.img_car_placeholder
+                        );
+                        item.setCommentCount(post.getInt("replyCount"));
+                        news.add(item);
+                    }
+
+                    final List<NewsItem> finalNews = news;
+                    mainHandler.post(() -> displayNewsList(finalNews));
+                } else {
+                    // 请求失败，使用默认数据
+                    mainHandler.post(() -> displayNewsList(getDefaultNewsList()));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                // 出错时使用默认数据
+                mainHandler.post(() -> displayNewsList(getDefaultNewsList()));
+            }
+        }).start();
+    }
+
+    /**
+     * 显示趋势卡片
+     */
+    private void displayTrendCards(List<TrendCard> cards) {
+        trendCardList = cards;
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvTrendCards.setLayoutManager(layoutManager);
 
-        adapter = new TrendCardAdapter(trendList);
-        rvTrendCards.setAdapter(adapter);
-
-        // 使用 PagerSnapHelper 实现一次滑动切换一个卡片
-        snapHelper = new PagerSnapHelper();
-        snapHelper.attachToRecyclerView(rvTrendCards);
-
-        // 添加 item 装饰器来增加左右间距，使居中效果更好
-        rvTrendCards.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view,
-                                       @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                int position = parent.getChildAdapterPosition(view);
-                int totalCount = adapter.getItemCount();
-
-                // 第一个 item 左边距，最后一个 item 右边距
-                if (position == 0) {
-                    outRect.left = (parent.getWidth() - view.getWidth()) / 2;
-                }
-                if (position == totalCount - 1) {
-                    outRect.right = (parent.getWidth() - view.getWidth()) / 2;
-                }
-            }
+        trendCardAdapter = new TrendCardAdapter(this, trendCardList, trendCard -> {
+            // 点击趋势卡片，跳转到帖子详情
+            Intent intent = new Intent(HomeActivity.this, PostdetailActivity.class);
+            intent.putExtra("post_id", trendCard.getPostId());
+            intent.putExtra("news_title", trendCard.getTitle());
+            startActivity(intent);
         });
 
-        addDotIndicators(trendList.size());
+        rvTrendCards.setAdapter(trendCardAdapter);
+    }
 
-        // 监听滚动，更新指示点和位置
-        rvTrendCards.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    updateCurrentPosition();
-                    isScrolling = false;
-                } else {
-                    isScrolling = true;
-                }
-            }
+    /**
+     * 显示新闻列表
+     */
+    private void displayNewsList(List<NewsItem> news) {
+        newsList = news;
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rvNewsList.setLayoutManager(layoutManager);
 
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (!isScrolling) {
-                    updateCurrentPosition();
-                }
-            }
+        newsAdapter = new NewsAdapter(this, newsList, newsItem -> {
+            // 点击新闻，跳转到帖子详情
+            Intent intent = new Intent(HomeActivity.this, PostdetailActivity.class);
+            intent.putExtra("post_id", newsItem.getId());
+            intent.putExtra("news_title", newsItem.getTitle());
+            intent.putExtra("news_author", newsItem.getAuthor());
+            intent.putExtra("news_comment_count", newsItem.getCommentCount());
+            startActivity(intent);
         });
 
-        // 初始化：滚动到中间位置，使第一个卡片居中
-        rvTrendCards.post(() -> {
-            // 计算中间位置（无限循环的中间）
-            int middlePosition = Integer.MAX_VALUE / 2;
-            // 调整到第一个卡片的位置
-            int targetPosition = middlePosition - (middlePosition % trendList.size());
-
-            // 平滑滚动到目标位置
-            layoutManager.scrollToPosition(targetPosition);
-
-            // 等待布局完成后精确居中
-            rvTrendCards.postDelayed(() -> {
-                View firstChild = layoutManager.findViewByPosition(targetPosition);
-                if (firstChild != null) {
-                    int targetScroll = (rvTrendCards.getWidth() - firstChild.getWidth()) / 2 - firstChild.getLeft();
-                    rvTrendCards.smoothScrollBy(targetScroll, 0);
-                }
-                updateCurrentPosition();
-            }, 100);
-        });
+        rvNewsList.setAdapter(newsAdapter);
     }
 
-    private void updateCurrentPosition() {
-        if (snapHelper == null || rvTrendCards.getLayoutManager() == null) return;
+    /**
+     * 发送Socket请求到服务器
+     * @param jsonData JSON格式的请求数据
+     * @return 服务器响应
+     */
+    private String sendSocketRequest(String jsonData) throws Exception {
+        // 服务器地址（请修改为你的服务器IP）
+        String serverIp = "192.168.1.100";  // TODO: 修改为你的服务器IP
+        int serverPort = 8888;
 
-        View snapView = snapHelper.findSnapView(rvTrendCards.getLayoutManager());
-        if (snapView != null) {
-            int position = rvTrendCards.getLayoutManager().getPosition(snapView);
-            if (position != RecyclerView.NO_POSITION && trendList != null && !trendList.isEmpty()) {
-                int realPosition = position % trendList.size();
-                if (realPosition != currentPosition) {
-                    currentPosition = realPosition;
-                    updateDotsStyle(currentPosition);
-                }
-            }
+        Socket socket = new Socket(serverIp, serverPort);
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+        // 发送数据（注意：需要加两个换行符）
+        out.print(jsonData + "\n\n");
+        out.flush();
+
+        // 读取响应
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = in.readLine()) != null) {
+            response.append(line);
         }
+
+        socket.close();
+        return response.toString();
     }
 
-    private void addDotIndicators(int count) {
-        if (dotIndicator == null) return;
-        dotIndicator.removeAllViews();
-        dotIndicator.setVisibility(View.VISIBLE);
-
-        for (int i = 0; i < count; i++) {
-            View dot = new View(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    i == 0 ? 8 : 6, i == 0 ? 8 : 6);
-            params.setMargins(0, 0, 8, 0);
-            dot.setLayoutParams(params);
-            dot.setBackgroundResource(i == 0 ? R.drawable.bg_dot_active : R.drawable.bg_dot_inactive);
-            dotIndicator.addView(dot);
-        }
+    /**
+     * 获取默认的趋势卡片（服务器没数据时使用）
+     */
+    private List<TrendCard> getDefaultTrendCards() {
+        List<TrendCard> cards = new ArrayList<>();
+        cards.add(new TrendCard("热门推荐", "今日热点新闻", R.drawable.img_car_placeholder));
+        cards.add(new TrendCard("科技前沿", "最新科技动态", R.drawable.img_car_placeholder));
+        cards.add(new TrendCard("娱乐八卦", "明星最新资讯", R.drawable.img_car_placeholder));
+        cards.add(new TrendCard("体育赛事", "精彩比赛回顾", R.drawable.img_car_placeholder));
+        return cards;
     }
 
-    private void updateDotsStyle(int activePosition) {
-        if (dotIndicator == null) return;
-        for (int i = 0; i < dotIndicator.getChildCount(); i++) {
-            View dot = dotIndicator.getChildAt(i);
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) dot.getLayoutParams();
-            if (i == activePosition) {
-                params.width = 8;
-                params.height = 8;
-                dot.setBackgroundResource(R.drawable.bg_dot_active);
-            } else {
-                params.width = 6;
-                params.height = 6;
-                dot.setBackgroundResource(R.drawable.bg_dot_inactive);
-            }
-            dot.setLayoutParams(params);
+    /**
+     * 获取默认的新闻列表（服务器没数据时使用）
+     */
+    private List<NewsItem> getDefaultNewsList() {
+        List<NewsItem> news = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            NewsItem item = new NewsItem(
+                    i,
+                    "示例新闻标题 " + i,
+                    "这是示例新闻内容，当服务器没有数据时会显示这些内容。请确保服务器正常运行。",
+                    "系统作者",
+                    System.currentTimeMillis(),
+                    R.drawable.img_car_placeholder
+            );
+            item.setCommentCount((int)(Math.random() * 100));
+            news.add(item);
         }
+        return news;
     }
 
-    private void setupBottomNavigation() {
-        if (navHome != null) {
-            navHome.setOnClickListener(v -> {
-                // 滚动到第一个卡片
-                if (rvTrendCards.getLayoutManager() != null && trendList != null && !trendList.isEmpty()) {
-                    int targetPosition = Integer.MAX_VALUE / 2;
-                    targetPosition = targetPosition - (targetPosition % trendList.size());
-                    rvTrendCards.smoothScrollToPosition(targetPosition);
-                    handler.postDelayed(this::updateCurrentPosition, 300);
-                }
-                Toast.makeText(this, "已在首页", Toast.LENGTH_SHORT).show();
-            });
-        }
-
-        if (navExplore != null) {
-            navExplore.setOnClickListener(v -> {
-                Intent intent = new Intent(HomeActivity.this, InteractionActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
-
-        if (navMessages != null) {
-            navMessages.setOnClickListener(v -> {
-                Intent intent = new Intent(HomeActivity.this, MessageActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
-
-        if (navProfile != null) {
-            navProfile.setOnClickListener(v -> {
-                Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
-    }
-
-    private void setupFab() {
-        if (fabWrite != null) {
-            fabWrite.setOnClickListener(v -> {
-                Intent intent = new Intent(HomeActivity.this, CreatepostActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
-    }
-
-    private void setupNewsCardClickListeners() {
-        View newsItem1 = findViewById(R.id.newsItem1);
-        View newsItem2 = findViewById(R.id.newsItem2);
-        View newsItem3 = findViewById(R.id.newsItem3);
-
-        if (newsItem1 != null) {
-            newsItem1.setOnClickListener(v -> {
-                Intent intent = new Intent(HomeActivity.this, PostdetailActivity.class);
-                intent.putExtra("post_title", "新能源汽车市场持续升温");
-                startActivity(intent);
-            });
-        }
-
-        if (newsItem2 != null) {
-            newsItem2.setOnClickListener(v -> {
-                Intent intent = new Intent(HomeActivity.this, PostdetailActivity.class);
-                intent.putExtra("post_title", "智能驾驶技术迎来新突破");
-                startActivity(intent);
-            });
-        }
-
-        if (newsItem3 != null) {
-            newsItem3.setOnClickListener(v -> {
-                Intent intent = new Intent(HomeActivity.this, PostdetailActivity.class);
-                intent.putExtra("post_title", "传统车企加速电动化转型");
-                startActivity(intent);
-            });
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        handler.removeCallbacksAndMessages(null);
+    /**
+     * 刷新数据
+     */
+    private void refreshData() {
+        Toast.makeText(this, "刷新中...", Toast.LENGTH_SHORT).show();
+        loadTrendCardsFromServer();
+        loadNewsListFromServer();
     }
 }
