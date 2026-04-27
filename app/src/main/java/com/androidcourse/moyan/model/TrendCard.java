@@ -1,14 +1,16 @@
 package com.androidcourse.moyan.model;
 
 public class TrendCard {
+    private int postId;          // 新增：帖子ID
     private String title;        // 标题
     private String author;       // 作者/工作室名称
     private String time;         // 发布时间
     private int imageResId;      // 图片资源ID
     private int commentCount;    // 评论数量
 
-    // 构造函数
-    public TrendCard(String title, String author, String time, int imageResId, int commentCount) {
+    // 完整构造函数
+    public TrendCard(int postId, String title, String author, String time, int imageResId, int commentCount) {
+        this.postId = postId;
         this.title = title;
         this.author = author;
         this.time = time;
@@ -16,8 +18,9 @@ public class TrendCard {
         this.commentCount = commentCount;
     }
 
-    // 简化构造函数（如果不需要时间和评论数）
-    public TrendCard(String title, String author, int imageResId) {
+    // 简化构造函数（不带时间和评论数）
+    public TrendCard(int postId, String title, String author, int imageResId) {
+        this.postId = postId;
         this.title = title;
         this.author = author;
         this.imageResId = imageResId;
@@ -25,7 +28,25 @@ public class TrendCard {
         this.commentCount = 0;
     }
 
-    // Getter 和 Setter 方法
+    // 原有构造函数保留兼容性
+    public TrendCard(String title, String author, int imageResId) {
+        this.postId = -1;
+        this.title = title;
+        this.author = author;
+        this.imageResId = imageResId;
+        this.time = "12:00";
+        this.commentCount = 0;
+    }
+
+    // Getter 和 Setter
+    public int getPostId() {
+        return postId;
+    }
+
+    public void setPostId(int postId) {
+        this.postId = postId;
+    }
+
     public String getTitle() {
         return title;
     }

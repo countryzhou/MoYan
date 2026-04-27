@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,17 +7,14 @@
     android:background="@color/background_base"
     tools:context=".MainActivity">
 
-    <!-- 模拟手机视口容器 -->
+    <!-- 主要内容容器 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:background="@color/white"
-        android:elevation="8dp"
-        android:importantForAccessibility="no"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/white">
 
-        <!-- 头部区域 (Header) -->
+        <!-- 头部区域 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,7 +30,6 @@
                 android:paddingEnd="16dp"
                 android:paddingBottom="16dp">
 
-                <!-- 搜索框容器 -->
                 <FrameLayout
                     android:layout_width="0dp"
                     android:layout_height="50dp"
@@ -66,7 +62,6 @@
 
                 </FrameLayout>
 
-                <!-- 头像 -->
                 <ImageView
                     android:id="@+id/iv_avatar"
                     android:layout_width="40dp"
@@ -79,7 +74,7 @@
             </LinearLayout>
         </FrameLayout>
 
-        <!-- 可滚动内容区域 - 占据剩余空间 -->
+        <!-- 可滚动内容区域 -->
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
@@ -95,7 +90,7 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="16dp">
 
-                <!-- 横向滚动卡片区域 (Trends Carousel) -->
+                <!-- 横向滚动卡片区域 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -169,11 +164,11 @@
 
         </androidx.core.widget.NestedScrollView>
 
-        <!-- 底部导航栏 - 固定在底部 -->
+        <!-- 底部导航栏 -->
         <LinearLayout
             android:id="@+id/bottom_nav"
             android:layout_width="match_parent"
-            android:layout_height="96dp"
+            android:layout_height="70dp"
             android:background="@drawable/bg_bottom_nav"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -267,14 +262,14 @@
 
     </LinearLayout>
 
-    <!-- 浮动操作按钮 (FAB) - 相对于整个屏幕定位 -->
+    <!-- ✅ 写帖子按钮 - 在 CoordinatorLayout 的最外层，相对于整个屏幕定位 -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_write"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="112dp"
+        android:layout_marginBottom="120dp"
         android:contentDescription="@string/write_post"
         android:src="@drawable/ic_edit"
         app:backgroundTint="@color/primary_blue"
@@ -282,4 +277,4 @@
         app:fabSize="normal"
         app:tint="@color/white" />
 
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
