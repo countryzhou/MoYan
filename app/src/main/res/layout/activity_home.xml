@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -8,17 +8,14 @@
     android:background="@color/white"
     tools:context=".MainActivity">
 
-    <!-- 模拟手机视口容器 -->
+    <!-- 主要内容容器 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:background="@color/white"
-        android:elevation="4dp"
-        android:importantForAccessibility="no"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/white">
 
-        <!-- 头部区域 (Header) -->
+        <!-- 头部区域 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,7 +31,6 @@
                 android:paddingEnd="16dp"
                 android:paddingBottom="16dp">
 
-                <!-- 搜索框容器 -->
                 <FrameLayout
                     android:layout_width="0dp"
                     android:layout_height="50dp"
@@ -42,6 +38,7 @@
                     android:layout_weight="1">
 
                     <EditText
+                        android:id="@+id/et_search"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:layout_gravity="center_vertical"
@@ -66,8 +63,8 @@
 
                 </FrameLayout>
 
-                <!-- 头像 -->
                 <ImageView
+                    android:id="@+id/iv_avatar"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:background="@drawable/bg_avatar"
@@ -78,7 +75,7 @@
             </LinearLayout>
         </FrameLayout>
 
-        <!-- 可滚动内容区域 - 占据剩余空间 -->
+        <!-- 可滚动内容区域 -->
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
@@ -94,14 +91,13 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="16dp">
 
-                <!-- 横向滚动卡片区域 (Trends Carousel) -->
+                <!-- 横向滚动卡片区域 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="32dp"
                     android:orientation="vertical"
                     android:translationX="0dp">
-
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_trend_cards"
@@ -122,7 +118,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="16dp"
                         android:orientation="horizontal"
-                        android:visibility="gone" />
+                        android:visibility="visible" />
 
                 </LinearLayout>
 
@@ -134,20 +130,13 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp">
 
-                    <!-- 新闻条目 1 -->
-                    <include
-                        android:id="@+id/newsItem1"
-                        layout="@layout/item_news_card" />
-
-                    <!-- 新闻条目 2 -->
-                    <include
-                        android:id="@+id/newsItem2"
-                        layout="@layout/item_news_card" />
-
-                    <!-- 新闻条目 3 -->
-                    <include
-                        android:id="@+id/newsItem3"
-                        layout="@layout/item_news_card" />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_news_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_news_card" />
 
                 </LinearLayout>
 
@@ -155,22 +144,24 @@
 
         </androidx.core.widget.NestedScrollView>
 
-        <!-- 底部导航栏 - 固定在底部 -->
+        <!-- ✅ 优化后的底部导航栏 -->
         <LinearLayout
             android:id="@+id/bottom_nav"
             android:layout_width="match_parent"
-            android:layout_height="96dp"
+            android:layout_height="72dp"
             android:background="@drawable/bg_bottom_nav"
+            android:elevation="8dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="32dp"
-            android:paddingEnd="32dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
             android:weightSum="4">
 
+            <!-- 首页 - 选中状态 -->
             <LinearLayout
                 android:id="@+id/nav_home"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
@@ -185,29 +176,31 @@
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:paddingHorizontal="12dp"
-                    android:paddingVertical="4dp">
+                    android:paddingVertical="6dp">
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
                         android:contentDescription="@string/home"
-                        android:src="@drawable/ic_home" />
+                        android:src="@drawable/ic_home"
+                        app:tint="@color/primary_blue" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="6dp"
                         android:fontWeight="600"
                         android:text="@string/home"
                         android:textColor="@color/primary_blue"
-                        android:textSize="12sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- 探索 -->
             <LinearLayout
                 android:id="@+id/nav_explore"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
@@ -215,18 +208,36 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:contentDescription="@string/explore"
-                    android:src="@drawable/ic_compass"
-                    app:tint="@color/text_secondary" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/explore"
+                        android:src="@drawable/ic_compass"
+                        app:tint="@color/text_secondary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/explore"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
             </LinearLayout>
 
+            <!-- 消息 -->
             <LinearLayout
                 android:id="@+id/nav_messages"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
@@ -234,18 +245,36 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:contentDescription="@string/messages"
-                    android:src="@drawable/ic_message"
-                    app:tint="@color/text_secondary" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/messages"
+                        android:src="@drawable/ic_message"
+                        app:tint="@color/text_secondary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/messages"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
             </LinearLayout>
 
+            <!-- 个人资料 -->
             <LinearLayout
                 android:id="@+id/nav_profile"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
@@ -253,25 +282,43 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:contentDescription="@string/profile"
-                    android:src="@drawable/ic_user"
-                    app:tint="@color/text_secondary" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/profile"
+                        android:src="@drawable/ic_user"
+                        app:tint="@color/text_secondary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/profile"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 
+    <!-- 写帖子按钮 -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_write"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="112dp"
+        android:layout_marginBottom="100dp"
         android:contentDescription="@string/write_post"
         android:src="@drawable/ic_edit"
         app:backgroundTint="@color/primary_blue"
@@ -279,4 +326,4 @@
         app:fabSize="normal"
         app:tint="@color/white" />
 
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

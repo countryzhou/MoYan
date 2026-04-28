@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="280dp"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="16dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp"
-    app:cardUseCompatPadding="true">
+    android:layout_width="330dp"
+    android:layout_height="266dp"
+    android:background="@drawable/bg_news_card"
+    android:elevation="4dp"
+    android:layout_marginEnd="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="12dp">
 
+        <!-- 标题 -->
         <TextView
-            android:id="@+id/tv_trend_title"
+            android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/trend_title_1"
@@ -23,82 +23,82 @@
             android:textColor="@color/text_main"
             android:fontFamily="sans-serif-medium"
             android:maxLines="2"
-            android:ellipsize="end"/>
+            android:ellipsize="end"
+            android:layout_marginBottom="12dp" />
 
+        <!-- 图片区域 -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="159dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="12dp">
 
             <ImageView
                 android:id="@+id/iv_trend_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/img_car_placeholder"/>
+                app:srcCompat="@drawable/img_car_placeholder" />
 
         </FrameLayout>
 
+        <!-- 底部信息栏 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
+            <!-- 作者 -->
+            <TextView
+                android:id="@+id/tv_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/studio_name"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <!-- 评论 -->
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_weight="2"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    app:srcCompat="@drawable/ic_comment"
+                    app:tint="@color/text_secondary" />
 
                 <TextView
-                    android:id="@+id/tv_author"
+                    android:id="@+id/tv_comment_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/studio_name"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
-                        app:srcCompat="@drawable/ic_comment"
-                        app:tint="@color/text_secondary" />
-
-                    <TextView
-                        android:id="@+id/tv_comment_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="@string/comment_count"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tv_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="@string/time_12h"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/comment_count"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
             </LinearLayout>
 
+            <!-- 时间 - 占用剩余空间 -->
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:text="@string/time_12h"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <!-- 更多按钮 -->
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
                 app:srcCompat="@drawable/ic_more"
                 app:tint="@color/text_secondary" />
 

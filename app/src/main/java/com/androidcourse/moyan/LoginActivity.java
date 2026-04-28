@@ -10,11 +10,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-// TODO: 等服务端搭好后，取消下面这些 import 的注释
-// import com.androidcourse.moyan.model.LoginResponse;
-// import com.androidcourse.moyan.network.SocketClient;
-// import com.google.gson.Gson;
-// import org.json.JSONObject;
+import com.androidcourse.moyan.model.LoginResponse;
+import com.androidcourse.moyan.network.SocketClient;
+import com.google.gson.Gson;
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -34,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initViews() {
         etPhone = findViewById(R.id.et_phone);
-        etCode = findViewById(R.id.et_code);
+        etCode = findViewById(R.id.et_password);
         btnLogin = findViewById(R.id.btn_login);
         tvGoRegister = findViewById(R.id.tv_go_register);
         progressBar = findViewById(R.id.progress_bar);
@@ -70,47 +69,49 @@ public class LoginActivity extends AppCompatActivity {
         // 显示加载状态
         setLoading(true);
 
-        // ========== 方式一：Mock 模式（当前使用，不需要服务端） ==========
-        new Thread(() -> {
-            try {
-                // 模拟网络延迟
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            runOnUiThread(() -> {
-                setLoading(false);
-
-                // 模拟登录逻辑：手机号以 1 开头且验证码为 123456 就成功
-                if (phone.startsWith("1") && code.equals("123456")) {
-                    Toast.makeText(this, "登录成功！", Toast.LENGTH_LONG).show();
-                    // TODO: 跳转到主页 HomeActivity
-                } else {
-                    Toast.makeText(this, "登录失败：手机号或验证码错误", Toast.LENGTH_SHORT).show();
+        // 通过 if 判断IS_DEBUG确定使用哪种模式
+        if (BuildConfig.IS_DEBUG) {
+            // Debug:Mock 模式（单元开发调试用）
+            new Thread(() -> {
+                try {
+                    // 模拟网络延迟
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            });
-        }).start();
-        // ===============================================================
 
-        /* ========== 方式二：真实网络请求（等服务端搭好后，删除上面的 Mock 代码，取消下面注释） ==========
-        // 构建请求JSON
-        String jsonRequest = buildLoginJson(phone, code);
+                runOnUiThread(() -> {
+                    setLoading(false);
 
-        // 在子线程中发送请求
-        new Thread(() -> {
-            String response = SocketClient.getInstance().sendRequest(jsonRequest);
+                    // 模拟登录逻辑：手机号以 1 开头且验证码为 123456 就成功
+                    if (phone.startsWith("1") && code.equals("123456")) {
+                        Toast.makeText(this, "登录成功！", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(this, "登录失败：手机号或验证码错误", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }).start();
+            // ===========================================
+        } else {
+            // Release:真实网络请求（联调用）
+            // 构建请求JSON
+            String jsonRequest = buildLoginJson(phone, code);
 
-            // 回到主线程处理结果
-            runOnUiThread(() -> {
-                setLoading(false);
-                handleLoginResponse(response);
-            });
-        }).start();
-        ======================================================================================= */
+            // 在子线程中发送请求
+            new Thread(() -> {
+                String response = SocketClient.getInstance().sendRequest(jsonRequest);
+
+                // 回到主线程处理结果
+                runOnUiThread(() -> {
+                    setLoading(false);
+                    handleLoginResponse(response);
+                });
+            }).start();
+            // ===============================================
+        }
     }
-
-    /* ========== 等服务端搭好后，取消下面这些方法的注释 ==========
 
     private String buildLoginJson(String phone, String code) {
         try {
@@ -139,7 +140,8 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, "登录成功！欢迎 " + loginRes.getData().getNickname(), Toast.LENGTH_LONG).show();
 
                 // TODO: 保存用户信息到 SharedPreferences
-                // TODO: 跳转到主页 HomeActivity
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                startActivity(intent);
 
             } else {
                 // 登录失败
@@ -154,8 +156,6 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "解析服务器响应失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
-
-    ================================================================= */
 
     private void setLoading(boolean isLoading) {
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
