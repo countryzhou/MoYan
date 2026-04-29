@@ -67,7 +67,119 @@ MoYan/
 ├── build.gradle (Module: app) # 模块级构建配置
 └── README.md                  # 项目说明文档
 ```
-
+```
+com.androidcourse.moyan/
+│
+├── model/                              # 模型层
+│   ├── entity/                         # 实体类（原有+新增）
+│   │   ├── User.java
+│   │   ├── Post.java                   # 添加匿名字段
+│   │   ├── Reply.java                  # 添加匿名字段（新增）
+│   │   ├── Comment.java
+│   │   ├── NewsItem.java
+│   │   ├── TrendCard.java
+│   │   └── AnonymousMapping.java       # 匿名映射实体（新增）
+│   │
+│   └── dto/                            # 数据传输对象（新增）
+│       ├── LoginRequest.java
+│       ├── LoginResponse.java
+│       ├── RegisterRequest.java
+│       └── AnonymousInfo.java          # 匿名信息DTO（新增）
+│
+├── network/                            # 网络层
+│   ├── SocketClient.java               # 已有
+│   ├── CommentNetworkManager.java      # 已有
+│   ├── PostNetworkManager.java         # 建议新增
+│   ├── UserNetworkManager.java         # 建议新增
+│   │
+│   ├── request/                        # 请求构建器（新增）
+│   │   ├── BaseRequest.java
+│   │   ├── PostRequestBuilder.java
+│   │   ├── ReplyRequestBuilder.java    # 回复请求构建器
+│   │   └── UserRequestBuilder.java
+│   │
+│   └── response/                       # 响应解析器（新增）
+│       ├── ResponseHandler.java
+│       └── JsonParser.java
+│
+├── repository/                         # 数据仓库层（新增）
+│   ├── PostRepository.java             # 帖子数据仓库（含匿名处理）
+│   ├── CommentRepository.java          # 评论数据仓库（含匿名处理）
+│   ├── ReplyRepository.java            # 回复数据仓库（新增）
+│   ├── UserRepository.java             # 用户数据仓库
+│   └── AnonymousRepository.java        # 匿名数据仓库（新增）
+│
+├── viewmodel/                          # ViewModel层（新增）
+│   ├── auth/
+│   │   ├── LoginViewModel.java
+│   │   └── RegisterViewModel.java
+│   │
+│   ├── home/
+│   │   ├── HomeViewModel.java
+│   │   └── RecommendViewModel.java
+│   │
+│   ├── post/
+│   │   ├── CreatePostViewModel.java    # 创建帖子（含匿名选项）
+│   │   ├── PostDetailViewModel.java    # 帖子详情（含匿名显示）
+│   │   └── PostListViewModel.java
+│   │
+│   ├── reply/                          # 回复相关（新增）
+│   │   ├── CreateReplyViewModel.java   # 创建回复（含匿名选项）
+│   │   └── ReplyListViewModel.java
+│   │
+│   ├── interaction/
+│   │   └── InteractionViewModel.java
+│   │
+│   ├── message/
+│   │   └── MessageViewModel.java
+│   │
+│   ├── profile/
+│   │   ├── ProfileViewModel.java
+│   │   ├── EditProfileViewModel.java
+│   │   └── UserProfileViewModel.java   # 查看他人主页（新增）
+│   │
+│   └── search/
+│       └── SearchViewModel.java
+│
+├── view/                               # View层
+│   ├── activity/
+│   │   ├── SplashActivity.java
+│   │   ├── LoginActivity.java
+│   │   ├── SignupActivity.java
+│   │   ├── HomeActivity.java
+│   │   ├── CreatePostActivity.java     # 创建帖子（含匿名复选框）
+│   │   ├── PostDetailActivity.java     # 帖子详情（含匿名显示）
+│   │   ├── InteractionActivity.java
+│   │   ├── MessageActivity.java
+│   │   ├── ProfileActivity.java
+│   │   ├── EditProfileActivity.java
+│   │   ├── SearchActivity.java
+│   │   ├── UserProfileActivity.java    # 查看他人主页（新增）
+│   │   ├── TopicDetailActivity.java
+│   │   └── ItemCommentActivity.java
+│   │
+│   └── adapter/                        # 适配器（改造支持匿名）
+│       ├── PostAdapter.java            # 改造：区分匿名/非匿名显示
+│       ├── ReplyAdapter.java           # 改造：区分匿名/非匿名显示
+│       ├── CommentAdapter.java
+│       ├── NewsAdapter.java
+│       └── TrendCardAdapter.java
+│
+├── cache/                              # 缓存层（新增）
+│   ├── MemoryCache.java                # 内存缓存
+│   ├── CacheManager.java               # 缓存管理器
+│   └── CacheKey.java                   # 缓存Key定义
+│
+├── utils/                              # 工具类（新增）
+│   ├── SharedPrefsHelper.java          # SharedPreferences封装
+│   ├── TimeUtils.java                  # 时间格式化
+│   ├── ImageLoader.java                # 图片加载封装
+│   └── AnonymousHelper.java            # 匿名辅助工具（新增）
+│
+└── manager/                            # 管理器（新增）
+    ├── UserManager.java                # 用户信息管理（单例）
+    └── AnonymousManager.java           # 匿名状态管理（新增）
+```
 ## 五、核心功能模块
 
 | 模块    | 对应文件                | 说明         |
