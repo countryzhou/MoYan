@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidcourse.moyan.R;
-import com.androidcourse.moyan.model.*;
+import com.androidcourse.moyan.model.entity.TrendCard;
 
 import java.util.List;
 

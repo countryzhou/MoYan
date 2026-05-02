@@ -1,12 +1,11 @@
-package com.androidcourse.moyan;
+package com.androidcourse.moyan.activity;
 
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.androidcourse.moyan.R;
 
 public class EditprofileActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.androidcourse.moyan;
+package com.androidcourse.moyan.activity;
 
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.androidcourse.moyan.R;
 import com.androidcourse.moyan.model.LoginResponse;
 import com.androidcourse.moyan.network.SocketClient;
 import com.google.gson.Gson;

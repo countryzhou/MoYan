@@ -19,7 +19,7 @@
             android:exported="false" />
         <!-- 启动页 SplashActivity，设置为 LAUNCHER -->
         <activity
-            android:name=".SplashActivity"
+            android:name=".activity.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,37 +28,37 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".activity.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".HomeActivity"
+            android:name=".activity.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".SearchActivity"
+            android:name=".activity.SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".TopicdetailActivity"
+            android:name=".activity.TopicdetailActivity"
             android:exported="false" />
         <activity
-            android:name=".PostdetailActivity"
+            android:name=".activity.PostdetailActivity"
             android:exported="false" />
         <activity
-            android:name=".InteractionActivity"
+            android:name=".activity.InteractionActivity"
             android:exported="false" />
         <activity
-            android:name=".MessageActivity"
+            android:name=".activity.MessageActivity"
             android:exported="false" />
         <activity
-            android:name=".ProfileActivity"
+            android:name=".activity.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".EditprofileActivity"
+            android:name=".activity.EditprofileActivity"
             android:exported="false" />
         <activity
-            android:name=".CreatepostActivity"
+            android:name=".activity.CreatepostActivity"
             android:exported="false" />
         <activity
-            android:name=".SignupActivity"
+            android:name=".activity.SignupActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

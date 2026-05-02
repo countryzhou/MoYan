@@ -67,7 +67,186 @@ MoYan/
 ├── build.gradle (Module: app) # 模块级构建配置
 └── README.md                  # 项目说明文档
 ```
+下面是想要的理想实现
+```
+com.androidcourse.moyan/
+│
+├── model/                              # 模型层
+│   ├── entity/                         # 实体类（原有+新增）
+│   │   ├── User.java
+│   │   ├── Post.java                   # 添加匿名字段
+│   │   ├── Reply.java                  # 添加匿名字段（新增）
+│   │   ├── Comment.java
+│   │   ├── NewsItem.java
+│   │   ├── TrendCard.java
+│   │   └── AnonymousMapping.java       # 匿名映射实体（新增）
+│   │
+│   └── dto/                            # 数据传输对象（新增）
+│       ├── LoginRequest.java
+│       ├── LoginResponse.java
+│       ├── RegisterRequest.java
+│       └── AnonymousInfo.java          # 匿名信息DTO（新增）
+│
+├── network/                            # 网络层
+│   ├── SocketClient.java               # 已有
+│   ├── CommentNetworkManager.java      # 已有
+│   ├── PostNetworkManager.java         # 建议新增
+│   ├── UserNetworkManager.java         # 建议新增
+│   │
+│   ├── request/                        # 请求构建器（新增）
+│   │   ├── BaseRequest.java
+│   │   ├── PostRequestBuilder.java
+│   │   ├── ReplyRequestBuilder.java    # 回复请求构建器
+│   │   └── UserRequestBuilder.java
+│   │
+│   └── response/                       # 响应解析器（新增）
+│       ├── ResponseHandler.java
+│       └── JsonParser.java
+│
+├── repository/                         # 数据仓库层（新增）
+│   ├── PostRepository.java             # 帖子数据仓库（含匿名处理）
+│   ├── CommentRepository.java          # 评论数据仓库（含匿名处理）
+│   ├── ReplyRepository.java            # 回复数据仓库（新增）
+│   ├── UserRepository.java             # 用户数据仓库
+│   └── AnonymousRepository.java        # 匿名数据仓库（新增）
+│
+├── viewmodel/                          # ViewModel层（新增）
+│   ├── auth/
+│   │   ├── LoginViewModel.java
+│   │   └── RegisterViewModel.java
+│   │
+│   ├── home/
+│   │   ├── HomeViewModel.java
+│   │   └── RecommendViewModel.java
+│   │
+│   ├── post/
+│   │   ├── CreatePostViewModel.java    # 创建帖子（含匿名选项）
+│   │   ├── PostDetailViewModel.java    # 帖子详情（含匿名显示）
+│   │   └── PostListViewModel.java
+│   │
+│   ├── reply/                          # 回复相关（新增）
+│   │   ├── CreateReplyViewModel.java   # 创建回复（含匿名选项）
+│   │   └── ReplyListViewModel.java
+│   │
+│   ├── interaction/
+│   │   └── InteractionViewModel.java
+│   │
+│   ├── message/
+│   │   └── MessageViewModel.java
+│   │
+│   ├── profile/
+│   │   ├── ProfileViewModel.java
+│   │   ├── EditProfileViewModel.java
+│   │   └── UserProfileViewModel.java   # 查看他人主页（新增）
+│   │
+│   └── search/
+│       └── SearchViewModel.java
+│
+├── view/                               # View层
+│   ├── activity/
+│   │   ├── SplashActivity.java
+│   │   ├── LoginActivity.java
+│   │   ├── SignupActivity.java
+│   │   ├── HomeActivity.java
+│   │   ├── CreatePostActivity.java     # 创建帖子（含匿名复选框）
+│   │   ├── PostDetailActivity.java     # 帖子详情（含匿名显示）
+│   │   ├── InteractionActivity.java
+│   │   ├── MessageActivity.java
+│   │   ├── ProfileActivity.java
+│   │   ├── EditProfileActivity.java
+│   │   ├── SearchActivity.java
+│   │   ├── UserProfileActivity.java    # 查看他人主页（新增）
+│   │   ├── TopicDetailActivity.java
+│   │   └── ItemCommentActivity.java
+│   │
+│   └── adapter/                        # 适配器（改造支持匿名）
+│       ├── PostAdapter.java            # 改造：区分匿名/非匿名显示
+│       ├── ReplyAdapter.java           # 改造：区分匿名/非匿名显示
+│       ├── CommentAdapter.java
+│       ├── NewsAdapter.java
+│       └── TrendCardAdapter.java
+│
+├── cache/                              # 缓存层（新增）
+│   ├── MemoryCache.java                # 内存缓存
+│   ├── CacheManager.java               # 缓存管理器
+│   └── CacheKey.java                   # 缓存Key定义
+│
+├── utils/                              # 工具类（新增）
+│   ├── SharedPrefsHelper.java          # SharedPreferences封装
+│   ├── TimeUtils.java                  # 时间格式化
+│   ├── ImageLoader.java                # 图片加载封装
+│   └── AnonymousHelper.java            # 匿名辅助工具（新增）
+│
+└── manager/                            # 管理器（新增）
+    ├── UserManager.java                # 用户信息管理（单例）
+    └── AnonymousManager.java           # 匿名状态管理（新增）
+```
 
+可实现模式
+·合并匿名相关组件
+删除 AnonymousMapping.java 实体（让服务端处理）
+删除 AnonymousRepository.java（功能合并到PostRepository）
+删除 AnonymousManager.java（功能合并到SharedPrefsHelper）
+```
+com.androidcourse.moyan/
+│
+├── model/                              # 模型层（保持原样）
+│   ├── User.java                       # 扩展匿名字段
+│   ├── Post.java                       # 扩展匿名字段
+│   ├── Reply.java                      # 扩展匿名字段
+│   ├── Comment.java
+│   ├── NewsItem.java
+│   ├── TrendCard.java
+│   ├── LoginRequest.java
+│   ├── LoginResponse.java
+│   └── RegisterRequest.java
+│
+├── network/                            # 网络层（基本保持）
+│   ├── SocketClient.java               # 已有
+│   ├── CommentNetworkManager.java      # 已有
+│   ├── PostNetworkManager.java         # 新增
+│   └── UserNetworkManager.java         # 新增
+│
+├── repository/                         # 数据仓库层（新增，核心）
+│   ├── PostRepository.java             # 帖子+匿名逻辑
+│   ├── UserRepository.java             # 用户相关
+│   └── CommentRepository.java          # 评论相关
+│
+├── viewmodel/                          # ViewModel层（新增，核心）
+│   ├── LoginViewModel.java
+│   ├── HomeViewModel.java
+│   ├── PostDetailViewModel.java
+│   ├── CreatePostViewModel.java
+│   └── ProfileViewModel.java
+│
+├── activity/                           # Activity层（原位置，不用移动）
+│   ├── LoginActivity.java              # 改造使用ViewModel
+│   ├── SignupActivity.java
+│   ├── HomeActivity.java               # 改造使用ViewModel
+│   ├── CreatePostActivity.java
+│   ├── PostDetailActivity.java
+│   ├── ProfileActivity.java
+│   ├── EditProfileActivity.java
+│   ├── SearchActivity.java
+│   ├── MessageActivity.java
+│   ├── InteractionActivity.java
+│   ├── TopicDetailActivity.java
+│   └── UserProfileActivity.java        # 新增
+│
+├── adapter/                            # 适配器（改造支持匿名）
+│   ├── PostAdapter.java                # 改造：区分匿名显示
+│   ├── CommentAdapter.java
+│   ├── NewsAdapter.java
+│   └── TrendCardAdapter.java
+│
+├── utils/                              # 工具类（简化）
+│   ├── SharedPrefsHelper.java          # SP管理
+│   ├── TimeUtils.java                  # 时间工具
+│   └── AnonymousHelper.java            # 匿名辅助（新增）
+│
+└── manager/                            # 管理器（简化）
+    └── UserManager.java                # 用户状态管理（单例）
+```
 ## 五、核心功能模块
 
 | 模块    | 对应文件                | 说明         |

@@ -1,4 +1,4 @@
-package com.androidcourse.moyan;
+package com.androidcourse.moyan.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class InteractionActivity extends AppCompatActivity {
+import com.androidcourse.moyan.R;
+
+public class ProfileActivity extends AppCompatActivity {
 
     private LinearLayout navHome, navExplore, navMessages, navProfile;
 
@@ -18,7 +20,7 @@ public class InteractionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_interaction);
+        setContentView(R.layout.activity_profile);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -39,7 +41,7 @@ public class InteractionActivity extends AppCompatActivity {
     private void setupBottomNavigation() {
         if (navHome != null) {
             navHome.setOnClickListener(v -> {
-                Intent intent = new Intent(InteractionActivity.this, HomeActivity.class);
+                Intent intent = new Intent(ProfileActivity.this, HomeActivity.class);
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
@@ -47,13 +49,15 @@ public class InteractionActivity extends AppCompatActivity {
 
         if (navExplore != null) {
             navExplore.setOnClickListener(v -> {
-                // 当前页面，不做跳转
+                Intent intent = new Intent(ProfileActivity.this, InteractionActivity.class);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
         }
 
         if (navMessages != null) {
             navMessages.setOnClickListener(v -> {
-                Intent intent = new Intent(InteractionActivity.this, MessageActivity.class);
+                Intent intent = new Intent(ProfileActivity.this, MessageActivity.class);
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
@@ -61,9 +65,7 @@ public class InteractionActivity extends AppCompatActivity {
 
         if (navProfile != null) {
             navProfile.setOnClickListener(v -> {
-                Intent intent = new Intent(InteractionActivity.this, ProfileActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                // 当前页面，不做跳转
             });
         }
     }

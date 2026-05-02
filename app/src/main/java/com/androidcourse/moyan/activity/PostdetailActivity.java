@@ -1,4 +1,4 @@
-package com.androidcourse.moyan;
+package com.androidcourse.moyan.activity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,11 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.androidcourse.moyan.R;
 import com.androidcourse.moyan.adapter.CommentAdapter;
 import com.androidcourse.moyan.model.Comment;
 import com.androidcourse.moyan.model.Post;
 import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
