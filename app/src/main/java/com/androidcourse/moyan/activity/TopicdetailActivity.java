@@ -1,19 +1,17 @@
 package com.androidcourse.moyan.activity;
 
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.androidcourse.moyan.R;
-
+/**
+ * 话题详情页面
+ * TODO: 实现话题详情功能
+ */
 public class TopicdetailActivity extends AppCompatActivity {
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_topicdetail);
-
+        // setContentView(R.layout.activity_topicdetail);
     }
 }

@@ -9,12 +9,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import com.androidcourse.moyan.R;
 
+import com.androidcourse.moyan.viewmodel.ProfileViewModel;
+
+/**
+ * 个人主页
+ * 使用 ProfileViewModel
+ */
 public class ProfileActivity extends AppCompatActivity {
 
     private LinearLayout navHome, navExplore, navMessages, navProfile;
+    private ProfileViewModel profileViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +33,7 @@ public class ProfileActivity extends AppCompatActivity {
             return insets;
         });
 
+        profileViewModel = new ProfileViewModel();
         initViews();
         setupBottomNavigation();
     }
@@ -46,7 +53,6 @@ public class ProfileActivity extends AppCompatActivity {
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
         }
-
         if (navExplore != null) {
             navExplore.setOnClickListener(v -> {
                 Intent intent = new Intent(ProfileActivity.this, InteractionActivity.class);
@@ -54,18 +60,11 @@ public class ProfileActivity extends AppCompatActivity {
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
         }
-
         if (navMessages != null) {
             navMessages.setOnClickListener(v -> {
                 Intent intent = new Intent(ProfileActivity.this, MessageActivity.class);
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
-
-        if (navProfile != null) {
-            navProfile.setOnClickListener(v -> {
-                // 当前页面，不做跳转
             });
         }
     }

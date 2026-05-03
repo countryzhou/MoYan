@@ -6,9 +6,13 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+/**
+ * Socket 网络客户端 - 单例
+ * 负责与服务器建立TCP连接、发送JSON请求、接收响应
+ */
 public class SocketClient {
     // TODO: 改成你电脑的实际IP地址
-    private static final String SERVER_IP = "10.0.2.2";  // 必须修改
+    private static final String SERVER_IP = "10.0.2.2";
     private static final int SERVER_PORT = 8888;
 
     private static SocketClient instance;
@@ -33,18 +37,15 @@ public class SocketClient {
     public String sendRequest(String jsonRequest) {
         String response = null;
         try {
-            // 建立连接
             socket = new Socket(SERVER_IP, SERVER_PORT);
-            socket.setSoTimeout(10000); // 10秒超时
+            socket.setSoTimeout(10000);
 
-            // 发送请求
             output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
             input = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 
-            output.print(jsonRequest + "\n\n");  // 服务端要求末尾加两个换行符
+            output.print(jsonRequest + "\n\n");
             output.flush();
 
-            // 接收响应
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = input.readLine()) != null) {
@@ -58,7 +59,6 @@ public class SocketClient {
         } finally {
             close();
         }
-
         return response;
     }
 

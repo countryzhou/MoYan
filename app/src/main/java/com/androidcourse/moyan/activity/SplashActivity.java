@@ -12,9 +12,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import com.androidcourse.moyan.R;
 
+import com.androidcourse.moyan.utils.SharedPrefsHelper;
+
+/**
+ * 启动页
+ * 判断登录状态，已登录→首页，未登录→登录页
+ */
 public class SplashActivity extends AppCompatActivity {
 
     private Button btnSkip;
@@ -36,21 +41,14 @@ public class SplashActivity extends AppCompatActivity {
         btnSkip = findViewById(R.id.btn_skip);
         handler = new Handler(Looper.getMainLooper());
 
-        // 设置初始按钮文字："跳过 3"
         btnSkip.setText(getString(R.string.skip) + " " + countdown);
-
-        // 开始倒计时
         startCountdown();
 
-        // 跳过按钮点击事件
-        btnSkip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (handler != null) {
-                    handler.removeCallbacksAndMessages(null);
-                }
-                jumpToLogin();
+        btnSkip.setOnClickListener(v -> {
+            if (handler != null) {
+                handler.removeCallbacksAndMessages(null);
             }
+            jumpToNext();
         });
     }
 
@@ -59,19 +57,26 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (countdown > 0) {
-                    // 更新按钮文字："跳过 3" -> "跳过 2" -> "跳过 1"
                     btnSkip.setText(getString(R.string.skip) + " " + countdown);
                     countdown--;
                     handler.postDelayed(this, 1000);
                 } else {
-                    jumpToLogin();
+                    jumpToNext();
                 }
             }
         });
     }
 
-    private void jumpToLogin() {
-        Intent intent = new Intent(SplashActivity.this, MessageActivity.class);
+    /**
+     * 根据登录状态跳转
+     */
+    private void jumpToNext() {
+        Intent intent;
+        if (SharedPrefsHelper.getInstance().isLogin()) {
+            intent = new Intent(SplashActivity.this, HomeActivity.class);
+        } else {
+            intent = new Intent(SplashActivity.this, LoginActivity.class);
+        }
         startActivity(intent);
         finish();
     }

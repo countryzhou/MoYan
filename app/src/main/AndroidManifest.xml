@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".MoYanApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -13,56 +14,78 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MoYan">
-        <activity
-            android:name=".ItemCommentActivity"
-            android:exported="false" />
+        android:theme="@style/Theme.MoYan"
+        tools:targetApi="31">
+
         <!-- 启动页 SplashActivity，设置为 LAUNCHER -->
         <activity
             android:name=".activity.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 登录注册 -->
         <activity
             android:name=".activity.LoginActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.SignupActivity"
+            android:exported="false" />
+
+        <!-- 首页 -->
+        <activity
             android:name=".activity.HomeActivity"
             android:exported="false" />
+
+        <!-- 搜索 -->
         <activity
             android:name=".activity.SearchActivity"
             android:exported="false" />
+
+        <!-- 话题详情 -->
         <activity
             android:name=".activity.TopicdetailActivity"
             android:exported="false" />
+
+        <!-- 帖子详情 -->
         <activity
             android:name=".activity.PostdetailActivity"
             android:exported="false" />
-        <activity
-            android:name=".activity.InteractionActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.MessageActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.ProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.EditprofileActivity"
-            android:exported="false" />
+
+        <!-- 发帖 -->
         <activity
             android:name=".activity.CreatepostActivity"
             android:exported="false" />
+
+        <!-- 互动通知 -->
         <activity
-            android:name=".activity.SignupActivity"
+            android:name=".activity.InteractionActivity"
             android:exported="false" />
+
+        <!-- 消息 -->
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MessageActivity"
             android:exported="false" />
+
+        <!-- 个人主页 -->
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:exported="false" />
+
+        <!-- 编辑资料 -->
+        <activity
+            android:name=".activity.EditprofileActivity"
+            android:exported="false" />
+
+        <!-- 用户主页（查看他人） -->
+        <activity
+            android:name=".activity.UserProfileActivity"
+            android:exported="false" />
+
+
     </application>
 
 </manifest>

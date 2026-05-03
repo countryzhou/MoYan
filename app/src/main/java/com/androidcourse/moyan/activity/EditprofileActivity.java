@@ -1,19 +1,17 @@
 package com.androidcourse.moyan.activity;
 
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.androidcourse.moyan.R;
-
+/**
+ * 编辑资料页面
+ * TODO: 实现编辑资料功能
+ */
 public class EditprofileActivity extends AppCompatActivity {
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_editprofile);
-
+        // setContentView(R.layout.activity_editprofile);
     }
 }

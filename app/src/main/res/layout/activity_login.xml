@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -69,10 +70,25 @@
         android:textColor="@android:color/holo_blue_dark"
         android:layout_marginTop="24dp" />
 
+    <!-- 新增：游客模式入口 -->
+    <TextView
+        android:id="@+id/tv_guest_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        android:text="游客浏览"
+        android:textColor="@color/primary_blue"
+        android:textSize="16dp"
+        tools:ignore="TouchTargetSizeCheck" />
+
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="16dp"
         android:visibility="gone" />
 </LinearLayout>

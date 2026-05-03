@@ -1,5 +1,8 @@
 package com.androidcourse.moyan.model;
 
+/**
+ * 登录请求实体类 - 纯数据模型
+ */
 public class LoginRequest {
     private String action;
     private Params params;
