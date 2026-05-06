@@ -5,27 +5,30 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
 
-    <!-- 搜索栏 -->
+    <!-- 顶部搜索栏 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:gravity="center_vertical"
-        android:paddingHorizontal="16dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
 
         <TextView
+            android:id="@+id/tv_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="&lt;"
             android:textSize="24sp"
-            android:textColor="#333"/>
+            android:textColor="#333333"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginStart="12dp"
             android:background="@drawable/bg_search_bar"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="16dp">
+            android:gravity="center_vertical|right"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
             <EditText
                 android:id="@+id/et_search"
@@ -34,190 +37,71 @@
                 android:layout_height="wrap_content"
                 android:hint="搜索内容"
                 android:background="@null"
-                android:textSize="16sp"/>
-
-            <ImageView
-                android:id="@+id/iv_clear"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@android:drawable/ic_menu_close_clear_cancel"
-                android:tint="#999"
-                android:visibility="gone"/>
+                android:textSize="16sp"
+                android:maxLines="1"/>
 
             <TextView
                 android:id="@+id/tv_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="搜索"
-                android:textColor="#1677FF"
-                android:layout_marginStart="12dp"/>
+                android:textColor="#333333"
+                android:textSize="16sp"
+                android:layout_marginStart="16dp"/>
 
         </LinearLayout>
 
     </LinearLayout>
-
-    <!-- 标签栏 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp">
-
-        <TextView
-            android:id="@+id/tv_all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="全部"
-            android:textSize="16sp"
-            android:textColor="#333"
-            android:layout_marginEnd="20dp"/>
-
-        <TextView
-            android:id="@+id/tv_user"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="用户"
-            android:textSize="16sp"
-            android:textColor="#999"
-            android:layout_marginEnd="20dp"/>
-
-        <TextView
-            android:id="@+id/tv_goods"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="商品"
-            android:textSize="16sp"
-            android:textColor="#999"
-            android:layout_marginEnd="20dp"/>
-
-        <TextView
-            android:id="@+id/tv_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="图片"
-            android:textSize="16sp"
-            android:textColor="#999"
-            android:layout_marginEnd="20dp"/>
-
-        <TextView
-            android:id="@+id/tv_ask"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="问一问"
-            android:textSize="16sp"
-            android:textColor="#999"/>
-
-    </LinearLayout>
-
-    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="#eee"/>
 
     <!-- 历史记录 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="16dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="搜索历史"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/tv_clear_all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="清空历史"
-            android:textSize="14sp"
-            android:textColor="#999"
-            android:layout_marginStart="auto"/>
-
-    </LinearLayout>
-
-    <androidx.recyclerview.widget
-        android:id="@+id/rv_history"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:layout_marginTop="8dp"/>
-
-    <TextView
-        android:id="@+id/tv_expand"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="展开"
-        android:gravity="center"
-        android:padding="8dp"
-        android:textColor="#1677FF"/>
-
-    <!-- 用户搜索结果 -->
-    <LinearLayout
-        android:id="@+id/layout_user_result"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone"
-        android:layout_marginTop="20dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@mipmap/ic_launcher"/>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="12dp">
-
-                <TextView
-                    android:id="@+id/tv_nickname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:id="@+id/tv_fans"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"/>
-
-                <TextView
-                    android:id="@+id/tv_user_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"/>
-
-            </LinearLayout>
-
             <TextView
-                android:id="@+id/tv_follow"
-                android:layout_width="70dp"
-                android:layout_height="32dp"
-                android:background="#FF2D55"
-                android:text="关注"
-                android:gravity="center"
-                android:textColor="#fff"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="最近搜索"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#333333"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <ImageView
+                android:id="@+id/iv_clear_all"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_delete_all"/>
 
         </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="— 无更多账号 —"
+            android:text="展开更多"
             android:gravity="center"
-            android:layout_marginBottom="20dp"/>
+            android:padding="8dp"
+            android:textColor="#1677FF"/>
 
     </LinearLayout>
 
