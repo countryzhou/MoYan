@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 评论发送界面 - 用户进入后自动弹出键盘，支持匿名回复选项 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="425dp"
+    android:layout_marginTop="2dp"
+    android:orientation="vertical"
+    android:background="@drawable/bg_comment_sheet"
+    android:elevation="4dp"
+    android:stateListAnimator="@null"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- 输入区域容器 - 模仿 CSS 中的 rectangle 40 -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="69dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="17dp"
+        android:background="@drawable/bg_input_field"
+        android:alpha="0.5"
+        app:hintEnabled="true"
+        app:hintTextColor="@color/gray"
+        app:boxBackgroundMode="none">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/commentEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="15dp"
+            android:background="@null"
+            android:gravity="top"
+            android:hint="我想说..."
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine"
+            android:padding="0dp"
+            android:textColor="@color/primary_blue"
+            android:textSize="14sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 底部工具栏：包含图片、键盘、表情、发送等按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="12dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- 左侧按钮组 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp">
+
+            <!-- 图片按钮 - 媒体设备/image-line -->
+            <ImageView
+                android:id="@+id/imageButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/ic_image_outline"
+                android:contentDescription="添加图片" />
+
+            <!-- 键盘按钮 - 存储设备/keyboard-box-line -->
+            <ImageView
+                android:id="@+id/keyboardButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/ic_keyboard_outline"
+                android:contentDescription="键盘" />
+
+            <!-- 添加按钮 - 系统/add-circle-line -->
+            <ImageView
+                android:id="@+id/addButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/ic_add_circle"
+                android:contentDescription="添加" />
+
+            <!-- 表情按钮 - 人群/emotion-line 伪装为表情选择 -->
+            <ImageView
+                android:id="@+id/emotionButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_emotion"
+                android:contentDescription="选择表情" />
+        </LinearLayout>
+
+        <!-- 右侧发送按钮 -->
+        <LinearLayout
+            android:id="@+id/sendButtonContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/bg_send_button"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <!-- 发送文本 -->
+            <TextView
+                android:id="@+id/sendTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="发送"
+                android:textSize="14sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="normal" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 匿名回复选项区域 -->
+    <LinearLayout
+        android:id="@+id/anonymousContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- 复选框（自定义样式模拟系统/check-line） -->
+        <CheckBox
+            android:id="@+id/anonymousCheckBox"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="8dp"
+            android:button="@drawable/check_box_selector"
+            android:background="@null"
+            android:contentDescription="匿名回复" />
+
+        <!-- 匿名文本 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="匿名回复"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:textStyle="normal" />
+    </LinearLayout>
+
+</LinearLayout>

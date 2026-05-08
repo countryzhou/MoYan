@@ -1,0 +1,6 @@
+<!-- 发送按钮背景（实心、有细微圆角） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#63B6FF" />
+    <corners android:radius="6dp" />
+</shape>

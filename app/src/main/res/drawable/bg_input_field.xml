@@ -1,0 +1,7 @@
+<!-- 半透明输入框背景 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#1A000000" />
+    <corners android:radius="10dp" />
+    <!-- 其实 alpha 0.2 已在布局中设置，这里用灰色填充 -->
+</shape>
