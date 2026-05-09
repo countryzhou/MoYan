@@ -56,6 +56,14 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+
+        <activity android:name=".FavoriteActivity" />
+        <activity android:name=".MessageRecordActivity" />
+        <activity android:name=".PostRecordActivity" />
+        <activity android:name=".TipRecordActivity" />
+        <activity android:name=".WalletActivity" />
+        <activity android:name=".ReportRecordActivity" />
+
     </application>
 
 </manifest>
