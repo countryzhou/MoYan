@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.androidcourse.moyan.model.LoginResponse;
+import com.androidcourse.moyan.model.User;
 import com.androidcourse.moyan.utils.SharedPrefsHelper;
 import com.androidcourse.moyan.viewmodel.LoginViewModel;
 
@@ -27,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText etPhone, etPassword;
     private Button btnLogin;
-    private TextView tvGoRegister, tvGuestMode;  // 添加游客模式TextView
+    private TextView tvGoRegister, tvGuestMode;
     private ProgressBar progressBar;
     private LoginViewModel loginViewModel;
 
@@ -52,11 +53,8 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.et_password);
         btnLogin = findViewById(R.id.btn_login);
         tvGoRegister = findViewById(R.id.tv_go_register);
-        tvGuestMode = findViewById(R.id.tv_guest_mode);  // 需要在布局中添加
+        tvGuestMode = findViewById(R.id.tv_guest_mode);
         progressBar = findViewById(R.id.progress_bar);
-
-        // 如果布局中没有tv_guest_mode，可以注释掉上面这行，使用下面的方式创建提示
-        // 或者添加一个游客模式的TextView到activity_login.xml
     }
 
     private void setupListeners() {
@@ -66,14 +64,8 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // 游客模式点击事件
         if (tvGuestMode != null) {
             tvGuestMode.setOnClickListener(v -> enterGuestMode());
-        } else {
-            // 如果没有tv_guest_mode，可以添加一个提示
-            findViewById(android.R.id.content).post(() -> {
-                Toast.makeText(this, "点击返回键可进入游客模式", Toast.LENGTH_LONG).show();
-            });
         }
     }
 
@@ -84,17 +76,12 @@ public class LoginActivity extends AppCompatActivity {
         setLoading(true);
 
         if (BuildConfig.IS_DEBUG) {
-            // Debug: Mock模式
             performMockLogin(phone, password);
         } else {
-            // Release: 真实网络请求
             performRealLogin(phone, password);
         }
     }
 
-    /**
-     * Mock模式登录
-     */
     private void performMockLogin(String phone, String password) {
         new Thread(() -> {
             try {
@@ -105,29 +92,52 @@ public class LoginActivity extends AppCompatActivity {
 
             runOnUiThread(() -> {
                 setLoading(false);
-                // Mock模式：只有以1开头且密码123456才成功，否则显示账号不存在
                 if (phone.startsWith("1") && password.equals("123456")) {
-                    Toast.makeText(this, "登录成功！", Toast.LENGTH_LONG).show();
+                    // ✅ 修复：创建 Mock 用户并保存
+                    User mockUser = new User();
+                    mockUser.setUserId(10086);
+                    mockUser.setPhone(phone);
+                    mockUser.setNickname("测试用户_" + phone.substring(7));
+                    mockUser.setToken("mock_token_" + System.currentTimeMillis());
+
+                    // 保存用户信息
+                    SharedPrefsHelper.getInstance().saveUser(mockUser);
+
+                    // 打印调试信息
+                    android.util.Log.d("LoginActivity", "========== Mock登录成功 ==========");
+                    android.util.Log.d("LoginActivity", "userId: " + mockUser.getUserId());
+                    android.util.Log.d("LoginActivity", "nickname: " + mockUser.getNickname());
+                    android.util.Log.d("LoginActivity", "token: " + mockUser.getToken());
+                    android.util.Log.d("LoginActivity", "isLogin: " + SharedPrefsHelper.getInstance().isLogin());
+
+                    Toast.makeText(this, "登录成功！欢迎 " + mockUser.getNickname(), Toast.LENGTH_LONG).show();
                     jumpToHome();
                 } else {
-                    // 显示账号不存在对话框
                     showAccountNotExistDialog();
                 }
             });
         }).start();
     }
 
-    /**
-     * 真实模式登录（使用ViewModel）
-     */
     private void performRealLogin(String phone, String password) {
         loginViewModel.login(phone, password, new LoginViewModel.LoginCallback() {
             @Override
             public void onLoginSuccess(LoginResponse response) {
                 setLoading(false);
-                Toast.makeText(LoginActivity.this,
-                        "登录成功！欢迎 " + response.getData().getNickname(),
-                        Toast.LENGTH_LONG).show();
+
+                // 验证保存结果
+                android.util.Log.d("LoginActivity", "========== 登录成功回调 ==========");
+                android.util.Log.d("LoginActivity", "isLogin: " + SharedPrefsHelper.getInstance().isLogin());
+                android.util.Log.d("LoginActivity", "userId: " + SharedPrefsHelper.getInstance().getUserId());
+
+                if (response != null && response.getData() != null) {
+                    Toast.makeText(LoginActivity.this,
+                            "登录成功！欢迎 " + response.getData().getNickname(),
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "登录成功！", Toast.LENGTH_LONG).show();
+                }
+
                 jumpToHome();
             }
 
@@ -151,9 +161,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * 显示账号不存在对话框
-     */
     private void showAccountNotExistDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("账号不存在")
@@ -169,9 +176,6 @@ public class LoginActivity extends AppCompatActivity {
                 .show();
     }
 
-    /**
-     * 进入游客模式
-     */
     private void enterGuestMode() {
         SharedPrefsHelper.getInstance().saveGuestMode();
         Toast.makeText(this, "游客模式，登录后可参与互动", Toast.LENGTH_LONG).show();

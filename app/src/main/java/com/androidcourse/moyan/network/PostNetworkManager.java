@@ -1,6 +1,8 @@
 package com.androidcourse.moyan.network;
 
 import org.json.JSONObject;
+import org.json.JSONArray;
+import java.util.List;
 
 /**
  * 帖子相关网络请求管理器
@@ -20,7 +22,7 @@ public class PostNetworkManager {
     }
 
     /**
-     * 发布帖子
+     * 发布帖子（不带图片）
      * @param userId 用户ID
      * @param isAnonymous 是否匿名
      * @param title 标题
@@ -30,19 +32,54 @@ public class PostNetworkManager {
      */
     public String createPost(int userId, boolean isAnonymous, String title,
                              String content, String tags) {
+        // 调用带图片的方法，传入null
+        return createPost(userId, isAnonymous, title, content, tags, null);
+    }
+
+    /**
+     * 发布帖子（带图片）
+     * @param userId 用户ID
+     * @param isAnonymous 是否匿名
+     * @param title 标题
+     * @param content 内容
+     * @param tags 标签（逗号分隔）
+     * @param imagePaths 图片路径列表
+     * @return 服务端响应JSON字符串
+     */
+    public String createPost(int userId, boolean isAnonymous, String title,
+                             String content, String tags, List<String> imagePaths) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "createPost");
+            request.put("type", "createPost");
 
             JSONObject params = new JSONObject();
             params.put("userId", userId);
             params.put("isAnonymous", isAnonymous);
-            params.put("title", title);
+            params.put("title", title == null || title.isEmpty() ? content.substring(0, Math.min(50, content.length())) : title);
             params.put("content", content);
-            params.put("tags", tags);
+            params.put("tags", tags == null ? "" : tags);
+
+            // 注意：根据你的API文档，似乎不需要传递图片路径
+            // 如果需要传递图片，取消下面的注释
+        /*
+        if (imagePaths != null && !imagePaths.isEmpty()) {
+            JSONArray imagesArray = new JSONArray();
+            for (String path : imagePaths) {
+                imagesArray.put(path);
+            }
+            params.put("imagePaths", imagesArray);
+        }
+        */
+
             request.put("params", params);
 
-            return SocketClient.getInstance().sendRequest(request.toString());
+            String requestStr = request.toString();
+            android.util.Log.d("PostNetworkManager", "发送请求: " + requestStr);
+
+            String response = SocketClient.getInstance().sendRequest(requestStr);
+            android.util.Log.d("PostNetworkManager", "收到响应: " + response);
+
+            return response;
         } catch (Exception e) {
             e.printStackTrace();
             return "{\"code\":1,\"msg\":\"请求构建失败：" + e.getMessage() + "\",\"data\":null}";
@@ -59,7 +96,7 @@ public class PostNetworkManager {
     public String getPostList(int page, int size, int userId) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "getPostList");
+            request.put("type", "getPostList");
 
             JSONObject params = new JSONObject();
             params.put("page", page);
@@ -83,7 +120,7 @@ public class PostNetworkManager {
     public String getPostDetail(int postId, int userId) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "getPostDetail");
+            request.put("type", "getPostDetail");
 
             JSONObject params = new JSONObject();
             params.put("postId", postId);
@@ -108,7 +145,7 @@ public class PostNetworkManager {
     public String searchPosts(String keyword, String tag, String sortBy, int page) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "searchPosts");
+            request.put("type", "searchPosts");
 
             JSONObject params = new JSONObject();
             params.put("keyword", keyword);
@@ -136,7 +173,7 @@ public class PostNetworkManager {
     public String ratePost(int postId, int userId, int tagAccuracy, int articleScore, String comment) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "ratePost");
+            request.put("type", "ratePost");
 
             JSONObject params = new JSONObject();
             params.put("postId", postId);
@@ -163,7 +200,7 @@ public class PostNetworkManager {
     public String tipPost(int postId, int fromUserId, int amount) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "tipPost");
+            request.put("type", "tipPost");
 
             JSONObject params = new JSONObject();
             params.put("postId", postId);
@@ -189,7 +226,7 @@ public class PostNetworkManager {
     public String report(int reporterId, int targetType, int targetId, String reason) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "report");
+            request.put("type", "report");
 
             JSONObject params = new JSONObject();
             params.put("reporterId", reporterId);
@@ -212,7 +249,7 @@ public class PostNetworkManager {
     public String getTodayTask() {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "getTodayTask");
+            request.put("type", "getTodayTask");
             request.put("params", new JSONObject());
 
             return SocketClient.getInstance().sendRequest(request.toString());
@@ -232,7 +269,7 @@ public class PostNetworkManager {
     public String submitTaskAnswer(int taskId, int userId, String content) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "submitTaskAnswer");
+            request.put("type", "submitTaskAnswer");
 
             JSONObject params = new JSONObject();
             params.put("taskId", taskId);

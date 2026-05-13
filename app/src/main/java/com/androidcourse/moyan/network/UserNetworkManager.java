@@ -30,7 +30,7 @@ public class UserNetworkManager {
     public String login(String phone, String password) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "login");
+            request.put("type", "login");
 
             JSONObject params = new JSONObject();
             params.put("phone", phone);
@@ -54,7 +54,7 @@ public class UserNetworkManager {
     public String register(String phone, String password, String nickname) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "register");
+            request.put("type", "register");
 
             JSONObject params = new JSONObject();
             params.put("phone", phone);
@@ -77,7 +77,7 @@ public class UserNetworkManager {
     public String getUserInfo(int userId) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "getUserInfo");
+            request.put("type", "getUserInfo");
 
             JSONObject params = new JSONObject();
             params.put("userId", userId);
@@ -100,7 +100,7 @@ public class UserNetworkManager {
     public String updatePassword(int userId, String oldPassword, String newPassword) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "updatePassword");
+            request.put("type", "updatePassword");
 
             JSONObject params = new JSONObject();
             params.put("userId", userId);
@@ -124,7 +124,7 @@ public class UserNetworkManager {
     public String updateNickname(int userId, String nickname) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "updateNickname");
+            request.put("type", "updateNickname");
 
             JSONObject params = new JSONObject();
             params.put("userId", userId);
@@ -147,7 +147,7 @@ public class UserNetworkManager {
     public String updateAvatar(int userId, String avatarUrl) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "updateAvatar");
+            request.put("type", "updateAvatar");
 
             JSONObject params = new JSONObject();
             params.put("userId", userId);

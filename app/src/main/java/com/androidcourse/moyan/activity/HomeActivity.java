@@ -20,6 +20,7 @@ import com.androidcourse.moyan.adapter.NewsAdapter;
 import com.androidcourse.moyan.adapter.TrendCardAdapter;
 import com.androidcourse.moyan.model.NewsItem;
 import com.androidcourse.moyan.model.TrendCard;
+import com.androidcourse.moyan.model.User;
 import com.androidcourse.moyan.utils.SharedPrefsHelper;
 import com.androidcourse.moyan.viewmodel.HomeViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -54,12 +55,33 @@ public class HomeActivity extends AppCompatActivity {
         sharedPrefsHelper = SharedPrefsHelper.getInstance();
         homeViewModel = new HomeViewModel();
 
+        // 添加登录状态日志
+        logLoginState();
+
         initViews();
         setupListeners();
         loadData();
 
         // 显示欢迎信息
         showWelcomeMessage();
+    }
+
+    /**
+     * 打印登录状态日志（用于调试）
+     */
+    private void logLoginState() {
+        Log.d("HomeActivity", "========== 首页启动状态 ==========");
+        Log.d("HomeActivity", "isLogin: " + sharedPrefsHelper.isLogin());
+        Log.d("HomeActivity", "isGuestMode: " + sharedPrefsHelper.isGuestMode());
+        Log.d("HomeActivity", "userId: " + sharedPrefsHelper.getUserId());
+
+        User user = sharedPrefsHelper.getUser();
+        if (user != null) {
+            Log.d("HomeActivity", "user.nickname: " + user.getNickname());
+            Log.d("HomeActivity", "user.userId: " + user.getUserId());
+        } else {
+            Log.d("HomeActivity", "user is null");
+        }
     }
 
     private void initViews() {
@@ -93,24 +115,25 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         fabWrite.setOnClickListener(v -> {
-            // 检查是否可以发帖（游客模式不能发帖）
-            if (sharedPrefsHelper.isGuestMode()) {
-                Toast.makeText(this, "请先登录后再发帖", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            // 先检查是否登录
             if (!sharedPrefsHelper.isLogin()) {
-                Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "请先登录后再发帖", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                 return;
             }
+
+            // 已登录，直接进入发帖页面
             Intent intent = new Intent(HomeActivity.this, CreatepostActivity.class);
             startActivity(intent);
         });
 
         navHome.setOnClickListener(v -> refreshData());
+
         navExplore.setOnClickListener(v -> {
             startActivity(new Intent(HomeActivity.this, InteractionActivity.class));
             finish();
         });
+
         navMessages.setOnClickListener(v -> {
             // 游客模式不能查看消息
             if (sharedPrefsHelper.isGuestMode()) {
@@ -120,6 +143,7 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(new Intent(HomeActivity.this, MessageActivity.class));
             finish();
         });
+
         navProfile.setOnClickListener(v -> {
             // 游客模式跳转到登录页
             if (sharedPrefsHelper.isGuestMode() || !sharedPrefsHelper.isLogin()) {
@@ -139,11 +163,16 @@ public class HomeActivity extends AppCompatActivity {
     private void showWelcomeMessage() {
         String message;
         if (sharedPrefsHelper.isLogin()) {
-            message = "欢迎回来！";
+            User user = sharedPrefsHelper.getUser();
+            if (user != null && user.getNickname() != null) {
+                message = "欢迎回来，" + user.getNickname() + "！";
+            } else {
+                message = "欢迎回来！";
+            }
         } else if (sharedPrefsHelper.isGuestMode()) {
             message = "游客模式，登录后可参与互动";
         } else {
-            message = "欢迎来到墨言";
+            message = "欢迎来到陌言";
         }
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }

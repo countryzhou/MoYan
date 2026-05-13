@@ -57,6 +57,9 @@ public class PostdetailActivity extends AppCompatActivity {
     private ImageView ivCollect;
     private TextView ivCollectCountBottom;
 
+
+    // 添加这一行
+    private LinearLayout llImageContainer;  // 图片容器
     private Post currentPost;
     private CommentAdapter commentAdapter;
     private List<Comment> commentList = new ArrayList<>();
@@ -105,6 +108,9 @@ public class PostdetailActivity extends AppCompatActivity {
         tvCommentCountBottom = findViewById(R.id.tvCommentCountBottom);
         ivCollect = findViewById(R.id.ivCollect);
         ivCollectCountBottom = findViewById(R.id.ivCollectCountBottom);
+
+        // 添加这一行：初始化图片容器
+        llImageContainer = findViewById(R.id.llImageContainer);
     }
 
     private void setupListeners() {
@@ -145,6 +151,39 @@ public class PostdetailActivity extends AppCompatActivity {
             submitComment();
             return true;
         });
+    }
+    // 在 PostDetailActivity 中添加图片展示方法
+    private void displayPostImages(Post post) {
+        // 确保控件已初始化
+        if (llImageContainer == null) {
+            return;
+        }
+
+        llImageContainer.removeAllViews();
+
+        if (post != null && post.hasImages()) {
+            llImageContainer.setVisibility(View.VISIBLE);
+            for (String imagePath : post.getImagePaths()) {
+                ImageView imageView = new ImageView(this);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                params.setMargins(0, 0, 0, 8);
+                imageView.setLayoutParams(params);
+                imageView.setAdjustViewBounds(true);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                Glide.with(this)
+                        .load(imagePath)
+                        .placeholder(R.drawable.img_car_placeholder)
+                        .into(imageView);
+
+                llImageContainer.addView(imageView);
+            }
+        } else {
+            llImageContainer.setVisibility(View.GONE);
+        }
     }
 
     private void loadPostData() {
@@ -199,6 +238,9 @@ public class PostdetailActivity extends AppCompatActivity {
         isLiked = currentPost.isLiked();
         updateLikeUI();
         loadPostImage();
+
+        // 显示图片
+        displayPostImages(currentPost);
     }
 
     private void displayTags(String tags) {

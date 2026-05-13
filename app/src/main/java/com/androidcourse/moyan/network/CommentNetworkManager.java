@@ -160,7 +160,7 @@ public class CommentNetworkManager {
     public String createReply(int postId, int userId, boolean isAnonymous, String content) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "createReply");
+            request.put("type", "createReply");
 
             JSONObject params = new JSONObject();
             params.put("postId", postId);
@@ -185,7 +185,7 @@ public class CommentNetworkManager {
     public String getReplyList(int postId, int page) {
         try {
             JSONObject request = new JSONObject();
-            request.put("action", "getReplies");
+            request.put("type", "getReplies");
 
             JSONObject params = new JSONObject();
             params.put("postId", postId);

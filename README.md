@@ -247,6 +247,113 @@ com.androidcourse.moyan/
 └── manager/                            # 管理器（简化）
     └── UserManager.java                # 用户状态管理（单例）
 ```
+
+第四版架构
+增加Room数据库存储本地草稿箱、标签等数据
+```
+com.androidcourse.moyan/
+│
+├── MoYanApplication.java                                   # Application 类（初始化数据库）
+│
+├── activity/                                  # Activity 层
+│   ├── LoginActivity.java
+│   ├── SignupActivity.java
+│   ├── HomeActivity.java
+│   ├── CreatePostActivity.java                # 新增：写帖子
+│   ├── PostDetailActivity.java
+│   ├── ProfileActivity.java
+│   ├── EditProfileActivity.java
+│   ├── SearchActivity.java
+│   ├── MessageActivity.java
+│   ├── InteractionActivity.java
+│   ├── TopicDetailActivity.java
+│   └── UserProfileActivity.java
+│
+├── adapter/                                   # 适配器层
+│   ├── PostAdapter.java
+│   ├── CommentAdapter.java
+│   ├── NewsAdapter.java
+│   ├── TrendCardAdapter.java
+│   ├── ImagePreviewAdapter.java               # 新增：图片预览适配器
+│   └── TagSelectAdapter.java                  # 新增：标签选择适配器
+│
+├── model/                                     # 模型层
+│   ├── User.java
+│   ├── Post.java
+│   ├── Reply.java
+│   ├── Comment.java
+│   ├── NewsItem.java
+│   ├── TrendCard.java
+│   ├── LoginRequest.java
+│   ├── LoginResponse.java
+│   ├── RegisterRequest.java
+│   ├── Draft.java                             # 新增：草稿模型
+│   └── Tag.java                               # 新增：标签模型
+│
+├── database/                                  # 新增：本地数据库层
+│   ├── AppDatabase.java                       # Room 数据库实例
+│   ├── DraftDao.java                          # 草稿 DAO
+│   ├── TagDao.java                            # 标签 DAO
+│   └── Converters.java                        # 类型转换器
+│
+├── repository/                                # 仓库层
+│   ├── PostRepository.java
+│   ├── UserRepository.java
+│   ├── CommentRepository.java
+│   ├── DraftRepository.java                   # 新增：草稿仓库
+│   └── TagRepository.java                     # 新增：标签仓库
+│
+├── viewmodel/                                 # ViewModel 层
+│   ├── LoginViewModel.java
+│   ├── HomeViewModel.java
+│   ├── PostDetailViewModel.java
+│   ├── ProfileViewModel.java
+│   └── CreatePostViewModel.java               # 新增：写帖子 ViewModel
+│
+├── network/                                   # 网络层
+│   ├── SocketClient.java
+│   ├── CommentNetworkManager.java
+│   ├── PostNetworkManager.java
+│   ├── UserNetworkManager.java
+│   ├── ApiService.java                        # 新增：Retrofit 接口定义
+│   └── RetrofitClient.java                    # 新增：Retrofit 客户端
+│
+├── utils/                                     # 工具类
+│   ├── SharedPrefsHelper.java
+│   ├── TimeUtils.java
+│   ├── AnonymousHelper.java
+│   ├── ImagePickerHelper.java                 # 新增：图片选择辅助类
+│   └── KeyboardUtils.java                     # 新增：键盘工具类
+│
+└── manager/                                   # 管理器
+    └── UserManager.java
+    
+
+res/layout/
+│
+├── activity_createcomment.xml          # 创建评论界面
+├── activity_createpost.xml             # 创建帖子界面
+├── activity_editprofile.xml            # 编辑个人资料界面
+├── activity_home.xml                   # 主页界面
+├── activity_interaction.xml            # 互动界面（点赞/评论/转发）
+├── activity_item_comment.xml           # 评论项界面
+├── activity_login.xml                  # 登录界面
+├── activity_message.xml                # 消息界面
+├── activity_postdetail.xml             # 帖子详情界面
+├── activity_profile.xml                # 个人资料界面
+├── activity_search.xml                 # 搜索界面
+├── activity_signup.xml                 # 注册界面
+├── activity_splash.xml                 # 启动页界面
+├── activity_topicdetail.xml            # 话题详情界面
+│
+├── dialog_tag_selector.xml             # 标签选择弹窗
+│
+├── item_image_preview.xml              # 图片预览项（用于RecyclerView）
+├── item_news_card.xml                  # 新闻卡片项
+├── item_private_message.xml            # 私信项
+├── item_reply.xml                      # 回复项
+└── item_trend_card.xml                 # 动态卡片项
+```
 ## 五、核心功能模块
 
 | 模块    | 对应文件                | 说明         |

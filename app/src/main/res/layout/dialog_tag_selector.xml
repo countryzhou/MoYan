@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:elevation="4dp">
+
+    <!-- 顶部标题栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="选择标签"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:gravity="center" />
+
+        <ImageView
+            android:id="@+id/ivClose"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_close"
+            android:contentDescription="关闭" />
+
+    </LinearLayout>
+
+    <!-- 标签列表区域 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/llTagContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp" />
+
+    </ScrollView>
+
+    <!-- 底部自定义标签输入区 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:elevation="4dp"
+        android:padding="16dp"
+        android:visibility="gone"
+        android:id="@+id/llCustomInput">
+
+        <EditText
+            android:id="@+id/etCustomTag"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="输入标签名称（不超过12字）"
+            android:textSize="14sp"
+            android:maxLength="12"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:background="@drawable/bg_tag_custom" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:id="@+id/btnCancelCustom"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="取消"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:background="#F0F0F0"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/btnConfirmCustom"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="确定"
+                android:textSize="14sp"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_button_send" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- 底部按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp">
+
+        <TextView
+            android:id="@+id/btnAddCustom"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="+ 自定义标签"
+            android:textSize="14sp"
+            android:textColor="#383838"
+            android:background="@drawable/bg_tag_default"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/btnConfirmTags"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="确定"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_button_send" />
+
+    </LinearLayout>
+
+</LinearLayout>
