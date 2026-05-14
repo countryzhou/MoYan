@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
 import org.json.JSONObject;
 
 import com.androidcourse.moyan.model.Draft;
@@ -43,58 +44,94 @@ public class CreatePostViewModel extends AndroidViewModel {
         loadAllTags();
     }
 
-    // 添加 getUserId 方法
+    // 获取用户ID
     private int getUserId() {
         return SharedPrefsHelper.getInstance().getUserId();
     }
 
     // Getters
-    public LiveData<String> getContent() { return content; }
-    public LiveData<List<String>> getImagePaths() { return imagePaths; }
-    public LiveData<List<String>> getSelectedTags() { return selectedTags; }
-    public LiveData<Boolean> getIsAnonymous() { return isAnonymous; }
-    public LiveData<List<Tag>> getAllTags() { return allTags; }
-    public LiveData<Boolean> getIsLoading() { return isLoading; }
-    public LiveData<String> getToastMessage() { return toastMessage; }
-    public LiveData<Boolean> getFinishActivity() { return finishActivity; }
+    public LiveData<String> getContent() {
+        return content;
+    }
+
+    public LiveData<List<String>> getImagePaths() {
+        return imagePaths;
+    }
+
+    public LiveData<List<String>> getSelectedTags() {
+        return selectedTags;
+    }
+
+    public LiveData<Boolean> getIsAnonymous() {
+        return isAnonymous;
+    }
+
+    public LiveData<List<Tag>> getAllTags() {
+        return allTags;
+    }
+
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+
+    public LiveData<String> getToastMessage() {
+        return toastMessage;
+    }
+
+    public LiveData<Boolean> getFinishActivity() {
+        return finishActivity;
+    }
 
     // Setters
-    public void setContent(String text) { content.setValue(text); }
-    public void setAnonymous(boolean anonymous) { isAnonymous.setValue(anonymous); }
+    public void setContent(String text) {
+        content.setValue(text);
+    }
 
-    // 添加/移除图片
+    public void setAnonymous(boolean anonymous) {
+        isAnonymous.setValue(anonymous);
+    }
+
+    // 添加图片
     public void addImagePaths(List<String> paths) {
         List<String> current = imagePaths.getValue();
-        if (current == null) current = new ArrayList<>();
+        if (current == null) {
+            current = new ArrayList<>();
+        }
+
         current.addAll(paths);
         imagePaths.setValue(current);
     }
 
+    // 删除指定位置图片
     public void removeImageAt(int position) {
         List<String> current = imagePaths.getValue();
-        if (current != null && position < current.size()) {
+        if (current != null && position >= 0 && position < current.size()) {
             current.remove(position);
             imagePaths.setValue(current);
         }
     }
 
+    // 清空图片
     public void clearImages() {
         imagePaths.setValue(new ArrayList<>());
     }
 
-    // 标签操作
+    // 标签选择/取消选择
     public void toggleTag(String tagName) {
         List<String> current = selectedTags.getValue();
-        if (current == null) current = new ArrayList<>();
+        if (current == null) {
+            current = new ArrayList<>();
+        }
 
         if (current.contains(tagName)) {
             current.remove(tagName);
-        } else if (current.size() < 4) { // 最多选4个标签
+        } else if (current.size() < 4) {
             current.add(tagName);
         } else {
             toastMessage.setValue("最多只能选择4个标签");
             return;
         }
+
         selectedTags.setValue(current);
     }
 
@@ -108,12 +145,12 @@ public class CreatePostViewModel extends AndroidViewModel {
         tagRepository.getAllTags(new TagRepository.TagCallback() {
             @Override
             public void onSuccess(List<Tag> tags) {
-                allTags.setValue(tags);
+                allTags.postValue(tags);
             }
 
             @Override
             public void onError(String error) {
-                toastMessage.setValue("加载标签失败: " + error);
+                toastMessage.postValue("加载标签失败: " + error);
             }
         });
     }
@@ -124,6 +161,9 @@ public class CreatePostViewModel extends AndroidViewModel {
             toastMessage.setValue("标签名称不能为空");
             return;
         }
+
+        tagName = tagName.trim();
+
         if (tagName.length() > 12) {
             toastMessage.setValue("标签名称不能超过12个字");
             return;
@@ -132,36 +172,44 @@ public class CreatePostViewModel extends AndroidViewModel {
         tagRepository.addTag(tagName, true, new TagRepository.InsertCallback() {
             @Override
             public void onSuccess(long id) {
-                loadAllTags(); // 重新加载标签列表
-                toastMessage.setValue("添加标签成功");
+                loadAllTags();
+                toastMessage.postValue("添加标签成功");
             }
 
             @Override
             public void onError(String error) {
-                toastMessage.setValue("添加标签失败: " + error);
+                toastMessage.postValue("添加标签失败: " + error);
             }
         });
     }
 
     // 删除自定义标签
     public void deleteCustomTag(Tag tag) {
+        if (tag == null) {
+            toastMessage.setValue("标签不存在");
+            return;
+        }
+
         if (!tag.isCustom()) {
             toastMessage.setValue("不能删除系统标签");
             return;
         }
 
-        tagRepository.deleteTag(tag,
+        tagRepository.deleteTag(
+                tag,
                 () -> {
                     loadAllTags();
+
                     // 如果当前选中的标签包含被删除的标签，也移除
                     List<String> current = selectedTags.getValue();
                     if (current != null && current.contains(tag.getName())) {
                         current.remove(tag.getName());
-                        selectedTags.setValue(current);
+                        selectedTags.postValue(current);
                     }
-                    toastMessage.setValue("删除标签成功");
+
+                    toastMessage.postValue("删除标签成功");
                 },
-                () -> toastMessage.setValue("删除标签失败")
+                () -> toastMessage.postValue("删除标签失败")
         );
     }
 
@@ -177,17 +225,18 @@ public class CreatePostViewModel extends AndroidViewModel {
 
         if (currentDraftId > 0) {
             draft.setId(currentDraftId);
+
             draftRepository.updateDraft(draft, new DraftRepository.InsertCallback() {
                 @Override
                 public void onSuccess(long id) {
-                    isLoading.setValue(false);
-                    toastMessage.setValue("草稿已保存");
+                    isLoading.postValue(false);
+                    toastMessage.postValue("草稿已保存");
                 }
 
                 @Override
                 public void onError(String error) {
-                    isLoading.setValue(false);
-                    toastMessage.setValue("保存草稿失败: " + error);
+                    isLoading.postValue(false);
+                    toastMessage.postValue("保存草稿失败: " + error);
                 }
             });
         } else {
@@ -195,14 +244,14 @@ public class CreatePostViewModel extends AndroidViewModel {
                 @Override
                 public void onSuccess(long id) {
                     currentDraftId = (int) id;
-                    isLoading.setValue(false);
-                    toastMessage.setValue("草稿已保存");
+                    isLoading.postValue(false);
+                    toastMessage.postValue("草稿已保存");
                 }
 
                 @Override
                 public void onError(String error) {
-                    isLoading.setValue(false);
-                    toastMessage.setValue("保存草稿失败: " + error);
+                    isLoading.postValue(false);
+                    toastMessage.postValue("保存草稿失败: " + error);
                 }
             });
         }
@@ -211,29 +260,37 @@ public class CreatePostViewModel extends AndroidViewModel {
     // 加载草稿
     public void loadDraft(int draftId) {
         isLoading.setValue(true);
+
         draftRepository.getDraftById(draftId, new DraftRepository.SingleDraftCallback() {
             @Override
             public void onSuccess(Draft draft) {
+                if (draft == null) {
+                    isLoading.postValue(false);
+                    toastMessage.postValue("草稿不存在");
+                    return;
+                }
+
                 currentDraftId = draft.getId();
-                content.setValue(draft.getContent() != null ? draft.getContent() : "");
-                imagePaths.setValue(draft.getImagePaths() != null ? draft.getImagePaths() : new ArrayList<>());
-                selectedTags.setValue(draft.getTags() != null ? draft.getTags() : new ArrayList<>());
-                isAnonymous.setValue(draft.isAnonymous());
-                isLoading.setValue(false);
+
+                content.postValue(draft.getContent() != null ? draft.getContent() : "");
+                imagePaths.postValue(draft.getImagePaths() != null ? draft.getImagePaths() : new ArrayList<>());
+                selectedTags.postValue(draft.getTags() != null ? draft.getTags() : new ArrayList<>());
+                isAnonymous.postValue(draft.isAnonymous());
+                isLoading.postValue(false);
             }
 
             @Override
             public void onError(String error) {
-                isLoading.setValue(false);
-                toastMessage.setValue("加载草稿失败: " + error);
+                isLoading.postValue(false);
+                toastMessage.postValue("加载草稿失败: " + error);
             }
         });
     }
 
     // 发布帖子
-    // 发布帖子
     public void publishPost() {
         String postContent = content.getValue();
+
         if (postContent == null || postContent.trim().isEmpty()) {
             toastMessage.setValue("请输入内容");
             return;
@@ -245,11 +302,15 @@ public class CreatePostViewModel extends AndroidViewModel {
         List<String> images = imagePaths.getValue();
         List<String> tags = selectedTags.getValue();
         boolean anonymous = isAnonymous.getValue() != null && isAnonymous.getValue();
-        String tagsStr = tags != null && !tags.isEmpty() ?
-                String.join(",", tags) : "";
 
-        // 设置标题（使用内容前50字）
-        String title = postContent.length() > 50 ? postContent.substring(0, 50) : postContent;
+        String tagsStr = tags != null && !tags.isEmpty()
+                ? String.join(",", tags)
+                : "";
+
+        // 设置标题：使用内容前50字
+        String title = postContent.length() > 50
+                ? postContent.substring(0, 50)
+                : postContent;
 
         // 获取用户ID
         int userId = getUserId();
@@ -268,7 +329,7 @@ public class CreatePostViewModel extends AndroidViewModel {
         android.util.Log.d("CreatePostVM", "标签: " + tagsStr);
         android.util.Log.d("CreatePostVM", "图片数量: " + (images != null ? images.size() : 0));
 
-        // 直接使用 PostNetworkManager 发送请求
+        // 子线程发送发帖请求
         new Thread(() -> {
             try {
                 String response = PostNetworkManager.getInstance()
@@ -277,6 +338,7 @@ public class CreatePostViewModel extends AndroidViewModel {
                 android.util.Log.d("CreatePostVM", "服务器响应: " + response);
 
                 JSONObject jsonResponse = new JSONObject(response);
+
                 if (jsonResponse.getInt("code") == 0) {
                     int postId = jsonResponse.getInt("data");
                     android.util.Log.d("CreatePostVM", "发布成功，帖子ID: " + postId);
