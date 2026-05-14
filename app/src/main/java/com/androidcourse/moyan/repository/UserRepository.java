@@ -32,20 +32,34 @@ public class UserRepository {
     public void login(String phone, String password, RepositoryCallback<LoginResponse> callback) {
         new Thread(() -> {
             String response = networkManager.login(phone, password);
+
+            // 先打印原始响应
+            android.util.Log.d("UserRepository", "原始响应: " + response);
+
             try {
                 LoginResponse loginResponse = gson.fromJson(response, LoginResponse.class);
+
+                // 检查解析后的对象
+                android.util.Log.d("UserRepository", "解析成功, code: " + loginResponse.getCode());
+                android.util.Log.d("UserRepository", "msg: " + loginResponse.getMsg());
+
                 if (loginResponse.isSuccess() && loginResponse.getData() != null) {
-                    // 登录成功，缓存用户信息
+                    android.util.Log.d("UserRepository", "用户数据: " + loginResponse.getData().getNickname());
                     User user = convertToUser(loginResponse);
                     spHelper.saveUser(user);
+                    android.util.Log.d("UserRepository", "用户保存成功");
+                } else {
+                    android.util.Log.e("UserRepository", "登录失败或数据为空, isSuccess: " + loginResponse.isSuccess());
                 }
+
                 if (callback != null) {
                     callback.onResult(loginResponse);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                android.util.Log.e("UserRepository", "解析失败", e);
+                android.util.Log.e("UserRepository", "原始响应内容: " + response);
                 if (callback != null) {
-                    callback.onError("解析登录响应失败：" + e.getMessage());
+                    callback.onError("解析登录响应失败：" + e.getMessage() + "\n响应内容：" + response);
                 }
             }
         }).start();

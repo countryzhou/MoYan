@@ -1,5 +1,7 @@
 package com.androidcourse.moyan.network;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -37,6 +39,8 @@ public class SocketClient {
     public String sendRequest(String jsonRequest) {
         String response = null;
         try {
+            Log.d("SocketClient", "发送请求: " + jsonRequest);
+
             socket = new Socket(SERVER_IP, SERVER_PORT);
             socket.setSoTimeout(10000);
 
@@ -56,8 +60,6 @@ public class SocketClient {
         } catch (Exception e) {
             e.printStackTrace();
             response = "{\"code\":1,\"msg\":\"网络连接失败：" + e.getMessage() + "\",\"data\":null}";
-        } finally {
-            close();
         }
         return response;
     }

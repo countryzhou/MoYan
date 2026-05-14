@@ -124,7 +124,7 @@ public class UserNetworkManager {
     public String updateNickname(int userId, String nickname) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "updateNickname");
+            request.put("action", "updateNickname");
 
             JSONObject params = new JSONObject();
             params.put("userId", userId);
@@ -147,7 +147,7 @@ public class UserNetworkManager {
     public String updateAvatar(int userId, String avatarUrl) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "updateAvatar");
+            request.put("action", "updateAvatar");
 
             JSONObject params = new JSONObject();
             params.put("userId", userId);

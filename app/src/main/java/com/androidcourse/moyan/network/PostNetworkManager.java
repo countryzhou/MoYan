@@ -50,7 +50,7 @@ public class PostNetworkManager {
                              String content, String tags, List<String> imagePaths) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "createPost");
+            request.put("action", "createPost");
 
             JSONObject params = new JSONObject();
             params.put("userId", userId);
@@ -96,7 +96,7 @@ public class PostNetworkManager {
     public String getPostList(int page, int size, int userId) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "getPostList");
+            request.put("action", "getPostList");
 
             JSONObject params = new JSONObject();
             params.put("page", page);
@@ -120,7 +120,7 @@ public class PostNetworkManager {
     public String getPostDetail(int postId, int userId) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "getPostDetail");
+            request.put("action", "getPostDetail");
 
             JSONObject params = new JSONObject();
             params.put("postId", postId);
@@ -145,7 +145,7 @@ public class PostNetworkManager {
     public String searchPosts(String keyword, String tag, String sortBy, int page) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "searchPosts");
+            request.put("action", "searchPosts");
 
             JSONObject params = new JSONObject();
             params.put("keyword", keyword);
@@ -173,7 +173,7 @@ public class PostNetworkManager {
     public String ratePost(int postId, int userId, int tagAccuracy, int articleScore, String comment) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "ratePost");
+            request.put("action", "ratePost");
 
             JSONObject params = new JSONObject();
             params.put("postId", postId);
@@ -200,7 +200,7 @@ public class PostNetworkManager {
     public String tipPost(int postId, int fromUserId, int amount) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "tipPost");
+            request.put("action", "tipPost");
 
             JSONObject params = new JSONObject();
             params.put("postId", postId);
@@ -226,7 +226,7 @@ public class PostNetworkManager {
     public String report(int reporterId, int targetType, int targetId, String reason) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "report");
+            request.put("action", "report");
 
             JSONObject params = new JSONObject();
             params.put("reporterId", reporterId);
@@ -249,7 +249,7 @@ public class PostNetworkManager {
     public String getTodayTask() {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "getTodayTask");
+            request.put("action", "getTodayTask");
             request.put("params", new JSONObject());
 
             return SocketClient.getInstance().sendRequest(request.toString());
@@ -269,7 +269,7 @@ public class PostNetworkManager {
     public String submitTaskAnswer(int taskId, int userId, String content) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "submitTaskAnswer");
+            request.put("action", "submitTaskAnswer");
 
             JSONObject params = new JSONObject();
             params.put("taskId", taskId);

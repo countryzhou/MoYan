@@ -31,7 +31,7 @@ public class CommentNetworkManager {
     public String getComments(int postId, int page, int pageSize) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "get_comments");
+            request.put("action", "get_comments");
             request.put("postId", postId);
             request.put("page", page);
             request.put("pageSize", pageSize);
@@ -54,7 +54,7 @@ public class CommentNetworkManager {
     public String addComment(int postId, int userId, String content, int replyToCommentId) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "add_comment");
+            request.put("action", "add_comment");
             request.put("postId", postId);
             request.put("userId", userId);
             request.put("content", content);
@@ -76,7 +76,7 @@ public class CommentNetworkManager {
     public String deleteComment(int commentId, int userId) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "delete_comment");
+            request.put("action", "delete_comment");
             request.put("commentId", commentId);
             request.put("userId", userId);
 
@@ -97,7 +97,7 @@ public class CommentNetworkManager {
     public String likeComment(int commentId, int userId, boolean isLike) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "like_comment");
+            request.put("action", "like_comment");
             request.put("commentId", commentId);
             request.put("userId", userId);
             request.put("isLike", isLike);
@@ -119,7 +119,7 @@ public class CommentNetworkManager {
     public String getReplies(int commentId, int page, int pageSize) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "get_replies");
+            request.put("action", "get_replies");
             request.put("commentId", commentId);
             request.put("page", page);
             request.put("pageSize", pageSize);
@@ -139,7 +139,7 @@ public class CommentNetworkManager {
     public String getCommentCount(int postId) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "get_comment_count");
+            request.put("action", "get_comment_count");
             request.put("postId", postId);
 
             return SocketClient.getInstance().sendRequest(request.toString());
@@ -160,7 +160,7 @@ public class CommentNetworkManager {
     public String createReply(int postId, int userId, boolean isAnonymous, String content) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "createReply");
+            request.put("action", "createReply");
 
             JSONObject params = new JSONObject();
             params.put("postId", postId);
@@ -185,7 +185,7 @@ public class CommentNetworkManager {
     public String getReplyList(int postId, int page) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "getReplies");
+            request.put("action", "getReplies");
 
             JSONObject params = new JSONObject();
             params.put("postId", postId);

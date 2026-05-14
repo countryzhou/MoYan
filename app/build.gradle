@@ -38,6 +38,7 @@ android {
         release {
             // Release 构建：使用真实网络请求
             buildConfigField("boolean", "IS_DEBUG", "false")
+            signingConfig signingConfigs.debug
         }
     }
 

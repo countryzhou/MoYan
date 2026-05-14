@@ -5,9 +5,9 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import com.androidcourse.moyan.model.LoginResponse;
-import com.androidcourse.moyan.model.User;
 import com.androidcourse.moyan.repository.UserRepository;
 import com.androidcourse.moyan.utils.SharedPrefsHelper;
+import com.androidcourse.moyan.model.User;
 
 /**
  * 登录ViewModel
@@ -44,33 +44,22 @@ public class LoginViewModel {
             public void onResult(LoginResponse result) {
                 mainHandler.post(() -> {
                     if (result.isSuccess()) {
-                        // 关键：从 LoginResponse 中获取 UserData 并转换为 User
-                        if (result.getData() != null) {
-                            LoginResponse.UserData userData = result.getData();
-
-                            // 创建 User 对象
+                        // ✅ 保存用户信息
+                        LoginResponse.UserData userData = result.getData();
+                        if (userData != null) {
                             User user = new User();
                             user.setUserId(userData.getUserId());
                             user.setPhone(userData.getPhone());
                             user.setNickname(userData.getNickname());
                             user.setAvatarUrl(userData.getAvatarUrl());
-                            user.setToken(userData.getToken());  // ✅ 关键修复
-
-                            // 可选：设置其他字段
                             user.setWarningCount(userData.getWarningCount());
                             user.setBanned(userData.isBanned());
+                            user.setToken(userData.getToken()); // 如果有token
 
-                            // 保存用户信息
+                            // 保存到SharedPreferences
                             SharedPrefsHelper.getInstance().saveUser(user);
-
-                            // 添加日志验证
-                            android.util.Log.d("LoginViewModel", "========== 登录成功 ==========");
-                            android.util.Log.d("LoginViewModel", "userId: " + user.getUserId());
-                            android.util.Log.d("LoginViewModel", "nickname: " + user.getNickname());
-                            android.util.Log.d("LoginViewModel", "phone: " + user.getPhone());
-                            android.util.Log.d("LoginViewModel", "token: " + user.getToken());
-                            android.util.Log.d("LoginViewModel", "isLogin: " + SharedPrefsHelper.getInstance().isLogin());
-                            android.util.Log.d("LoginViewModel", "isGuestMode: " + SharedPrefsHelper.getInstance().isGuestMode());
+                            android.util.Log.d("LoginViewModel", "用户保存成功: " + user.getNickname() + " (ID: " + user.getUserId() + ")");
+                            android.util.Log.d("LoginViewModel", "登录状态: " + SharedPrefsHelper.getInstance().isLogin());
                         }
 
                         if (callback != null) callback.onLoginSuccess(result);
@@ -146,6 +135,6 @@ public class LoginViewModel {
         void onLoginSuccess(LoginResponse response);
         void onLoginFailure(String error);
         void onValidationError(String error);
-        void onAccountNotExist();
+        void onAccountNotExist();  // 新增：账号不存在回调
     }
 }
