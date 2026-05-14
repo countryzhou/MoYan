@@ -141,7 +141,7 @@ public class HomeActivity extends AppCompatActivity {
                 return;
             }
             startActivity(new Intent(HomeActivity.this, MessageActivity.class));
-            finish();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         });
 
         navProfile.setOnClickListener(v -> {
@@ -149,11 +149,11 @@ public class HomeActivity extends AppCompatActivity {
             if (sharedPrefsHelper.isGuestMode() || !sharedPrefsHelper.isLogin()) {
                 Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
                 startActivity(intent);
-                finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 return;
             }
             startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
-            finish();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         });
     }
 
