@@ -9,8 +9,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidcourse.moyan.R;
 import com.androidcourse.moyan.BuildConfig;
+import com.androidcourse.moyan.R;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 

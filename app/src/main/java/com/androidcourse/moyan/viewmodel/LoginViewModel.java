@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.androidcourse.moyan.model.LoginResponse;
 import com.androidcourse.moyan.repository.UserRepository;
 import com.androidcourse.moyan.utils.SharedPrefsHelper;
+import com.androidcourse.moyan.model.User;
 
 /**
  * 登录ViewModel
@@ -43,8 +44,24 @@ public class LoginViewModel {
             public void onResult(LoginResponse result) {
                 mainHandler.post(() -> {
                     if (result.isSuccess()) {
-                        // 登录成功，清除游客模式
-                        SharedPrefsHelper.getInstance().clearGuestMode();
+                        // ✅ 保存用户信息
+                        LoginResponse.UserData userData = result.getData();
+                        if (userData != null) {
+                            User user = new User();
+                            user.setUserId(userData.getUserId());
+                            user.setPhone(userData.getPhone());
+                            user.setNickname(userData.getNickname());
+                            user.setAvatarUrl(userData.getAvatarUrl());
+                            user.setWarningCount(userData.getWarningCount());
+                            user.setBanned(userData.isBanned());
+                            user.setToken(userData.getToken()); // 如果有token
+
+                            // 保存到SharedPreferences
+                            SharedPrefsHelper.getInstance().saveUser(user);
+                            android.util.Log.d("LoginViewModel", "用户保存成功: " + user.getNickname() + " (ID: " + user.getUserId() + ")");
+                            android.util.Log.d("LoginViewModel", "登录状态: " + SharedPrefsHelper.getInstance().isLogin());
+                        }
+
                         if (callback != null) callback.onLoginSuccess(result);
                     } else {
                         String errorMsg = result.getMsg();
