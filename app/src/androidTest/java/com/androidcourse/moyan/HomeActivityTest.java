@@ -5,12 +5,13 @@ import org.junit.Test;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
-import static androidx.test.espresso.contrib.RecyclerViewActions.scrollToPosition;
+
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
+import androidx.test.espresso.contrib.RecyclerViewActions;
 
 import com.androidcourse.moyan.activity.HomeActivity;
 
@@ -59,7 +60,7 @@ public class HomeActivityTest extends BaseTest<HomeActivity> {
     public void testTrendCardsHorizontalScroll() {
         // 滚动到第3个位置
         onView(withId(R.id.rv_trend_cards))
-                .perform(scrollToPosition(2));
+                .perform(RecyclerViewActions.scrollToPosition(2));
         waitFor(500);
         // 验证点指示器更新
     }
@@ -71,7 +72,7 @@ public class HomeActivityTest extends BaseTest<HomeActivity> {
     public void testNewsListVerticalScroll() {
         // 滚动到第10个位置
         onView(withId(R.id.rv_news_list))
-                .perform(scrollToPosition(10));
+                .perform(RecyclerViewActions.scrollToPosition(10));
         waitFor(500);
     }
 
@@ -222,7 +223,7 @@ public class HomeActivityTest extends BaseTest<HomeActivity> {
     public void testClickTrendCard() {
         // 点击第一个趋势卡片
         onView(withId(R.id.rv_trend_cards))
-                .perform(actionOnItemAtPosition(0, click()));
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         waitFor(500);
         // 验证跳转到PostdetailActivity
     }
@@ -236,7 +237,7 @@ public class HomeActivityTest extends BaseTest<HomeActivity> {
     public void testClickNewsItem() {
         // 点击第一个新闻项
         onView(withId(R.id.rv_news_list))
-                .perform(actionOnItemAtPosition(0, click()));
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         waitFor(500);
         // 验证跳转到PostdetailActivity
     }
