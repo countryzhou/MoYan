@@ -14,6 +14,12 @@ android {
         buildConfig = true
     }
 
+    sourceSets {
+        androidTest {
+            java.srcDirs = ['src/androidTest/java']
+        }
+    }
+
     defaultConfig {
         applicationId "com.androidcourse.moyan"
         minSdk 24
@@ -40,14 +46,19 @@ android {
             buildConfigField("boolean", "IS_DEBUG", "false")
             signingConfig signingConfigs.debug
         }
+
+        testBuildType "release"
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
+
 }
 
+// ... existing code ...
 dependencies {
     implementation libs.appcompat
     implementation libs.material
@@ -55,9 +66,14 @@ dependencies {
     implementation libs.constraintlayout
     implementation libs.room.common.jvm
     implementation libs.firebase.database
-    testImplementation libs.junit
-    androidTestImplementation libs.ext.junit
-    androidTestImplementation libs.espresso.core
+    implementation libs.androidx.junit
+    implementation libs.androidx.uiautomator
+    implementation libs.androidx.espresso.core
+    // Deleted:implementation libs.core
+    // Deleted:implementation libs.androidx.junit
+
+    // JUnit4 测试框架
+    testImplementation 'junit:junit:4.13.2'
 
     //new客户端用了gson库
     implementation 'com.google.code.gson:gson:2.10.1'
@@ -65,6 +81,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     // Glide图片加载
     implementation 'com.github.bumptech.glide:glide:4.16.0'
+    testImplementation libs.androidx.junit
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
 
     implementation 'com.google.android.material:material:1.9.0'
@@ -73,4 +90,18 @@ dependencies {
     implementation "androidx.room:room-runtime:2.5.2"
     annotationProcessor "androidx.room:room-compiler:2.5.2"
 
+    // ========== 单元测试 ==========
+    testImplementation 'junit:junit:4.13.2'
+
+    // ========== Android UI 测试 ==========
+    androidTestImplementation 'androidx.test:core:1.6.1'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test:rules:1.6.1'
+    androidTestImplementation 'androidx.test:monitor:1.7.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.6.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.6.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-idling-resource:3.6.1'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.3.0'
 }

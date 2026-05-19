@@ -30,7 +30,7 @@ public class UserNetworkManager {
     public String login(String phone, String password) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "login");
+            request.put("action", "login");
 
             JSONObject params = new JSONObject();
             params.put("phone", phone);
@@ -54,7 +54,7 @@ public class UserNetworkManager {
     public String register(String phone, String password, String nickname) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "register");
+            request.put("action", "register");
 
             JSONObject params = new JSONObject();
             params.put("phone", phone);
@@ -77,7 +77,7 @@ public class UserNetworkManager {
     public String getUserInfo(int userId) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "getUserInfo");
+            request.put("action", "getUserInfo");
 
             JSONObject params = new JSONObject();
             params.put("userId", userId);
@@ -100,7 +100,7 @@ public class UserNetworkManager {
     public String updatePassword(int userId, String oldPassword, String newPassword) {
         try {
             JSONObject request = new JSONObject();
-            request.put("type", "updatePassword");
+            request.put("action", "updatePassword");
 
             JSONObject params = new JSONObject();
             params.put("userId", userId);
