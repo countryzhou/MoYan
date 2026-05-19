@@ -54,8 +54,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+}
 
-
+// 添加编译参数以显示详细的弃用信息
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ["-Xlint:deprecation"]
 }
 
 dependencies {

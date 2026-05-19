@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -87,7 +88,7 @@ public class EditprofileActivity extends AppCompatActivity {
         currentUser = SharedPrefsHelper.getInstance().getUser();
         if (currentUser != null) {
             etNickname.setText(currentUser.getNickname());
-            if (currentUser.getAvatarUrl() != null && !currentUser.getAvatarUrl().isEmpty()) {
+            if (!TextUtils.isEmpty(currentUser.getAvatarUrl())) {
                 Glide.with(this)
                         .load(currentUser.getAvatarUrl())
                         .placeholder(R.drawable.ic_avatar_placeholder)
@@ -125,11 +126,53 @@ public class EditprofileActivity extends AppCompatActivity {
             return;
         }
 
-        // TODO: 上传头像到服务器
-        // 保存昵称
-        User updatedUser = currentUser;
-        updatedUser.setNickname(nickname);
+        // 如果有头像上传，先上传头像
+        if (selectedAvatarUri != null) {
+            uploadAvatarAndUpdate(nickname);
+        } else {
+            // 只更新昵称
+            updateNickname(nickname);
+        }
+    }
 
+    /**
+     * 更新昵称（本地 + 服务端）
+     */
+    private void updateNickname(String nickname) {
+        // 调用仓库层更新
+        userRepository.updateNickname(currentUser.getUserId(), nickname, new UserRepository.RepositoryCallback<Void>() {
+            @Override
+            public void onResult(Void result) {
+                runOnUiThread(() -> {
+                    Toast.makeText(EditprofileActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
+                    finish();
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(EditprofileActivity.this, "保存失败: " + error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    /**
+     * 上传头像并更新
+     */
+    private void uploadAvatarAndUpdate(String nickname) {
+        // TODO: 实现头像上传逻辑
+        // 1. 将 Uri 转换为文件路径
+        // 2. 上传到服务器
+        // 3. 获取新的 avatarUrl
+        // 4. 更新用户信息
+        
+        // 临时方案：只更新本地
+        currentUser.setNickname(nickname);
+        // currentUser.setAvatarUrl(selectedAvatarUri.toString());
+        SharedPrefsHelper.getInstance().saveUser(currentUser);
+        
         Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
         finish();
     }

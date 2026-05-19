@@ -139,6 +139,41 @@ public class UserRepository {
     }
 
     /**
+     * 更新昵称
+     * @param userId 用户ID
+     * @param nickname 新昵称
+     * @param callback 回调
+     */
+    public void updateNickname(int userId, String nickname, RepositoryCallback<Void> callback) {
+        new Thread(() -> {
+            String response = networkManager.updateNickname(userId, nickname);
+            try {
+                LoginResponse loginResponse = gson.fromJson(response, LoginResponse.class);
+                if (loginResponse != null && loginResponse.isSuccess()) {
+                    // 更新本地用户信息
+                    User currentUser = spHelper.getUser();
+                    if (currentUser != null) {
+                        currentUser.setNickname(nickname);
+                        spHelper.saveUser(currentUser);
+                    }
+                    if (callback != null) {
+                        callback.onResult(null);
+                    }
+                } else {
+                    if (callback != null) {
+                        callback.onError(loginResponse != null ? loginResponse.getMsg() : "更新失败");
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (callback != null) {
+                    callback.onError("解析响应失败：" + e.getMessage());
+                }
+            }
+        }).start();
+    }
+
+    /**
      * 将 LoginResponse.UserData 转换为 User
      */
     private User convertToUser(LoginResponse loginResponse) {

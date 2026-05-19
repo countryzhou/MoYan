@@ -11,8 +11,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import androidx.test.InstrumentationRegistry;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.androidcourse.moyan.activity.HomeActivity;
 import com.androidcourse.moyan.activity.LoginActivity;
@@ -33,10 +34,9 @@ public class LoginActivityTest extends BaseTest<LoginActivity> {
     protected void clearLoginState() {
         // 清除SharedPreferences中的登录信息
         InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
-            SharedPrefsHelper.init(InstrumentationRegistry.getInstrumentation().getTargetContext());
+            SharedPrefsHelper.init(ApplicationProvider.getApplicationContext());
             SharedPrefsHelper.getInstance().logout();
         });
-        InstrumentationRegistry.getTargetContext();
     }
 
     // ========== 界面元素测试 ==========

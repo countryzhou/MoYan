@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.androidcourse.moyan.R;
 
 import androidx.activity.EdgeToEdge;
@@ -18,6 +19,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.androidcourse.moyan.utils.SharedPrefsHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +40,15 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 检查登录状态
+        if (!SharedPrefsHelper.getInstance().isLogin()) {
+            Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_message);
 
@@ -66,7 +78,7 @@ public class MessageActivity extends AppCompatActivity {
                 Intent intent = new Intent(MessageActivity.this, HomeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                overridePendingTransitionCompat(android.R.anim.fade_in, android.R.anim.fade_out);
             });
         }
         if (navExplore != null) {
@@ -74,15 +86,29 @@ public class MessageActivity extends AppCompatActivity {
                 Intent intent = new Intent(MessageActivity.this, InteractionActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                overridePendingTransitionCompat(android.R.anim.fade_in, android.R.anim.fade_out);
             });
         }
         if (navProfile != null) {
             navProfile.setOnClickListener(v -> {
                 Intent intent = new Intent(MessageActivity.this, ProfileActivity.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                overridePendingTransitionCompat(android.R.anim.fade_in, android.R.anim.fade_out);
             });
+        }
+    }
+
+    /**
+     * 兼容新旧版本的过渡动画
+     */
+    @SuppressWarnings("deprecation")
+    private void overridePendingTransitionCompat(int enterAnim, int exitAnim) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            // Android 14+ 使用新 API
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, enterAnim, exitAnim);
+        } else {
+            // Android 13 及以下使用旧 API
+            overridePendingTransition(enterAnim, exitAnim);
         }
     }
 
@@ -96,15 +122,15 @@ public class MessageActivity extends AppCompatActivity {
 
     private List<PrivateMessageItem> getMockPrivateMessages() {
         List<PrivateMessageItem> list = new ArrayList<>();
-        list.add(new PrivateMessageItem("新浪新闻", "特朗普认为是中国促使伊朗进行谈判...", "17:05"));
-        list.add(new PrivateMessageItem("活动通知", "超话社区：亲爱的@用户...", "3-27"));
-        list.add(new PrivateMessageItem("服务通知", "超话社区：#时光代理人...", "25-2-6"));
+        list.add(new PrivateMessageItem("系统通知", "欢迎使用陌言社交App！", "10:30"));
+        list.add(new PrivateMessageItem("点赞助手", "你的帖子获得了10个新赞", "昨天"));
+        list.add(new PrivateMessageItem("评论提醒", "张三评论了你的帖子", "星期一"));
+        list.add(new PrivateMessageItem("私信消息", "李四给你发了一条消息", "2024-01-15"));
         return list;
     }
 
     private void showComingSoonToast() {
-        android.widget.Toast.makeText(this, "功能开发中，敬请期待",
-                android.widget.Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "功能开发中，敬请期待", Toast.LENGTH_SHORT).show();
     }
 
     private static class PrivateMessageItem {
@@ -142,8 +168,10 @@ public class MessageActivity extends AppCompatActivity {
             holder.tvContent.setText(item.content);
             holder.tvTime.setText(item.time);
             holder.itemView.setOnClickListener(v -> {
-                android.widget.Toast.makeText(v.getContext(),
-                        "进入与" + item.name + "的聊天", android.widget.Toast.LENGTH_SHORT).show();
+
+                // TODO: 跳转到聊天详情页面
+                Toast.makeText(v.getContext(),
+                        "进入与" + item.name + "的聊天", Toast.LENGTH_SHORT).show();
             });
         }
 

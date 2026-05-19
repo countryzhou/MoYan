@@ -237,7 +237,6 @@ public class PostdetailActivity extends AppCompatActivity {
 
         isLiked = currentPost.isLiked();
         updateLikeUI();
-        loadPostImage();
 
         // 显示图片
         displayPostImages(currentPost);
@@ -315,27 +314,35 @@ public class PostdetailActivity extends AppCompatActivity {
     }
 
     private void toggleLike() {
+        if (currentPost == null) return;
+        
         isLiked = !isLiked;
         updateLikeUI();
+        
+        // 乐观更新 UI
         if (isLiked) {
             int newCount = currentPost.getLikeCount() + 1;
             currentPost.setLikeCount(newCount);
             tvLikeCountBottom.setText(String.valueOf(newCount));
-            Toast.makeText(this, "点赞成功", Toast.LENGTH_SHORT).show();
         } else {
             int newCount = currentPost.getLikeCount() - 1;
             currentPost.setLikeCount(newCount);
             tvLikeCountBottom.setText(String.valueOf(newCount));
-            Toast.makeText(this, "取消点赞", Toast.LENGTH_SHORT).show();
         }
+        
+        // TODO: 同步到服务端
+        // viewModel.toggleLike(currentPost.getPostId(), isLiked, callback);
+        
     }
 
     private void updateLikeUI() {
         if (isLiked) {
             ivLikeBottom.setImageResource(R.drawable.ic_like_outline);
+            ivLikeBottom.setColorFilter(getColor(R.color.colorAccent));
             tvLikeCountBottom.setTextColor(getColor(R.color.colorAccent));
         } else {
             ivLikeBottom.setImageResource(R.drawable.ic_like_empty);
+            ivLikeBottom.clearColorFilter();
             tvLikeCountBottom.setTextColor(getColor(R.color.text_secondary));
         }
     }
@@ -374,12 +381,6 @@ public class PostdetailActivity extends AppCompatActivity {
 
     private void scrollToComments() {
         rvComments.smoothScrollToPosition(0);
-    }
-
-    private void loadPostImage() {
-        Glide.with(this)
-                .load(R.drawable.img_car_placeholder)
-                .into(ivPostImage);
     }
 
     private void openUserProfile(int userId) {

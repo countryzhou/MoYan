@@ -36,6 +36,7 @@ public class CreatepostActivity extends AppCompatActivity {
 
     // UI组件
     private ImageView ivBack;
+    private EditText etTitle;
     private EditText etContent;
     private LinearLayout llImageContainer;
     private LinearLayout llAddImage;
@@ -98,6 +99,7 @@ public class CreatepostActivity extends AppCompatActivity {
 
     private void initViews() {
         ivBack = findViewById(R.id.ivBack);
+        etTitle = findViewById(R.id.etTitle);
         etContent = findViewById(R.id.etContent);
         llImageContainer = findViewById(R.id.llImageContainer);
         llAddImage = findViewById(R.id.llAddImage);
@@ -140,6 +142,13 @@ public class CreatepostActivity extends AppCompatActivity {
 
     private void setupViewModel() {
         viewModel = new ViewModelProvider(this).get(CreatePostViewModel.class);
+
+        // 观察标题
+        viewModel.getTitle().observe(this, title -> {
+            if (!TextUtils.equals(etTitle.getText().toString(), title)) {
+                etTitle.setText(title);
+            }
+        });
 
         // 观察内容
         viewModel.getContent().observe(this, content -> {
@@ -217,6 +226,20 @@ public class CreatepostActivity extends AppCompatActivity {
             viewModel.setAnonymous(anonymousCheckBox.isChecked());
         });
 
+        // 标题变化时同步到ViewModel
+        etTitle.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                viewModel.setTitle(s.toString());
+            }
+        });
+
         // 内容变化时同步到ViewModel
         etContent.addTextChangedListener(new android.text.TextWatcher() {
             @Override
@@ -236,12 +259,14 @@ public class CreatepostActivity extends AppCompatActivity {
      * 处理返回事件（统一处理）
      */
     private void handleBackPress() {
+        String title = etTitle.getText().toString().trim();
         String content = etContent.getText().toString().trim();
+        boolean hasTitle = !TextUtils.isEmpty(title);
         boolean hasContent = !TextUtils.isEmpty(content);
         boolean hasImages = !imagePaths.isEmpty();
         boolean hasTags = !selectedTags.isEmpty();
 
-        if (hasContent || hasImages || hasTags) {
+        if (hasTitle || hasContent || hasImages || hasTags) {
             new AlertDialog.Builder(this)
                     .setTitle("提示")
                     .setMessage("是否保存草稿？")
@@ -385,12 +410,8 @@ public class CreatepostActivity extends AppCompatActivity {
                 etCustomTag.setText("");
                 llCustomInput.setVisibility(View.GONE);
                 btnAddCustom.setVisibility(View.VISIBLE);
-                // 刷新标签列表
-                viewModel.getAllTags().observe(this, tags -> {
-                    if (tags != null) {
-                        updateTagContainer(llTagContainer, dialog);
-                    }
-                });
+                // 直接刷新标签容器
+                updateTagContainer(llTagContainer, dialog);
             } else {
                 Toast.makeText(this, "请输入标签名称", Toast.LENGTH_SHORT).show();
             }

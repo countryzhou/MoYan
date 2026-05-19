@@ -58,6 +58,8 @@ public abstract class BaseTest<T extends Activity> {
         targetContext = ApplicationProvider.getApplicationContext();
         clearLoginState();
         sleep(800);
+        // 等待Activity完全启动
+        sleep(1000);
     }
 
     @After
@@ -82,12 +84,14 @@ public abstract class BaseTest<T extends Activity> {
     }
 
     protected void inputText(int viewId, String text) {
+        // 使用 replaceText 替代 typeText 以支持中文输入
         onView(withId(viewId))
-                .perform(typeText(text), closeSoftKeyboard());
+                .perform(ViewActions.replaceText(text), closeSoftKeyboard());
     }
 
     protected void inputTextWithoutClose(int viewId, String text) {
-        onView(withId(viewId)).perform(typeText(text));
+        // 使用 replaceText 替代 typeText 以支持中文输入
+        onView(withId(viewId)).perform(ViewActions.replaceText(text));
     }
 
     // ==================== 视图验证方法 ====================
@@ -255,8 +259,9 @@ public abstract class BaseTest<T extends Activity> {
     // ==================== 高级工具方法 ====================
 
     protected void clearAndInputText(int viewId, String text) {
+        // 使用 replaceText 替代 typeText 以支持中文输入
         onView(withId(viewId))
-                .perform(ViewActions.clearText(), typeText(text), closeSoftKeyboard());
+                .perform(ViewActions.clearText(), ViewActions.replaceText(text), closeSoftKeyboard());
     }
 
     protected void assertTextContains(int viewId, String expectedText) {
@@ -285,6 +290,7 @@ public abstract class BaseTest<T extends Activity> {
         }
 
         @Override
+        @SuppressWarnings("deprecation")
         public boolean matchesSafely(Root root) {
             int type = root.getWindowLayoutParams().get().type;
             // Toast 的窗口类型

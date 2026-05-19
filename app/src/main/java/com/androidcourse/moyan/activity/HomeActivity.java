@@ -2,6 +2,7 @@ package com.androidcourse.moyan.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -102,7 +103,6 @@ public class HomeActivity extends AppCompatActivity {
             Intent intent = new Intent(HomeActivity.this, SearchActivity.class);
             startActivity(intent);
         });
-        etSearch.setFocusable(false);
 
         ivAvatar.setOnClickListener(v -> {
             // 游客模式不能进入个人主页
@@ -115,13 +115,8 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         fabWrite.setOnClickListener(v -> {
-            // 先检查是否登录
-            if (!sharedPrefsHelper.isLogin()) {
-                Toast.makeText(this, "请先登录后再发帖", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(HomeActivity.this, LoginActivity.class));
-                return;
-            }
-
+            if (!checkLogin()) return;
+            
             // 已登录，直接进入发帖页面
             Intent intent = new Intent(HomeActivity.this, CreatepostActivity.class);
             startActivity(intent);
@@ -141,20 +136,44 @@ public class HomeActivity extends AppCompatActivity {
                 return;
             }
             startActivity(new Intent(HomeActivity.this, MessageActivity.class));
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            overridePendingTransitionCompat(android.R.anim.fade_in, android.R.anim.fade_out);
         });
 
         navProfile.setOnClickListener(v -> {
-            // 游客模式跳转到登录页
+            // 游客模式或未登录跳转到登录页
             if (sharedPrefsHelper.isGuestMode() || !sharedPrefsHelper.isLogin()) {
-                Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                return;
+                if (!checkLogin()) return;
             }
             startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            overridePendingTransitionCompat(android.R.anim.fade_in, android.R.anim.fade_out);
         });
+    }
+
+    /**
+     * 兼容新旧版本的过渡动画
+     */
+    @SuppressWarnings("deprecation")
+    private void overridePendingTransitionCompat(int enterAnim, int exitAnim) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            // Android 14+ 使用新 API
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, enterAnim, exitAnim);
+        } else {
+            // Android 13 及以下使用旧 API
+            overridePendingTransition(enterAnim, exitAnim);
+        }
+    }
+
+    /**
+     * 检查是否已登录，未登录则跳转到登录页
+     * @return true 如果已登录
+     */
+    private boolean checkLogin() {
+        if (!sharedPrefsHelper.isLogin()) {
+            Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -164,7 +183,7 @@ public class HomeActivity extends AppCompatActivity {
         String message;
         if (sharedPrefsHelper.isLogin()) {
             User user = sharedPrefsHelper.getUser();
-            if (user != null && user.getNickname() != null) {
+            if (user != null && !TextUtils.isEmpty(user.getNickname())) {
                 message = "欢迎回来，" + user.getNickname() + "！";
             } else {
                 message = "欢迎回来！";

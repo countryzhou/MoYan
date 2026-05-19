@@ -2,6 +2,7 @@ package com.androidcourse.moyan.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,17 +36,19 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
+        
         loginViewModel = new LoginViewModel();
-        initViews();
-        setupListeners();
-
-        // 如果已登录，直接跳转首页
+        
+        // 如果已登录，直接跳转首页（在初始化UI之前）
         if (loginViewModel.isLogin()) {
             jumpToHome();
             finish();
+            return;
         }
+        
+        setContentView(R.layout.activity_login);
+        initViews();
+        setupListeners();
     }
 
     private void initViews() {
@@ -73,6 +76,22 @@ public class LoginActivity extends AppCompatActivity {
         String phone = etPhone.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
+        // 添加输入验证
+        if (TextUtils.isEmpty(phone)) {
+            Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(this, "请输入密码", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        if (phone.length() != 11) {
+            Toast.makeText(this, "手机号格式不正确", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         setLoading(true);
 
         if (BuildConfig.IS_DEBUG) {
@@ -92,12 +111,15 @@ public class LoginActivity extends AppCompatActivity {
 
             runOnUiThread(() -> {
                 setLoading(false);
-                if (phone.startsWith("1") && password.equals("123456")) {
-                    // ✅ 修复：创建 Mock 用户并保存
+                // 只允许特定的测试账号
+                if ((phone.equals("13800138000") || phone.equals("13900139000")) 
+                    && password.equals("123456")) {
+                    // 创建 Mock 用户并保存
                     User mockUser = new User();
                     mockUser.setUserId(10086);
                     mockUser.setPhone(phone);
-                    mockUser.setNickname("测试用户_" + phone.substring(7));
+                    String suffix = phone.length() >= 8 ? phone.substring(7) : phone;
+                    mockUser.setNickname("测试用户_" + suffix);
                     mockUser.setToken("mock_token_" + System.currentTimeMillis());
 
                     // 保存用户信息
@@ -110,7 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                     android.util.Log.d("LoginActivity", "token: " + mockUser.getToken());
                     android.util.Log.d("LoginActivity", "isLogin: " + SharedPrefsHelper.getInstance().isLogin());
 
-                    Toast.makeText(this, "登录成功！欢迎 " + mockUser.getNickname(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "登录成功！欢迎 " + mockUser.getNickname(), Toast.LENGTH_SHORT).show();
                     jumpToHome();
                 } else {
                     showAccountNotExistDialog();

@@ -4,11 +4,14 @@ import org.junit.Test;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
+// 添加 ViewActions 导入，替换 typeText
+import androidx.test.espresso.action.ViewActions;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 
 import com.androidcourse.moyan.activity.EditprofileActivity;
 
@@ -69,7 +72,7 @@ public class EditprofileActivityTest extends BaseTest<EditprofileActivity> {
     @Test
     public void testEditNicknameSuccess() {
         String newNickname = "新昵称_" + System.currentTimeMillis();
-        onView(withId(R.id.et_nickname)).perform(typeText(newNickname));
+        onView(withId(R.id.et_nickname)).perform(ViewActions.replaceText(newNickname), closeSoftKeyboard());
         onView(withId(R.id.tv_save)).perform(click());
         waitFor(500);
 
@@ -83,7 +86,7 @@ public class EditprofileActivityTest extends BaseTest<EditprofileActivity> {
      */
     @Test
     public void testSaveEmptyNickname() {
-        onView(withId(R.id.et_nickname)).perform(typeText(""));
+        onView(withId(R.id.et_nickname)).perform(ViewActions.replaceText(""), closeSoftKeyboard());
         onView(withId(R.id.tv_save)).perform(click());
         waitFor(500);
 
@@ -96,7 +99,7 @@ public class EditprofileActivityTest extends BaseTest<EditprofileActivity> {
      */
     @Test
     public void testSaveNicknameTooShort() {
-        onView(withId(R.id.et_nickname)).perform(typeText("a"));
+        onView(withId(R.id.et_nickname)).perform(ViewActions.replaceText("a"), closeSoftKeyboard());
         onView(withId(R.id.tv_save)).perform(click());
         waitFor(500);
 
@@ -110,7 +113,7 @@ public class EditprofileActivityTest extends BaseTest<EditprofileActivity> {
     @Test
     public void testSaveNicknameTooLong() {
         String longNickname = "这是一个非常非常非常长的昵称超过二十个字";
-        onView(withId(R.id.et_nickname)).perform(typeText(longNickname));
+        onView(withId(R.id.et_nickname)).perform(ViewActions.replaceText(longNickname), closeSoftKeyboard());
         onView(withId(R.id.tv_save)).perform(click());
         waitFor(500);
 
@@ -137,7 +140,7 @@ public class EditprofileActivityTest extends BaseTest<EditprofileActivity> {
     @Test
     public void testProfileUpdatedAfterSave() {
         String newNickname = "更新测试昵称";
-        onView(withId(R.id.et_nickname)).perform(typeText(newNickname));
+        onView(withId(R.id.et_nickname)).perform(ViewActions.replaceText(newNickname), closeSoftKeyboard());
         onView(withId(R.id.tv_save)).perform(click());
         waitFor(500);
 

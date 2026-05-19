@@ -24,6 +24,7 @@ public class CreatePostViewModel extends AndroidViewModel {
     private final TagRepository tagRepository;
 
     // LiveData
+    private final MutableLiveData<String> title = new MutableLiveData<>("");
     private final MutableLiveData<String> content = new MutableLiveData<>("");
     private final MutableLiveData<List<String>> imagePaths = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<String>> selectedTags = new MutableLiveData<>(new ArrayList<>());
@@ -50,6 +51,10 @@ public class CreatePostViewModel extends AndroidViewModel {
     }
 
     // Getters
+    public LiveData<String> getTitle() {
+        return title;
+    }
+
     public LiveData<String> getContent() {
         return content;
     }
@@ -83,6 +88,10 @@ public class CreatePostViewModel extends AndroidViewModel {
     }
 
     // Setters
+    public void setTitle(String text) {
+        title.setValue(text);
+    }
+
     public void setContent(String text) {
         content.setValue(text);
     }
@@ -218,6 +227,7 @@ public class CreatePostViewModel extends AndroidViewModel {
         isLoading.setValue(true);
 
         Draft draft = new Draft();
+        draft.setTitle(title.getValue() != null ? title.getValue() : "");
         draft.setContent(content.getValue() != null ? content.getValue() : "");
         draft.setImagePaths(imagePaths.getValue() != null ? imagePaths.getValue() : new ArrayList<>());
         draft.setTags(selectedTags.getValue() != null ? selectedTags.getValue() : new ArrayList<>());
@@ -272,6 +282,7 @@ public class CreatePostViewModel extends AndroidViewModel {
 
                 currentDraftId = draft.getId();
 
+                title.postValue(draft.getTitle() != null ? draft.getTitle() : "");
                 content.postValue(draft.getContent() != null ? draft.getContent() : "");
                 imagePaths.postValue(draft.getImagePaths() != null ? draft.getImagePaths() : new ArrayList<>());
                 selectedTags.postValue(draft.getTags() != null ? draft.getTags() : new ArrayList<>());
@@ -289,12 +300,24 @@ public class CreatePostViewModel extends AndroidViewModel {
 
     // 发布帖子
     public void publishPost() {
+        String postTitle = title.getValue();
         String postContent = content.getValue();
 
         if (postContent == null || postContent.trim().isEmpty()) {
             toastMessage.setValue("请输入内容");
             return;
         }
+
+        // 如果标题为空，使用内容前50字作为标题
+        if (postTitle == null || postTitle.trim().isEmpty()) {
+            postTitle = postContent.length() > 50
+                    ? postContent.substring(0, 50)
+                    : postContent;
+        }
+
+        // 创建 final 变量用于 lambda 表达式
+        final String finalTitle = postTitle;
+        final String finalContent = postContent;
 
         isLoading.setValue(true);
 
@@ -306,11 +329,6 @@ public class CreatePostViewModel extends AndroidViewModel {
         String tagsStr = tags != null && !tags.isEmpty()
                 ? String.join(",", tags)
                 : "";
-
-        // 设置标题：使用内容前50字
-        String title = postContent.length() > 50
-                ? postContent.substring(0, 50)
-                : postContent;
 
         // 获取用户ID
         int userId = getUserId();
@@ -324,8 +342,8 @@ public class CreatePostViewModel extends AndroidViewModel {
         android.util.Log.d("CreatePostVM", "=== 发帖信息 ===");
         android.util.Log.d("CreatePostVM", "用户ID: " + userId);
         android.util.Log.d("CreatePostVM", "是否匿名: " + anonymous);
-        android.util.Log.d("CreatePostVM", "标题: " + title);
-        android.util.Log.d("CreatePostVM", "内容: " + postContent);
+        android.util.Log.d("CreatePostVM", "标题: " + finalTitle);
+        android.util.Log.d("CreatePostVM", "内容: " + finalContent);
         android.util.Log.d("CreatePostVM", "标签: " + tagsStr);
         android.util.Log.d("CreatePostVM", "图片数量: " + (images != null ? images.size() : 0));
 
@@ -333,7 +351,7 @@ public class CreatePostViewModel extends AndroidViewModel {
         new Thread(() -> {
             try {
                 String response = PostNetworkManager.getInstance()
-                        .createPost(userId, anonymous, title, postContent, tagsStr, images);
+                        .createPost(userId, anonymous, finalTitle, finalContent, tagsStr, images);
 
                 android.util.Log.d("CreatePostVM", "服务器响应: " + response);
 
@@ -362,4 +380,5 @@ public class CreatePostViewModel extends AndroidViewModel {
             }
         }).start();
     }
+
 }

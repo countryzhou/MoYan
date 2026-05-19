@@ -29,7 +29,7 @@ public class SearchActivity extends AppCompatActivity {
 
     // 搜索栏控件
     private EditText etSearch;
-    private ImageView tvSearch;
+    private ImageView ivSearch;
     private TextView tvBack;
 
     // 历史记录视图
@@ -71,7 +71,7 @@ public class SearchActivity extends AppCompatActivity {
         // 搜索栏
         tvBack = findViewById(R.id.tv_back);
         etSearch = findViewById(R.id.et_search);
-        tvSearch = findViewById(R.id.tv_search);
+        ivSearch = findViewById(R.id.tv_search);
 
         // 历史记录视图
         viewHistory = findViewById(R.id.view_history);
@@ -99,7 +99,7 @@ public class SearchActivity extends AppCompatActivity {
         tvBack.setOnClickListener(v -> finish());
 
         // 搜索按钮
-        tvSearch.setOnClickListener(v -> performSearch());
+        ivSearch.setOnClickListener(v -> performSearch());
 
         // 搜索框输入监听
         etSearch.addTextChangedListener(new TextWatcher() {
@@ -143,33 +143,38 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void updateCategoryUI() {
-        // 重置颜色
-        tvAll.setTextColor(0xFF333333);
-        tvUser.setTextColor(0xFF333333);
-        tvImage.setTextColor(0xFF333333);
-
-        // 高亮当前选中
+        // 使用资源颜色
+        int defaultColor = getColor(R.color.text_main);
+        int accentColor = getColor(R.color.colorAccent);
+        
+        tvAll.setTextColor(defaultColor);
+        tvUser.setTextColor(defaultColor);
+        tvImage.setTextColor(defaultColor);
+        
         switch (currentCategory) {
             case "all":
-                tvAll.setTextColor(0xFFFF0000);
+                tvAll.setTextColor(accentColor);
                 break;
             case "user":
-                tvUser.setTextColor(0xFFFF0000);
+                tvUser.setTextColor(accentColor);
                 break;
             case "image":
-                tvImage.setTextColor(0xFFFF0000);
+                tvImage.setTextColor(accentColor);
                 break;
         }
     }
 
     private void updateSortUI() {
-        tvComprehensive.setTextColor(0xFF999999);
-        tvLatest.setTextColor(0xFF999999);
-
+        int defaultColor = getColor(R.color.text_secondary);
+        int accentColor = getColor(R.color.colorAccent);
+        
+        tvComprehensive.setTextColor(defaultColor);
+        tvLatest.setTextColor(defaultColor);
+        
         if ("comprehensive".equals(currentSort)) {
-            tvComprehensive.setTextColor(0xFFFF0000);
+            tvComprehensive.setTextColor(accentColor);
         } else {
-            tvLatest.setTextColor(0xFFFF0000);
+            tvLatest.setTextColor(accentColor);
         }
     }
 
@@ -369,7 +374,6 @@ public class SearchActivity extends AppCompatActivity {
                 if (viewResult.getVisibility() == View.VISIBLE) {
                     viewResult.setVisibility(View.GONE);
                     viewHistory.setVisibility(View.VISIBLE);
-                    etSearch.setText("");
                 } else {
                     // 如果没有搜索结果视图显示，调用 finish
                     finish();
