@@ -10,7 +10,6 @@
     android:paddingBottom="10dp"
     android:background="@color/reply_bg">
 
-    <!-- 回复头部：头像和用户名 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,7 +37,6 @@
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
-            <!-- 回复目标（显示被回复的人） -->
             <TextView
                 android:id="@+id/tvReplyTarget"
                 android:layout_width="wrap_content"
@@ -53,7 +51,6 @@
 
     </LinearLayout>
 
-    <!-- 回复内容 -->
     <TextView
         android:id="@+id/tvReplyContent"
         android:layout_width="match_parent"
@@ -65,7 +62,6 @@
         android:textSize="13sp"
         android:lineSpacingExtra="2dp" />
 
-    <!-- 底部操作栏：时间 | 回复 | 点赞 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -74,7 +70,6 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
-        <!-- 回复时间 -->
         <TextView
             android:id="@+id/tvReplyTime"
             android:layout_width="0dp"
@@ -84,7 +79,6 @@
             android:textColor="@color/text_secondary"
             android:textSize="11sp" />
 
-        <!-- 回复此回复的按钮 -->
         <TextView
             android:id="@+id/tvReplyToReply"
             android:layout_width="wrap_content"
@@ -93,9 +87,9 @@
             android:textColor="@color/text_secondary"
             android:textSize="11sp"
             android:paddingStart="8dp"
-            android:paddingEnd="8dp" />
+            android:paddingEnd="8dp"
+            android:visibility="gone" />
 
-        <!-- 点赞按钮 -->
         <LinearLayout
             android:id="@+id/layoutReplyLike"
             android:layout_width="wrap_content"
@@ -124,7 +118,6 @@
 
     </LinearLayout>
 
-    <!-- 删除按钮（单独一行，仅作者可见） -->
     <TextView
         android:id="@+id/tvReplyDelete"
         android:layout_width="wrap_content"

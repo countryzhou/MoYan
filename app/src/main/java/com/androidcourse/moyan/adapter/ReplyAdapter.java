@@ -77,45 +77,50 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder> 
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        private CircleImageView ivAvatar;
-        private TextView tvNickname;
-        private TextView tvContent;
-        private TextView tvCommentTime;
-        private ImageView ivLike;
-        private TextView tvLikeCount;
-        private TextView tvDelete;
-        private LinearLayout layoutLike;
+        // ✅ 修正：使用布局中正确的 ID
+        private CircleImageView ivReplyAvatar;
+        private TextView tvReplyNickname;
+        private TextView tvReplyContent;
+        private TextView tvReplyTime;
+        private ImageView ivReplyLike;
+        private TextView tvReplyLikeCount;
+        private TextView tvReplyDelete;
+        private LinearLayout layoutReplyLike;
+        private TextView tvReplyToReply;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivAvatar = itemView.findViewById(R.id.ivAvatar);
-            tvNickname = itemView.findViewById(R.id.tvNickname);
-            tvContent = itemView.findViewById(R.id.tvContent);
-            tvCommentTime = itemView.findViewById(R.id.tvCommentTime);
-            ivLike = itemView.findViewById(R.id.ivLike);
-            tvLikeCount = itemView.findViewById(R.id.tvLikeCount);
-            tvDelete = itemView.findViewById(R.id.tvDelete);
-            layoutLike = itemView.findViewById(R.id.layoutLike);
+            // ✅ 使用正确的 ID
+            ivReplyAvatar = itemView.findViewById(R.id.ivReplyAvatar);
+            tvReplyNickname = itemView.findViewById(R.id.tvReplyNickname);
+            tvReplyContent = itemView.findViewById(R.id.tvReplyContent);
+            tvReplyTime = itemView.findViewById(R.id.tvReplyTime);
+            ivReplyLike = itemView.findViewById(R.id.ivReplyLike);
+            tvReplyLikeCount = itemView.findViewById(R.id.tvReplyLikeCount);
+            tvReplyDelete = itemView.findViewById(R.id.tvReplyDelete);
+            layoutReplyLike = itemView.findViewById(R.id.layoutReplyLike);
+            tvReplyToReply = itemView.findViewById(R.id.tvReplyToReply);
         }
 
         public void bind(Reply reply, int position) {
             // 设置昵称（支持匿名显示）
             if (reply.isAnonymous()) {
-                tvNickname.setText("匿名用户");
+                tvReplyNickname.setText("匿名用户");
+                tvReplyToReply.setVisibility(View.GONE);
             } else if (TextUtils.isEmpty(reply.getNickname())) {
-                tvNickname.setText("用户" + reply.getUserId());
+                tvReplyNickname.setText("用户" + reply.getUserId());
             } else {
-                tvNickname.setText(reply.getNickname());
+                tvReplyNickname.setText(reply.getNickname());
             }
 
             // 设置内容
-            tvContent.setText(reply.getContent());
+            tvReplyContent.setText(reply.getContent());
 
             // 设置时间
-            tvCommentTime.setText(TimeUtils.formatRelativeTime(reply.getCreateTime()));
+            tvReplyTime.setText(TimeUtils.formatRelativeTime(reply.getCreateTime()));
 
             // 设置点赞数
-            tvLikeCount.setText(String.valueOf(reply.getLikeCount()));
+            tvReplyLikeCount.setText(String.valueOf(reply.getLikeCount()));
 
             // 设置点赞状态
             updateLikeIcon(reply.isLiked());
@@ -126,13 +131,13 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder> 
                         .load(reply.getAvatarUrl())
                         .placeholder(R.drawable.ic_avatar_placeholder)
                         .error(R.drawable.ic_avatar_placeholder)
-                        .into(ivAvatar);
+                        .into(ivReplyAvatar);
             } else {
-                ivAvatar.setImageResource(R.drawable.ic_avatar_placeholder);
+                ivReplyAvatar.setImageResource(R.drawable.ic_avatar_placeholder);
             }
 
             // 头像点击（匿名用户不可点击）
-            ivAvatar.setOnClickListener(v -> {
+            ivReplyAvatar.setOnClickListener(v -> {
                 if (reply.isProfileAccessible() && listener != null) {
                     listener.onAvatarClick(reply);
                 }
@@ -140,27 +145,27 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder> 
 
             // 删除按钮（只有回复作者可见）
             if (reply.getUserId() == currentUserId) {
-                tvDelete.setVisibility(View.VISIBLE);
-                tvDelete.setOnClickListener(v -> {
+                tvReplyDelete.setVisibility(View.VISIBLE);
+                tvReplyDelete.setOnClickListener(v -> {
                     if (listener != null) {
                         listener.onDeleteClick(reply, position);
                     }
                 });
             } else {
-                tvDelete.setVisibility(View.GONE);
+                tvReplyDelete.setVisibility(View.GONE);
             }
 
             // 点赞按钮
-            layoutLike.setOnClickListener(v -> toggleLike(reply, position));
+            layoutReplyLike.setOnClickListener(v -> toggleLike(reply, position));
         }
 
         private void updateLikeIcon(boolean isLiked) {
             if (isLiked) {
-                ivLike.setImageResource(R.drawable.ic_like_outline);
-                tvLikeCount.setTextColor(itemView.getContext().getColor(R.color.colorAccent));
+                ivReplyLike.setImageResource(R.drawable.ic_like_outline);
+                tvReplyLikeCount.setTextColor(itemView.getContext().getColor(R.color.colorAccent));
             } else {
-                ivLike.setImageResource(R.drawable.ic_like_empty);
-                tvLikeCount.setTextColor(itemView.getContext().getColor(R.color.text_secondary));
+                ivReplyLike.setImageResource(R.drawable.ic_like_empty);
+                tvReplyLikeCount.setTextColor(itemView.getContext().getColor(R.color.text_secondary));
             }
         }
 
@@ -168,13 +173,11 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder> 
             boolean newLikeState = !reply.isLiked();
             int newLikeCount = reply.getLikeCount() + (newLikeState ? 1 : -1);
 
-            // 乐观更新UI
             reply.setLiked(newLikeState);
             reply.setLikeCount(newLikeCount);
             updateLikeIcon(newLikeState);
-            tvLikeCount.setText(String.valueOf(newLikeCount));
+            tvReplyLikeCount.setText(String.valueOf(newLikeCount));
 
-            // 通过监听器通知上层处理网络请求
             if (listener != null) {
                 listener.onLikeClick(reply, position);
             }

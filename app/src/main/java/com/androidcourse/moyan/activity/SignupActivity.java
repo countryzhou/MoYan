@@ -9,15 +9,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import com.androidcourse.moyan.R;
 
+import com.androidcourse.moyan.R;
 import com.androidcourse.moyan.model.LoginResponse;
 import com.androidcourse.moyan.viewmodel.SignupViewModel;
 
-/**
- * 注册页面
- * 使用 SignupViewModel 处理注册逻辑
- */
 public class SignupActivity extends AppCompatActivity {
 
     private EditText etPhone, etNickname, etPassword, etConfirmPassword;
@@ -64,23 +60,20 @@ public class SignupActivity extends AppCompatActivity {
                     @Override
                     public void onRegisterSuccess(LoginResponse response) {
                         setLoading(false);
-                        Toast.makeText(SignupActivity.this, "注册成功！请登录",
-                                Toast.LENGTH_LONG).show();
+                        Toast.makeText(SignupActivity.this, "注册成功！请登录", Toast.LENGTH_LONG).show();
                         finish();
                     }
 
                     @Override
                     public void onRegisterFailure(String error) {
                         setLoading(false);
-                        Toast.makeText(SignupActivity.this, error,
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignupActivity.this, error, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onValidationError(String error) {
                         setLoading(false);
-                        Toast.makeText(SignupActivity.this, error,
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignupActivity.this, error, Toast.LENGTH_SHORT).show();
                     }
                 });
     }

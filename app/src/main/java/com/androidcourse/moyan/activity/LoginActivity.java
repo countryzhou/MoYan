@@ -10,21 +10,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidcourse.moyan.R;
-import com.androidcourse.moyan.BuildConfig;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.androidcourse.moyan.R;
 import com.androidcourse.moyan.model.LoginResponse;
 import com.androidcourse.moyan.model.User;
 import com.androidcourse.moyan.utils.SharedPrefsHelper;
 import com.androidcourse.moyan.viewmodel.LoginViewModel;
 
-/**
- * 登录页面
- * 使用 LoginViewModel 处理登录逻辑
- * 支持 BuildConfig.IS_DEBUG 切换 Mock/真实模式
- */
 public class LoginActivity extends AppCompatActivity {
 
     private EditText etPhone, etPassword;
@@ -36,16 +30,15 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         loginViewModel = new LoginViewModel();
-        
-        // 如果已登录，直接跳转首页（在初始化UI之前）
+
         if (loginViewModel.isLogin()) {
             jumpToHome();
             finish();
             return;
         }
-        
+
         setContentView(R.layout.activity_login);
         initViews();
         setupListeners();
@@ -76,17 +69,14 @@ public class LoginActivity extends AppCompatActivity {
         String phone = etPhone.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        // 添加输入验证
         if (TextUtils.isEmpty(phone)) {
             Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
             return;
         }
-        
         if (TextUtils.isEmpty(password)) {
             Toast.makeText(this, "请输入密码", Toast.LENGTH_SHORT).show();
             return;
         }
-        
         if (phone.length() != 11) {
             Toast.makeText(this, "手机号格式不正确", Toast.LENGTH_SHORT).show();
             return;
@@ -94,72 +84,15 @@ public class LoginActivity extends AppCompatActivity {
 
         setLoading(true);
 
-        if (BuildConfig.IS_DEBUG) {
-            performMockLogin(phone, password);
-        } else {
-            performRealLogin(phone, password);
-        }
-    }
-
-    private void performMockLogin(String phone, String password) {
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            runOnUiThread(() -> {
-                setLoading(false);
-                // 只允许特定的测试账号
-                if ((phone.equals("13800138000") || phone.equals("13900139000")) 
-                    && password.equals("123456")) {
-                    // 创建 Mock 用户并保存
-                    User mockUser = new User();
-                    mockUser.setUserId(10086);
-                    mockUser.setPhone(phone);
-                    String suffix = phone.length() >= 8 ? phone.substring(7) : phone;
-                    mockUser.setNickname("测试用户_" + suffix);
-                    mockUser.setToken("mock_token_" + System.currentTimeMillis());
-
-                    // 保存用户信息
-                    SharedPrefsHelper.getInstance().saveUser(mockUser);
-
-                    // 打印调试信息
-                    android.util.Log.d("LoginActivity", "========== Mock登录成功 ==========");
-                    android.util.Log.d("LoginActivity", "userId: " + mockUser.getUserId());
-                    android.util.Log.d("LoginActivity", "nickname: " + mockUser.getNickname());
-                    android.util.Log.d("LoginActivity", "token: " + mockUser.getToken());
-                    android.util.Log.d("LoginActivity", "isLogin: " + SharedPrefsHelper.getInstance().isLogin());
-
-                    Toast.makeText(this, "登录成功！欢迎 " + mockUser.getNickname(), Toast.LENGTH_SHORT).show();
-                    jumpToHome();
-                } else {
-                    showAccountNotExistDialog();
-                }
-            });
-        }).start();
-    }
-
-    private void performRealLogin(String phone, String password) {
         loginViewModel.login(phone, password, new LoginViewModel.LoginCallback() {
             @Override
             public void onLoginSuccess(LoginResponse response) {
                 setLoading(false);
-
-                // 验证保存结果
-                android.util.Log.d("LoginActivity", "========== 登录成功回调 ==========");
-                android.util.Log.d("LoginActivity", "isLogin: " + SharedPrefsHelper.getInstance().isLogin());
-                android.util.Log.d("LoginActivity", "userId: " + SharedPrefsHelper.getInstance().getUserId());
-
                 if (response != null && response.getData() != null) {
-                    Toast.makeText(LoginActivity.this,
-                            "登录成功！欢迎 " + response.getData().getNickname(),
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "登录成功！欢迎 " + response.getData().getNickname(), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(LoginActivity.this, "登录成功！", Toast.LENGTH_LONG).show();
                 }
-
                 jumpToHome();
             }
 

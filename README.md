@@ -354,6 +354,104 @@ res/layout/
 ├── item_reply.xml                      # 回复项
 └── item_trend_card.xml                 # 动态卡片项
 ```
+
+第五版架构
+新增了举报界面，全部用reply替代comment
+```
+MoYan/
+├── app/
+│   ├── src/main/java/com/androidcourse/moyan/
+│   │   │
+│   │   ├── activity/                        # Activity 层
+│   │   │   ├── SplashActivity.java          # 启动页
+│   │   │   ├── LoginActivity.java           # 登录页
+│   │   │   ├── SignupActivity.java          # 注册页
+│   │   │   ├── HomeActivity.java            # 首页
+│   │   │   ├── CreatepostActivity.java      # 发布帖子
+│   │   │   ├── CreateReplyActivity.java     # 发布回复
+│   │   │   ├── PostdetailActivity.java      # 帖子详情
+│   │   │   ├── ProfileActivity.java         # 个人主页
+│   │   │   ├── EditprofileActivity.java     # 编辑资料
+│   │   │   ├── UserProfileActivity.java     # 他人主页
+│   │   │   ├── SearchActivity.java          # 搜索
+│   │   │   ├── MessageActivity.java         # 消息
+│   │   │   ├── InteractionActivity.java     # 互动通知
+│   │   │   ├── TopicdetailActivity.java     # 话题详情
+│   │   │   └── ReportActivity.java          # 举报页面
+│   │   │
+│   │   ├── adapter/                         # 适配器层
+│   │   │   ├── PostAdapter.java             # 帖子列表适配器
+│   │   │   ├── ReplyAdapter.java            # 回复列表适配器
+│   │   │   ├── NewsAdapter.java             # 新闻列表适配器
+│   │   │   ├── TrendCardAdapter.java        # 趋势卡片适配器
+│   │   │   ├── ImagePreviewAdapter.java     # 图片预览适配器
+│   │   │   └── TagSelectAdapter.java        # 标签选择适配器
+│   │   │
+│   │   ├── model/                           # 模型层
+│   │   │   ├── User.java                    # 用户实体
+│   │   │   ├── Post.java                    # 帖子实体（含匿名、图片）
+│   │   │   ├── Reply.java                   # 回复实体
+│   │   │   ├── Comment.java                 # 【已注释】保留备用
+│   │   │   ├── Draft.java                   # 草稿实体（Room）
+│   │   │   ├── Tag.java                     # 标签实体（Room）
+│   │   │   ├── NewsItem.java                # 新闻列表项
+│   │   │   ├── TrendCard.java               # 趋势卡片
+│   │   │   ├── LoginRequest.java            # 登录请求
+│   │   │   ├── LoginResponse.java           # 登录响应
+│   │   │   └── RegisterRequest.java         # 注册请求
+│   │   │
+│   │   ├── database/                        # Room 数据库层
+│   │   │   ├── AppDatabase.java             # 数据库实例
+│   │   │   ├── DraftDao.java                # 草稿 DAO
+│   │   │   ├── TagDao.java                  # 标签 DAO
+│   │   │   └── Converters.java              # 类型转换器
+│   │   │
+│   │   ├── network/                         # 网络层
+│   │   │   ├── SocketClient.java            # Socket 客户端（单例）
+│   │   │   ├── UserNetworkManager.java      # 用户相关网络请求
+│   │   │   ├── PostNetworkManager.java      # 帖子相关网络请求
+│   │   │   ├── ReplyNetworkManager.java     # 回复相关网络请求
+│   │   │   └── CommentNetworkManager.java   # 【已注释】保留备用
+│   │   │
+│   │   ├── repository/                      # 仓库层
+│   │   │   ├── UserRepository.java          # 用户数据仓库
+│   │   │   ├── PostRepository.java          # 帖子数据仓库
+│   │   │   ├── ReplyRepository.java         # 回复数据仓库
+│   │   │   ├── DraftRepository.java         # 草稿仓库
+│   │   │   ├── TagRepository.java           # 标签仓库
+│   │   │   └── CommentRepository.java       # 【已注释】保留备用
+│   │   │
+│   │   ├── viewmodel/                       # ViewModel 层
+│   │   │   ├── LoginViewModel.java          # 登录逻辑
+│   │   │   ├── SignupViewModel.java         # 注册逻辑
+│   │   │   ├── HomeViewModel.java           # 首页逻辑
+│   │   │   ├── PostDetailViewModel.java     # 帖子详情逻辑
+│   │   │   ├── CreatePostViewModel.java     # 发布帖子逻辑
+│   │   │   └── ProfileViewModel.java        # 个人主页逻辑
+│   │   │
+│   │   ├── utils/                           # 工具类
+│   │   │   ├── SharedPrefsHelper.java       # SharedPreferences 封装
+│   │   │   ├── AnonymousHelper.java         # 匿名辅助工具
+│   │   │   ├── TimeUtils.java               # 时间格式化
+│   │   │   ├── ImagePickerHelper.java       # 图片选择辅助
+│   │   │   ├── KeyboardUtils.java           # 键盘工具
+│   │   │   └── UriUtils.java                # Uri 路径转换
+│   │   │
+│   │   ├── manager/                         # 管理器层
+│   │   │   └── UserManager.java             # 用户状态管理（单例）
+│   │   │
+│   │   └── MoYanApplication.java            # Application 类（初始化）
+│   │
+│   └── src/main/res/                        # 资源文件
+│       ├── layout/                          # 页面布局
+│       ├── drawable/                        # 图片资源
+│       ├── values/                          # 颜色、字符串定义
+│       └── menu/                            # 菜单资源
+│
+├── build.gradle (Project)                   # 项目级构建配置
+├── build.gradle (Module: app)               # 模块级构建配置
+└── README.md                                # 项目说明文档
+```
 ## 五、核心功能模块
 
 | 模块    | 对应文件                | 说明         |
@@ -452,6 +550,12 @@ res/layout/
 请求：{"action":"report","params":{"reporterId":1,"targetType":1,"targetId":1,"reason":"举报原因"}}\
 说明：targetType=1表示帖子，2表示回复\
 响应：{"code":0,"msg":"success","data":null}\
+
+//调用方式
+//Intent intent = new Intent(context, ReportActivity.class);
+//intent.putExtra("target_type", 1);  // 1=帖子，2=回复
+//intent.putExtra("target_id", postId);
+//startActivity(intent);
 
 【16】获取今日互动任务\
 请求：{"action":"getTodayTask","params":{}}\

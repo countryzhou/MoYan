@@ -25,6 +25,7 @@ public class Post {
     private String avatarUrl;
     private boolean isLiked;
     private String anonymousName;
+    private boolean isFollowed;
 
     // 新增：图片路径列表（第一张是封面）
     private List<String> imagePaths;
@@ -100,7 +101,8 @@ public class Post {
     public boolean isProfileAccessible() {
         return !isAnonymous;
     }
-
+    public boolean isFollowed() { return isFollowed; }
+    public void setFollowed(boolean followed) { isFollowed = followed; }
     // ==================== 新增图片相关 ====================
 
     /**

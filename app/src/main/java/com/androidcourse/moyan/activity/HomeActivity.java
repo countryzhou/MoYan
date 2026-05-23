@@ -9,14 +9,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
 
-import com.androidcourse.moyan.BuildConfig;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.androidcourse.moyan.R;
 
+import com.androidcourse.moyan.R;
 import com.androidcourse.moyan.adapter.NewsAdapter;
 import com.androidcourse.moyan.adapter.TrendCardAdapter;
 import com.androidcourse.moyan.model.NewsItem;
@@ -28,11 +27,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-/**
- * 首页
- * 使用 HomeViewModel 加载数据
- * 支持 BuildConfig.IS_DEBUG 切换 Mock/真实模式
- */
 public class HomeActivity extends AppCompatActivity {
 
     private EditText etSearch;
@@ -56,33 +50,10 @@ public class HomeActivity extends AppCompatActivity {
         sharedPrefsHelper = SharedPrefsHelper.getInstance();
         homeViewModel = new HomeViewModel();
 
-        // 添加登录状态日志
-        logLoginState();
-
         initViews();
         setupListeners();
         loadData();
-
-        // 显示欢迎信息
         showWelcomeMessage();
-    }
-
-    /**
-     * 打印登录状态日志（用于调试）
-     */
-    private void logLoginState() {
-        Log.d("HomeActivity", "========== 首页启动状态 ==========");
-        Log.d("HomeActivity", "isLogin: " + sharedPrefsHelper.isLogin());
-        Log.d("HomeActivity", "isGuestMode: " + sharedPrefsHelper.isGuestMode());
-        Log.d("HomeActivity", "userId: " + sharedPrefsHelper.getUserId());
-
-        User user = sharedPrefsHelper.getUser();
-        if (user != null) {
-            Log.d("HomeActivity", "user.nickname: " + user.getNickname());
-            Log.d("HomeActivity", "user.userId: " + user.getUserId());
-        } else {
-            Log.d("HomeActivity", "user is null");
-        }
     }
 
     private void initViews() {
@@ -105,7 +76,6 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         ivAvatar.setOnClickListener(v -> {
-            // 游客模式不能进入个人主页
             if (sharedPrefsHelper.isGuestMode()) {
                 Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
                 return;
@@ -116,57 +86,29 @@ public class HomeActivity extends AppCompatActivity {
 
         fabWrite.setOnClickListener(v -> {
             if (!checkLogin()) return;
-            
-            // 已登录，直接进入发帖页面
             Intent intent = new Intent(HomeActivity.this, CreatepostActivity.class);
             startActivity(intent);
         });
 
         navHome.setOnClickListener(v -> refreshData());
-
         navExplore.setOnClickListener(v -> {
             startActivity(new Intent(HomeActivity.this, InteractionActivity.class));
-            finish();
         });
-
         navMessages.setOnClickListener(v -> {
-            // 游客模式不能查看消息
             if (sharedPrefsHelper.isGuestMode()) {
                 Toast.makeText(this, "请先登录后再查看消息", Toast.LENGTH_SHORT).show();
                 return;
             }
             startActivity(new Intent(HomeActivity.this, MessageActivity.class));
-            overridePendingTransitionCompat(android.R.anim.fade_in, android.R.anim.fade_out);
         });
-
         navProfile.setOnClickListener(v -> {
-            // 游客模式或未登录跳转到登录页
             if (sharedPrefsHelper.isGuestMode() || !sharedPrefsHelper.isLogin()) {
                 if (!checkLogin()) return;
             }
             startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
-            overridePendingTransitionCompat(android.R.anim.fade_in, android.R.anim.fade_out);
         });
     }
 
-    /**
-     * 兼容新旧版本的过渡动画
-     */
-    @SuppressWarnings("deprecation")
-    private void overridePendingTransitionCompat(int enterAnim, int exitAnim) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            // Android 14+ 使用新 API
-            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, enterAnim, exitAnim);
-        } else {
-            // Android 13 及以下使用旧 API
-            overridePendingTransition(enterAnim, exitAnim);
-        }
-    }
-
-    /**
-     * 检查是否已登录，未登录则跳转到登录页
-     * @return true 如果已登录
-     */
     private boolean checkLogin() {
         if (!sharedPrefsHelper.isLogin()) {
             Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
@@ -176,9 +118,6 @@ public class HomeActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * 显示欢迎信息
-     */
     private void showWelcomeMessage() {
         String message;
         if (sharedPrefsHelper.isLogin()) {
@@ -197,48 +136,38 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void loadData() {
-        boolean isDebug = BuildConfig.IS_DEBUG;
-
-        // 加载趋势卡片
-        homeViewModel.loadTrendCards(isDebug, new HomeViewModel.TrendCardCallback() {
+        homeViewModel.loadTrendCards(new HomeViewModel.TrendCardCallback() {
             @Override
             public void onSuccess(List<TrendCard> cards) {
                 displayTrendCards(cards);
-                Log.d("HomeActivity", "趋势卡片加载成功，数量：" + cards.size());
             }
 
             @Override
-            public void onFallback(List<TrendCard> cards, String error) {
-                displayTrendCards(cards);
-                Log.e("HomeActivity", "趋势卡片加载失败，使用默认数据: " + error);
+            public void onError(String error) {
+                Log.e("HomeActivity", "加载趋势卡片失败: " + error);
             }
         });
 
-        // 加载新闻列表
-        homeViewModel.loadNewsList(isDebug, new HomeViewModel.NewsListCallback() {
+        homeViewModel.loadNewsList(new HomeViewModel.NewsListCallback() {
             @Override
             public void onSuccess(List<NewsItem> news) {
                 displayNewsList(news);
-                Log.d("HomeActivity", "新闻列表加载成功，数量：" + news.size());
             }
 
             @Override
-            public void onFallback(List<NewsItem> news, String error) {
-                displayNewsList(news);
-                Log.e("HomeActivity", "新闻列表加载失败，使用默认数据: " + error);
+            public void onError(String error) {
+                Log.e("HomeActivity", "加载新闻列表失败: " + error);
             }
         });
     }
 
     private void displayTrendCards(List<TrendCard> cards) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this,
-                LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvTrendCards.setLayoutManager(layoutManager);
 
         trendCardAdapter = new TrendCardAdapter(this, cards, trendCard -> {
             Intent intent = new Intent(HomeActivity.this, PostdetailActivity.class);
             intent.putExtra("post_id", trendCard.getPostId());
-            intent.putExtra("news_title", trendCard.getTitle());
             startActivity(intent);
         });
 
@@ -262,7 +191,6 @@ public class HomeActivity extends AppCompatActivity {
         newsAdapter = new NewsAdapter(this, news, newsItem -> {
             Intent intent = new Intent(HomeActivity.this, PostdetailActivity.class);
             intent.putExtra("post_id", newsItem.getId());
-            intent.putExtra("news_title", newsItem.getTitle());
             startActivity(intent);
         });
 

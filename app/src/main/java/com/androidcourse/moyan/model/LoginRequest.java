@@ -7,18 +7,19 @@ public class LoginRequest {
     private String action;
     private Params params;
 
-    public LoginRequest(String phone, String code) {
+
+    public LoginRequest(String phone, String password) {
         this.action = "login";
-        this.params = new Params(phone, code);
+        this.params = new Params(phone, password);
     }
 
     private static class Params {
         private String phone;
-        private String code;
+        private String password;
 
-        public Params(String phone, String code) {
+        public Params(String phone, String password) {
             this.phone = phone;
-            this.code = code;
+            this.password = password;
         }
     }
 }

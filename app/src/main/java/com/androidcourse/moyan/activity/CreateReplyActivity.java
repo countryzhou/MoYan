@@ -22,14 +22,9 @@ import com.androidcourse.moyan.viewmodel.PostDetailViewModel;
 public class CreateReplyActivity extends AppCompatActivity {
 
     private EditText commentEditText;
-    private ImageView imageButton;
-    private ImageView keyboardButton;
-    private ImageView addButton;
-    private ImageView emotionButton;
     private TextView sendTextView;
     private LinearLayout sendButtonContainer;
     private CheckBox anonymousCheckBox;
-    private LinearLayout anonymousContainer;
 
     private PostDetailViewModel viewModel;
     private int postId;
@@ -59,44 +54,15 @@ public class CreateReplyActivity extends AppCompatActivity {
 
     private void initViews() {
         commentEditText = findViewById(R.id.commentEditText);
-        imageButton = findViewById(R.id.imageButton);
-        keyboardButton = findViewById(R.id.keyboardButton);
-        addButton = findViewById(R.id.addButton);
-        emotionButton = findViewById(R.id.emotionButton);
         sendTextView = findViewById(R.id.sendTextView);
         sendButtonContainer = findViewById(R.id.sendButtonContainer);
         anonymousCheckBox = findViewById(R.id.anonymousCheckBox);
-        anonymousContainer = findViewById(R.id.anonymousContainer);
     }
 
     private void setupListeners() {
-        // 发送按钮
-        sendButtonContainer.setOnClickListener(v -> submitComment());
+        sendButtonContainer.setOnClickListener(v -> submitReply());
 
-        // 匿名复选框
-        anonymousCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            // 可以在这里添加匿名状态变化的处理
-        });
-
-        // 图片按钮（暂时提示功能未实现）
-        imageButton.setOnClickListener(v -> {
-            Toast.makeText(this, "图片功能暂未实现", Toast.LENGTH_SHORT).show();
-        });
-
-        // 键盘按钮
-        keyboardButton.setOnClickListener(v -> {
-            KeyboardUtils.toggleKeyboard(this, commentEditText);
-        });
-
-        // 添加按钮（暂时提示功能未实现）
-        addButton.setOnClickListener(v -> {
-            Toast.makeText(this, "添加功能暂未实现", Toast.LENGTH_SHORT).show();
-        });
-
-        // 表情按钮（暂时提示功能未实现）
-        emotionButton.setOnClickListener(v -> {
-            Toast.makeText(this, "表情功能暂未实现", Toast.LENGTH_SHORT).show();
-        });
+        // 可选：其他按钮（图片、键盘、添加、表情）可以保持原有 Toast 提示
     }
 
     private void setupBackHandler() {
@@ -109,11 +75,11 @@ public class CreateReplyActivity extends AppCompatActivity {
         getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
-    private void submitComment() {
+    private void submitReply() {
         String content = commentEditText.getText().toString().trim();
 
         if (TextUtils.isEmpty(content)) {
-            Toast.makeText(this, "请输入评论内容", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "请输入回复内容", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -122,7 +88,7 @@ public class CreateReplyActivity extends AppCompatActivity {
         viewModel.submitReply(this, postId, content, isAnonymous, new PostDetailViewModel.SubmitCallback() {
             @Override
             public void onSuccess() {
-                Toast.makeText(CreateReplyActivity.this, "评论成功", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CreateReplyActivity.this, "回复成功", Toast.LENGTH_SHORT).show();
                 setResult(RESULT_OK);
                 finish();
             }
@@ -137,7 +103,6 @@ public class CreateReplyActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // 隐藏键盘
         KeyboardUtils.hideKeyboard(this);
     }
 }
