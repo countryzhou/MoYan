@@ -16,6 +16,7 @@ public class Post {
     private int viewCount;
     private int likeCount;
     private int replyCount;
+    private int collectCount;
     private int ratingCount;
     private double avgScore;
     private long createTime;
@@ -61,6 +62,9 @@ public class Post {
 
     public int getReplyCount() { return replyCount; }
     public void setReplyCount(int replyCount) { this.replyCount = replyCount; }
+
+    public int getCollectCount() { return collectCount; }
+    public void setCollectCount(int collectCount) { this.collectCount = collectCount; }
 
     public int getRatingCount() { return ratingCount; }
     public void setRatingCount(int ratingCount) { this.ratingCount = ratingCount; }

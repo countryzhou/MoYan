@@ -1,9 +1,7 @@
 package com.androidcourse.moyan.repository;
 
 import com.androidcourse.moyan.model.Comment;
-import com.androidcourse.moyan.model.Reply;
 import com.androidcourse.moyan.network.CommentNetworkManager;
-import com.androidcourse.moyan.utils.SharedPrefsHelper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -14,19 +12,17 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * 评论/回复数据仓库
- * 负责：评论列表、发表评论、删除评论、点赞评论、回复列表、发表回复
- * 调用：CommentNetworkManager + SharedPrefsHelper
+ * 评论数据仓库
+ * 负责：评论列表、发表评论、删除评论、点赞评论
+ * 调用：CommentNetworkManager
  */
 public class CommentRepository {
 
     private CommentNetworkManager networkManager;
-    private SharedPrefsHelper spHelper;
     private Gson gson;
 
     public CommentRepository() {
         networkManager = CommentNetworkManager.getInstance();
-        spHelper = SharedPrefsHelper.getInstance();
         gson = new Gson();
     }
 
@@ -141,69 +137,6 @@ public class CommentRepository {
                 e.printStackTrace();
                 if (callback != null) {
                     callback.onError("解析点赞响应失败：" + e.getMessage());
-                }
-            }
-        }).start();
-    }
-
-    /**
-     * 获取回复列表
-     * 对应API序号12
-     */
-    public void getReplies(int commentId, int page, int pageSize,
-                           RepositoryCallback<List<Comment>> callback) {
-        new Thread(() -> {
-            String response = networkManager.getReplies(commentId, page, pageSize);
-            try {
-                JSONObject jsonResponse = new JSONObject(response);
-                if (jsonResponse.getInt("code") == 0) {
-                    JSONObject data = jsonResponse.getJSONObject("data");
-                    JSONArray repliesArray = data.getJSONArray("replies");
-                    Type listType = new TypeToken<List<Comment>>() {}.getType();
-                    List<Comment> replyList = gson.fromJson(repliesArray.toString(), listType);
-                    if (callback != null) {
-                        callback.onResult(replyList);
-                    }
-                } else {
-                    String errorMsg = jsonResponse.optString("msg", "获取回复失败");
-                    if (callback != null) {
-                        callback.onError(errorMsg);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (callback != null) {
-                    callback.onError("解析回复列表失败：" + e.getMessage());
-                }
-            }
-        }).start();
-    }
-
-    /**
-     * 发布回复
-     * 对应API序号11
-     */
-    public void createReply(int postId, int userId, boolean isAnonymous, String content,
-                            RepositoryCallback<Integer> callback) {
-        new Thread(() -> {
-            String response = networkManager.createReply(postId, userId, isAnonymous, content);
-            try {
-                JSONObject jsonResponse = new JSONObject(response);
-                if (jsonResponse.getInt("code") == 0) {
-                    int replyId = jsonResponse.getInt("data");
-                    if (callback != null) {
-                        callback.onResult(replyId);
-                    }
-                } else {
-                    String errorMsg = jsonResponse.optString("msg", "发表回复失败");
-                    if (callback != null) {
-                        callback.onError(errorMsg);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (callback != null) {
-                    callback.onError("解析回复响应失败：" + e.getMessage());
                 }
             }
         }).start();

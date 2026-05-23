@@ -49,14 +49,19 @@
             android:name=".activity.SearchActivity"
             android:exported="false" />
 
-        <!-- 帖子详情 -->
-        <activity
-            android:name=".activity.PostdetailActivity"
-            android:exported="false" />
-
         <!-- 发帖 -->
         <activity
             android:name=".activity.CreatepostActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".activity.CreateReplyActivity"
+            android:exported="false"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+
+        <activity
+            android:name=".activity.PostdetailActivity"
             android:exported="false" />
 
         <!-- 互动通知 -->

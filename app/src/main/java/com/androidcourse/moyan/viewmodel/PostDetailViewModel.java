@@ -5,8 +5,10 @@ import android.os.Looper;
 
 import com.androidcourse.moyan.model.Comment;
 import com.androidcourse.moyan.model.Post;
+import com.androidcourse.moyan.model.Reply;
 import com.androidcourse.moyan.repository.CommentRepository;
 import com.androidcourse.moyan.repository.PostRepository;
+import com.androidcourse.moyan.repository.ReplyRepository;
 import com.androidcourse.moyan.utils.SharedPrefsHelper;
 
 import java.util.List;
@@ -14,17 +16,19 @@ import java.util.List;
 /**
  * 帖子详情ViewModel
  * 负责：加载帖子详情、加载评论、发表评论、点赞、收藏
- * 调用：PostRepository + CommentRepository
+ * 调用：PostRepository + CommentRepository + ReplyRepository
  */
 public class PostDetailViewModel {
 
     private PostRepository postRepository;
     private CommentRepository commentRepository;
+    private ReplyRepository replyRepository;
     private Handler mainHandler;
 
     public PostDetailViewModel() {
         postRepository = new PostRepository();
         commentRepository = new CommentRepository();
+        replyRepository = new ReplyRepository();
         mainHandler = new Handler(Looper.getMainLooper());
     }
 
@@ -111,18 +115,19 @@ public class PostDetailViewModel {
     }
 
     /**
-     * 发表回复
+     * 发表回复（到帖子）
      * 对应API序号11
+     * @param context Context
      * @param postId 帖子ID
      * @param content 回复内容
      * @param isAnonymous 是否匿名
      * @param callback 回调
      */
-    public void submitReply(int postId, String content, boolean isAnonymous,
+    public void submitReply(android.content.Context context, int postId, String content, boolean isAnonymous,
                             SubmitCallback callback) {
         int userId = SharedPrefsHelper.getInstance().getUserId();
-        commentRepository.createReply(postId, userId, isAnonymous, content,
-                new CommentRepository.RepositoryCallback<Integer>() {
+        replyRepository.createReply(postId, userId, isAnonymous, content,
+                new ReplyRepository.RepositoryCallback<Integer>() {
                     @Override
                     public void onResult(Integer result) {
                         mainHandler.post(() -> {
@@ -142,14 +147,14 @@ public class PostDetailViewModel {
     /**
      * 获取回复列表
      * 对应API序号12
-     * @param commentId 评论ID
+     * @param postId 帖子ID
      * @param callback 回调
      */
-    public void loadReplies(int commentId, CommentListCallback callback) {
-        commentRepository.getReplies(commentId, 1, 20,
-                new CommentRepository.RepositoryCallback<List<Comment>>() {
+    public void loadReplies(int postId, ReplyListCallback callback) {
+        replyRepository.getReplies(postId, 1,
+                new ReplyRepository.RepositoryCallback<List<Reply>>() {
                     @Override
-                    public void onResult(List<Comment> result) {
+                    public void onResult(List<Reply> result) {
                         mainHandler.post(() -> {
                             if (callback != null) callback.onSuccess(result);
                         });
@@ -193,6 +198,14 @@ public class PostDetailViewModel {
      */
     public interface PostDetailCallback {
         void onSuccess(Post post);
+        void onFailure(String error);
+    }
+
+    /**
+     * 回复列表回调接口
+     */
+    public interface ReplyListCallback {
+        void onSuccess(List<Reply> replies);
         void onFailure(String error);
     }
 

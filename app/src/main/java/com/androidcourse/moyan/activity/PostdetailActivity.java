@@ -18,8 +18,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.androidcourse.moyan.R;
 
 import com.androidcourse.moyan.adapter.CommentAdapter;
+import com.androidcourse.moyan.adapter.ReplyAdapter;
 import com.androidcourse.moyan.model.Comment;
 import com.androidcourse.moyan.model.Post;
+import com.androidcourse.moyan.model.Reply;
 import com.androidcourse.moyan.utils.TimeUtils;
 import com.androidcourse.moyan.viewmodel.PostDetailViewModel;
 import com.bumptech.glide.Glide;
@@ -58,11 +60,12 @@ public class PostdetailActivity extends AppCompatActivity {
     private TextView ivCollectCountBottom;
 
 
-    // 添加这一行
-    private LinearLayout llImageContainer;  // 图片容器
+    private LinearLayout llImageContainer;
     private Post currentPost;
     private CommentAdapter commentAdapter;
+    private ReplyAdapter replyAdapter;
     private List<Comment> commentList = new ArrayList<>();
+    private List<Reply> replyList = new ArrayList<>();
     private PostDetailViewModel viewModel;
 
     private boolean isLiked = false;
@@ -100,7 +103,8 @@ public class PostdetailActivity extends AppCompatActivity {
         rvComments = findViewById(R.id.rvComments);
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         commentAdapter = new CommentAdapter(commentList, getCurrentUserId());
-        rvComments.setAdapter(commentAdapter);
+        replyAdapter = new ReplyAdapter(replyList, getCurrentUserId());
+        rvComments.setAdapter(replyAdapter);
         etComment = findViewById(R.id.etComment);
         ivLikeBottom = findViewById(R.id.ivLikeBottom);
         tvLikeCountBottom = findViewById(R.id.tvLikeCountBottom);
@@ -109,7 +113,6 @@ public class PostdetailActivity extends AppCompatActivity {
         ivCollect = findViewById(R.id.ivCollect);
         ivCollectCountBottom = findViewById(R.id.ivCollectCountBottom);
 
-        // 添加这一行：初始化图片容器
         llImageContainer = findViewById(R.id.llImageContainer);
     }
 
@@ -121,7 +124,6 @@ public class PostdetailActivity extends AppCompatActivity {
         ivCollect.setOnClickListener(v -> toggleCollect());
         ivCommentBottom.setOnClickListener(v -> scrollToComments());
 
-        // 评论适配器回调
         commentAdapter.setOnCommentActionListener(new CommentAdapter.OnCommentActionListener() {
             @Override
             public void onReplyClick(Comment comment) {
@@ -131,7 +133,6 @@ public class PostdetailActivity extends AppCompatActivity {
 
             @Override
             public void onLikeClick(Comment comment, int position) {
-                // 由适配器乐观更新，此处不需额外处理
             }
 
             @Override
@@ -147,14 +148,37 @@ public class PostdetailActivity extends AppCompatActivity {
             }
         });
 
+        replyAdapter.setOnReplyActionListener(new ReplyAdapter.OnReplyActionListener() {
+            @Override
+            public void onReplyClick(Reply reply) {
+                etComment.setHint("回复 @" + reply.getDisplayName());
+                etComment.requestFocus();
+            }
+
+            @Override
+            public void onLikeClick(Reply reply, int position) {
+            }
+
+            @Override
+            public void onDeleteClick(Reply reply, int position) {
+                deleteReply(reply, position);
+            }
+
+            @Override
+            public void onAvatarClick(Reply reply) {
+                if (reply.isProfileAccessible()) {
+                    openUserProfile(reply.getUserId());
+                }
+            }
+        });
+
         etComment.setOnEditorActionListener((v, actionId, event) -> {
             submitComment();
             return true;
         });
     }
-    // 在 PostDetailActivity 中添加图片展示方法
+
     private void displayPostImages(Post post) {
-        // 确保控件已初始化
         if (llImageContainer == null) {
             return;
         }
@@ -207,7 +231,6 @@ public class PostdetailActivity extends AppCompatActivity {
     private void displayPostData() {
         if (currentPost == null) return;
 
-        // 匿名处理
         if (currentPost.isAnonymous()) {
             tvAuthorName.setText(currentPost.getAnonymousName() != null ?
                     currentPost.getAnonymousName() : "匿名用户");
@@ -229,17 +252,34 @@ public class PostdetailActivity extends AppCompatActivity {
 
         tvPostTitle.setText(currentPost.getTitle());
         tvPostContent.setText(currentPost.getContent());
-        tvLikeCountBottom.setText(String.valueOf(currentPost.getLikeCount()));
-        tvCommentCount.setText("共" + currentPost.getReplyCount() + "条评论");
-        tvCommentCountBottom.setText(String.valueOf(currentPost.getReplyCount()));
+        
+        updateInteractionCounts();
+        
         tvEditInfo.setText("编辑于 " + TimeUtils.formatDateTime(currentPost.getUpdateTime()));
         displayTags(currentPost.getTags());
 
         isLiked = currentPost.isLiked();
         updateLikeUI();
 
-        // 显示图片
         displayPostImages(currentPost);
+    }
+
+    /**
+     * 更新互动数据：点赞数、回复数、收藏数
+     */
+    private void updateInteractionCounts() {
+        if (currentPost == null) return;
+        
+        // 更新点赞数
+        tvLikeCountBottom.setText(String.valueOf(currentPost.getLikeCount()));
+        
+        // 更新回复数
+        String replyText = "共" + currentPost.getReplyCount() + "条评论";
+        tvCommentCount.setText(replyText);
+        tvCommentCountBottom.setText(String.valueOf(currentPost.getReplyCount()));
+        
+        // 更新收藏数
+        ivCollectCountBottom.setText(String.valueOf(currentPost.getCollectCount()));
     }
 
     private void displayTags(String tags) {
@@ -262,12 +302,18 @@ public class PostdetailActivity extends AppCompatActivity {
 
     private void loadComments() {
         int postId = getIntent().getIntExtra("post_id", 1);
-        viewModel.loadComments(postId, new PostDetailViewModel.CommentListCallback() {
+        viewModel.loadReplies(postId, new PostDetailViewModel.ReplyListCallback() {
             @Override
-            public void onSuccess(List<Comment> comments) {
-                commentList.clear();
-                commentList.addAll(comments);
-                commentAdapter.notifyDataSetChanged();
+            public void onSuccess(List<Reply> replies) {
+                replyList.clear();
+                replyList.addAll(replies);
+                replyAdapter.notifyDataSetChanged();
+                
+                // 更新回复数显示
+                if (currentPost != null) {
+                    currentPost.setReplyCount(replies.size());
+                    updateInteractionCounts();
+                }
             }
 
             @Override
@@ -305,9 +351,20 @@ public class PostdetailActivity extends AppCompatActivity {
                 .setTitle("确认删除")
                 .setMessage("确定要删除这条评论吗？")
                 .setPositiveButton("确定", (dialog, which) -> {
-                    // 删除逻辑由适配器处理
                     commentList.remove(position);
                     commentAdapter.notifyItemRemoved(position);
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    private void deleteReply(Reply reply, int position) {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("确认删除")
+                .setMessage("确定要删除这条回复吗？")
+                .setPositiveButton("确定", (dialog, which) -> {
+                    replyList.remove(position);
+                    replyAdapter.notifyItemRemoved(position);
                 })
                 .setNegativeButton("取消", null)
                 .show();
@@ -319,16 +376,15 @@ public class PostdetailActivity extends AppCompatActivity {
         isLiked = !isLiked;
         updateLikeUI();
         
-        // 乐观更新 UI
         if (isLiked) {
             int newCount = currentPost.getLikeCount() + 1;
             currentPost.setLikeCount(newCount);
-            tvLikeCountBottom.setText(String.valueOf(newCount));
         } else {
             int newCount = currentPost.getLikeCount() - 1;
             currentPost.setLikeCount(newCount);
-            tvLikeCountBottom.setText(String.valueOf(newCount));
         }
+        
+        updateInteractionCounts();
         
         // TODO: 同步到服务端
         // viewModel.toggleLike(currentPost.getPostId(), isLiked, callback);
@@ -351,11 +407,17 @@ public class PostdetailActivity extends AppCompatActivity {
         isCollected = !isCollected;
         if (isCollected) {
             ivCollect.setImageResource(R.drawable.ic_comment_filled);
+            int newCount = currentPost.getCollectCount() + 1;
+            currentPost.setCollectCount(newCount);
             Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show();
         } else {
             ivCollect.setImageResource(R.drawable.ic_collect_outline);
+            int newCount = currentPost.getCollectCount() - 1;
+            currentPost.setCollectCount(newCount);
             Toast.makeText(this, "取消收藏", Toast.LENGTH_SHORT).show();
         }
+        
+        updateInteractionCounts();
     }
 
     private void toggleFollow() {

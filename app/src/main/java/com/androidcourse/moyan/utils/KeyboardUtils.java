@@ -18,6 +18,16 @@ public class KeyboardUtils {
         }
     }
 
+    // 显示键盘（使用View）
+    public static void showKeyboard(View view) {
+        if (view == null) return;
+        view.requestFocus();
+        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+        }
+    }
+
     // 隐藏键盘
     public static void hideKeyboard(Activity activity) {
         View view = activity.getCurrentFocus();
@@ -36,6 +46,15 @@ public class KeyboardUtils {
             if (imm != null) {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
+        }
+    }
+
+    // 切换键盘显示/隐藏
+    public static void toggleKeyboard(Activity activity, EditText editText) {
+        if (editText == null) return;
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.toggleSoftInput(0, 0);
         }
     }
 }

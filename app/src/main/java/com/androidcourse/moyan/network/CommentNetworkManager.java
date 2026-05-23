@@ -110,28 +110,6 @@ public class CommentNetworkManager {
     }
 
     /**
-     * 获取评论的回复列表（用于嵌套回复）
-     * @param commentId 评论ID
-     * @param page 页码
-     * @param pageSize 每页数量
-     * @return 服务端响应JSON字符串
-     */
-    public String getReplies(int commentId, int page, int pageSize) {
-        try {
-            JSONObject request = new JSONObject();
-            request.put("action", "get_replies");
-            request.put("commentId", commentId);
-            request.put("page", page);
-            request.put("pageSize", pageSize);
-
-            return SocketClient.getInstance().sendRequest(request.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "{\"code\":1,\"msg\":\"请求构建失败：" + e.getMessage() + "\",\"data\":null}";
-        }
-    }
-
-    /**
      * 获取评论总数
      * @param postId 帖子ID
      * @return 服务端响应JSON字符串
@@ -141,56 +119,6 @@ public class CommentNetworkManager {
             JSONObject request = new JSONObject();
             request.put("action", "get_comment_count");
             request.put("postId", postId);
-
-            return SocketClient.getInstance().sendRequest(request.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "{\"code\":1,\"msg\":\"请求构建失败：" + e.getMessage() + "\",\"data\":null}";
-        }
-    }
-
-    /**
-     * 发布回复（对应API序号11）
-     * @param postId 帖子ID
-     * @param userId 用户ID
-     * @param isAnonymous 是否匿名
-     * @param content 回复内容
-     * @return 服务端响应JSON字符串
-     */
-    public String createReply(int postId, int userId, boolean isAnonymous, String content) {
-        try {
-            JSONObject request = new JSONObject();
-            request.put("action", "createReply");
-
-            JSONObject params = new JSONObject();
-            params.put("postId", postId);
-            params.put("userId", userId);
-            params.put("isAnonymous", isAnonymous);
-            params.put("content", content);
-            request.put("params", params);
-
-            return SocketClient.getInstance().sendRequest(request.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "{\"code\":1,\"msg\":\"请求构建失败：" + e.getMessage() + "\",\"data\":null}";
-        }
-    }
-
-    /**
-     * 获取回复列表（对应API序号12）
-     * @param postId 帖子ID
-     * @param page 页码
-     * @return 服务端响应JSON字符串
-     */
-    public String getReplyList(int postId, int page) {
-        try {
-            JSONObject request = new JSONObject();
-            request.put("action", "getReplies");
-
-            JSONObject params = new JSONObject();
-            params.put("postId", postId);
-            params.put("page", page);
-            request.put("params", params);
 
             return SocketClient.getInstance().sendRequest(request.toString());
         } catch (Exception e) {
