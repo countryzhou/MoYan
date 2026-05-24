@@ -71,22 +71,21 @@ public class PostDetailViewModel {
      * 获取回复列表
      */
     public void loadReplies(int postId, ReplyListCallback callback) {
-        replyRepository.getReplies(postId, 1,
-                new ReplyRepository.RepositoryCallback<List<Reply>>() {
-                    @Override
-                    public void onResult(List<Reply> result) {
-                        mainHandler.post(() -> {
-                            if (callback != null) callback.onSuccess(result);
-                        });
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        mainHandler.post(() -> {
-                            if (callback != null) callback.onFailure(error);
-                        });
-                    }
+        replyRepository.getReplies(postId, 1, new ReplyRepository.RepositoryCallback<List<Reply>>() {
+            @Override
+            public void onResult(List<Reply> result) {
+                mainHandler.post(() -> {
+                    if (callback != null) callback.onSuccess(result);
                 });
+            }
+
+            @Override
+            public void onError(String error) {
+                mainHandler.post(() -> {
+                    if (callback != null) callback.onFailure(error);
+                });
+            }
+        });
     }
 
     // ==================== 回调接口 ====================

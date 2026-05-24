@@ -28,6 +28,9 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * 帖子详情页面
+ */
 public class PostdetailActivity extends AppCompatActivity {
 
     // 顶部栏
@@ -45,12 +48,10 @@ public class PostdetailActivity extends AppCompatActivity {
     private TextView tvTag1, tvTag2, tvTag3, tvTag4;
 
     // 互动区
-    private ImageView ivLikeBottom;
-    private TextView tvLikeCountBottom;
     private ImageView ivCommentBottom;
     private TextView tvCommentCountBottom;
     private ImageView ivCollect;
-    private TextView ivCollectCountBottom;
+    private TextView tvCollectCountBottom;
     private LinearLayout layoutShare;
 
     // 回复区
@@ -59,10 +60,9 @@ public class PostdetailActivity extends AppCompatActivity {
 
     private Post currentPost;
     private ReplyAdapter replyAdapter;
-    private List<Reply> replyList = new ArrayList<>();
+    private final List<Reply> replyList = new ArrayList<>();
     private PostDetailViewModel viewModel;
 
-    private boolean isLiked = false;
     private boolean isCollected = false;
 
     @Override
@@ -74,7 +74,6 @@ public class PostdetailActivity extends AppCompatActivity {
         initViews();
         setupListeners();
         loadPostData();
-        loadReplies();
     }
 
     private void initViews() {
@@ -93,12 +92,10 @@ public class PostdetailActivity extends AppCompatActivity {
         tvTag3 = findViewById(R.id.tvTag3);
         tvTag4 = findViewById(R.id.tvTag4);
 
-        ivLikeBottom = findViewById(R.id.ivLikeBottom);
-        tvLikeCountBottom = findViewById(R.id.tvLikeCountBottom);
         ivCommentBottom = findViewById(R.id.ivCommentBottom);
         tvCommentCountBottom = findViewById(R.id.tvCommentCountBottom);
         ivCollect = findViewById(R.id.ivCollect);
-        ivCollectCountBottom = findViewById(R.id.ivCollectCountBottom);
+        tvCollectCountBottom = findViewById(R.id.ivCollectCountBottom);
         layoutShare = findViewById(R.id.layoutShare);
 
         rvReplies = findViewById(R.id.rvComments);
@@ -112,7 +109,6 @@ public class PostdetailActivity extends AppCompatActivity {
         btnBack.setOnClickListener(v -> finish());
         layoutShare.setOnClickListener(v -> sharePost());
         btnFollow.setOnClickListener(v -> toggleFollow());
-        ivLikeBottom.setOnClickListener(v -> toggleLike());
         ivCollect.setOnClickListener(v -> toggleCollect());
         ivCommentBottom.setOnClickListener(v -> scrollToReplies());
 
@@ -122,11 +118,6 @@ public class PostdetailActivity extends AppCompatActivity {
                 Intent intent = new Intent(PostdetailActivity.this, CreateReplyActivity.class);
                 intent.putExtra("post_id", currentPost != null ? currentPost.getPostId() : -1);
                 startActivity(intent);
-            }
-
-            @Override
-            public void onLikeClick(Reply reply, int position) {
-                // TODO: 点赞回复
             }
 
             @Override
@@ -156,6 +147,14 @@ public class PostdetailActivity extends AppCompatActivity {
             public void onSuccess(Post post) {
                 currentPost = post;
                 displayPostData();
+                if (post.getReplies() != null && !post.getReplies().isEmpty()) {
+                    replyList.clear();
+                    replyList.addAll(post.getReplies());
+                    replyAdapter.updateReplies(replyList);
+                    updateReplyCount(post.getReplies().size());
+                } else {
+                    loadReplies();
+                }
             }
 
             @Override
@@ -169,14 +168,17 @@ public class PostdetailActivity extends AppCompatActivity {
         if (currentPost == null) return;
 
         if (currentPost.isAnonymous()) {
-            tvAuthorName.setText(currentPost.getAnonymousName() != null ? currentPost.getAnonymousName() : "匿名用户");
+            tvAuthorName.setText("匿名用户");
             ivAuthorAvatar.setImageResource(R.drawable.ic_avatar_placeholder);
             ivAuthorAvatar.setClickable(false);
             btnFollow.setVisibility(View.GONE);
         } else {
             tvAuthorName.setText(currentPost.getDisplayName());
             if (!TextUtils.isEmpty(currentPost.getAvatarUrl())) {
-                Glide.with(this).load(currentPost.getAvatarUrl()).placeholder(R.drawable.ic_avatar_placeholder).into(ivAuthorAvatar);
+                Glide.with(this)
+                        .load(currentPost.getAvatarUrl())
+                        .placeholder(R.drawable.ic_avatar_placeholder)
+                        .into(ivAuthorAvatar);
             }
             ivAuthorAvatar.setClickable(true);
             ivAuthorAvatar.setOnClickListener(v -> openUserProfile(currentPost.getUserId()));
@@ -185,15 +187,11 @@ public class PostdetailActivity extends AppCompatActivity {
         tvPostTitle.setText(currentPost.getTitle());
         tvPostContent.setText(currentPost.getContent());
 
-        tvLikeCountBottom.setText(String.valueOf(currentPost.getLikeCount()));
         tvCommentCountBottom.setText(String.valueOf(currentPost.getReplyCount()));
-        ivCollectCountBottom.setText(String.valueOf(currentPost.getCollectCount()));
+        tvCollectCountBottom.setText(String.valueOf(currentPost.getCollectCount()));
 
         tvEditInfo.setText("编辑于 " + TimeUtils.formatDateTime(currentPost.getUpdateTime()));
         displayTags(currentPost.getTags());
-
-        isLiked = currentPost.isLiked();
-        updateLikeUI();
 
         displayPostImages(currentPost);
     }
@@ -207,11 +205,14 @@ public class PostdetailActivity extends AppCompatActivity {
             for (String imagePath : post.getImagePaths()) {
                 ImageView imageView = new ImageView(this);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
                 params.setMargins(0, 0, 0, 8);
                 imageView.setLayoutParams(params);
                 imageView.setAdjustViewBounds(true);
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
                 Glide.with(this).load(imagePath).placeholder(R.drawable.img_car_placeholder).into(imageView);
                 llImageContainer.addView(imageView);
             }
@@ -245,12 +246,8 @@ public class PostdetailActivity extends AppCompatActivity {
             public void onSuccess(List<Reply> replies) {
                 replyList.clear();
                 replyList.addAll(replies);
-                replyAdapter.notifyDataSetChanged();
-
-                if (currentPost != null) {
-                    currentPost.setReplyCount(replies.size());
-                    tvCommentCountBottom.setText(String.valueOf(replies.size()));
-                }
+                replyAdapter.updateReplies(replyList);
+                updateReplyCount(replies.size());
             }
 
             @Override
@@ -260,6 +257,13 @@ public class PostdetailActivity extends AppCompatActivity {
         });
     }
 
+    private void updateReplyCount(int count) {
+        tvCommentCountBottom.setText(String.valueOf(count));
+        if (currentPost != null) {
+            currentPost.setReplyCount(count);
+        }
+    }
+
     private void deleteReply(Reply reply, int position) {
         new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("确认删除")
@@ -267,32 +271,10 @@ public class PostdetailActivity extends AppCompatActivity {
                 .setPositiveButton("确定", (dialog, which) -> {
                     replyList.remove(position);
                     replyAdapter.notifyItemRemoved(position);
+                    updateReplyCount(replyList.size());
                 })
                 .setNegativeButton("取消", null)
                 .show();
-    }
-
-    private void toggleLike() {
-        if (currentPost == null) return;
-        isLiked = !isLiked;
-        updateLikeUI();
-
-        if (isLiked) {
-            currentPost.setLikeCount(currentPost.getLikeCount() + 1);
-        } else {
-            currentPost.setLikeCount(currentPost.getLikeCount() - 1);
-        }
-        tvLikeCountBottom.setText(String.valueOf(currentPost.getLikeCount()));
-    }
-
-    private void updateLikeUI() {
-        if (isLiked) {
-            ivLikeBottom.setImageResource(R.drawable.ic_like_filled);
-            ivLikeBottom.setColorFilter(getColor(R.color.colorAccent));
-        } else {
-            ivLikeBottom.setImageResource(R.drawable.ic_like_outline);
-            ivLikeBottom.clearColorFilter();
-        }
     }
 
     private void toggleCollect() {
@@ -307,7 +289,7 @@ public class PostdetailActivity extends AppCompatActivity {
             currentPost.setCollectCount(currentPost.getCollectCount() - 1);
             Toast.makeText(this, "取消收藏", Toast.LENGTH_SHORT).show();
         }
-        ivCollectCountBottom.setText(String.valueOf(currentPost.getCollectCount()));
+        tvCollectCountBottom.setText(String.valueOf(currentPost.getCollectCount()));
     }
 
     private void toggleFollow() {
@@ -322,7 +304,8 @@ public class PostdetailActivity extends AppCompatActivity {
         if (currentPost == null) return;
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, currentPost.getTitle() + "\n" + "https://yourapp.com/post/" + currentPost.getPostId());
+        shareIntent.putExtra(Intent.EXTRA_TEXT,
+                currentPost.getTitle() + "\n" + "https://yourapp.com/post/" + currentPost.getPostId());
         startActivity(Intent.createChooser(shareIntent, "分享到"));
     }
 

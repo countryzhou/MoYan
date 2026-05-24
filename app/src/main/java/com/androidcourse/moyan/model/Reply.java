@@ -1,27 +1,62 @@
 package com.androidcourse.moyan.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
- * 回复实体类 - 纯数据模型
- * 对应API：getReplies、createReply
+ * 回复实体类
+ * 完全对应服务端 ReplyDTO
  */
 public class Reply {
+
+    // ========== 服务端返回字段 ==========
+    @SerializedName("replyId")
     private int replyId;
+
+    @SerializedName("content")
+    private String content;
+
+    @SerializedName("replyTime")
+    private long replyTime;
+
+    @SerializedName("isAnonymous")
+    private boolean isAnonymous;
+
+    @SerializedName("authorName")
+    private String authorName;
+
+    @SerializedName("anonymousNum")
+    private Integer anonymousNum;
+
+    @SerializedName("avatarUrl")
+    private String avatarUrl;
+
+    // ========== 本地扩展字段 ==========
     private int postId;
     private int userId;
-    private String nickname;
-    private String avatarUrl;
-    private String content;
-    private int likeCount;
-    private long createTime;
-    private boolean isLiked;
-    private boolean isAnonymous;
     private Reply replyTo;
-    private int replyToId;
 
     // ==================== Getters and Setters ====================
 
     public int getReplyId() { return replyId; }
     public void setReplyId(int replyId) { this.replyId = replyId; }
+
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+
+    public long getReplyTime() { return replyTime; }
+    public void setReplyTime(long replyTime) { this.replyTime = replyTime; }
+
+    public boolean isAnonymous() { return isAnonymous; }
+    public void setAnonymous(boolean anonymous) { isAnonymous = anonymous; }
+
+    public String getAuthorName() { return authorName; }
+    public void setAuthorName(String authorName) { this.authorName = authorName; }
+
+    public Integer getAnonymousNum() { return anonymousNum; }
+    public void setAnonymousNum(Integer anonymousNum) { this.anonymousNum = anonymousNum; }
+
+    public String getAvatarUrl() { return avatarUrl; }
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
 
     public int getPostId() { return postId; }
     public void setPostId(int postId) { this.postId = postId; }
@@ -29,39 +64,26 @@ public class Reply {
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
 
-    public String getNickname() { return nickname; }
-    public void setNickname(String nickname) { this.nickname = nickname; }
-
-    public String getAvatarUrl() { return avatarUrl; }
-    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
-
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
-
-    public int getLikeCount() { return likeCount; }
-    public void setLikeCount(int likeCount) { this.likeCount = likeCount; }
-
-    public long getCreateTime() { return createTime; }
-    public void setCreateTime(long createTime) { this.createTime = createTime; }
-
-    public boolean isLiked() { return isLiked; }
-    public void setLiked(boolean liked) { isLiked = liked; }
-
-    public boolean isAnonymous() { return isAnonymous; }
-    public void setAnonymous(boolean anonymous) { isAnonymous = anonymous; }
-
     public Reply getReplyTo() { return replyTo; }
     public void setReplyTo(Reply replyTo) { this.replyTo = replyTo; }
 
-    public int getReplyToId() { return replyToId; }
-    public void setReplyToId(int replyToId) { this.replyToId = replyToId; }
+    // ==================== 辅助方法 ====================
 
     public String getDisplayName() {
-        if (isAnonymous) return "匿名用户";
-        return nickname != null ? nickname : "用户" + userId;
+        if (isAnonymous) {
+            if (anonymousNum != null) {
+                return "匿名用户 #" + anonymousNum;
+            }
+            return "匿名用户";
+        }
+        if (authorName != null && !authorName.isEmpty()) return authorName;
+        return "用户" + userId;
     }
 
     public boolean isProfileAccessible() {
         return !isAnonymous;
     }
+
+    public long getCreateTime() { return replyTime; }
+    public void setCreateTime(long createTime) { this.replyTime = createTime; }
 }

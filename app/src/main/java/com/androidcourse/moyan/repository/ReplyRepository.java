@@ -11,11 +11,6 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.List;
 
-/**
- * 回复数据仓库
- * 负责：回复列表、发表回复
- * 调用：ReplyNetworkManager
- */
 public class ReplyRepository {
 
     private ReplyNetworkManager networkManager;
@@ -28,13 +23,8 @@ public class ReplyRepository {
 
     /**
      * 获取回复列表
-     * 对应API序号12
-     * @param postId 帖子ID
-     * @param page 页码
-     * @param callback 回调
      */
-    public void getReplies(int postId, int page,
-                           RepositoryCallback<List<Reply>> callback) {
+    public void getReplies(int postId, int page, RepositoryCallback<List<Reply>> callback) {
         new Thread(() -> {
             String response = networkManager.getReplies(postId, page);
             try {
@@ -43,32 +33,20 @@ public class ReplyRepository {
                     JSONArray repliesArray = jsonResponse.getJSONArray("data");
                     Type listType = new TypeToken<List<Reply>>() {}.getType();
                     List<Reply> replyList = gson.fromJson(repliesArray.toString(), listType);
-                    if (callback != null) {
-                        callback.onResult(replyList);
-                    }
+                    if (callback != null) callback.onResult(replyList);
                 } else {
                     String errorMsg = jsonResponse.optString("msg", "获取回复失败");
-                    if (callback != null) {
-                        callback.onError(errorMsg);
-                    }
+                    if (callback != null) callback.onError(errorMsg);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                if (callback != null) {
-                    callback.onError("解析回复列表失败：" + e.getMessage());
-                }
+                if (callback != null) callback.onError("解析回复列表失败：" + e.getMessage());
             }
         }).start();
     }
 
     /**
      * 发布回复
-     * 对应API序号11
-     * @param postId 帖子ID
-     * @param userId 用户ID
-     * @param isAnonymous 是否匿名
-     * @param content 回复内容
-     * @param callback 回调
      */
     public void createReply(int postId, int userId, boolean isAnonymous, String content,
                             RepositoryCallback<Integer> callback) {
@@ -78,27 +56,18 @@ public class ReplyRepository {
                 JSONObject jsonResponse = new JSONObject(response);
                 if (jsonResponse.getInt("code") == 0) {
                     int replyId = jsonResponse.getInt("data");
-                    if (callback != null) {
-                        callback.onResult(replyId);
-                    }
+                    if (callback != null) callback.onResult(replyId);
                 } else {
                     String errorMsg = jsonResponse.optString("msg", "发表回复失败");
-                    if (callback != null) {
-                        callback.onError(errorMsg);
-                    }
+                    if (callback != null) callback.onError(errorMsg);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                if (callback != null) {
-                    callback.onError("解析回复响应失败：" + e.getMessage());
-                }
+                if (callback != null) callback.onError("发表回复失败：" + e.getMessage());
             }
         }).start();
     }
 
-    /**
-     * 通用回调接口
-     */
     public interface RepositoryCallback<T> {
         void onResult(T result);
         void onError(String error);

@@ -1,47 +1,86 @@
 package com.androidcourse.moyan.model;
 
+import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
  * 帖子实体类
+ * 完全对应服务端 PostListDTO + PostDetailDTO
  */
 public class Post {
-    private int postId;
-    private int userId;
-    private String title;
-    private String content;
-    private String tags;
-    private boolean isAnonymous;
-    private int status;
-    private int viewCount;
-    private int likeCount;
-    private int replyCount;
-    private int collectCount;
-    private int ratingCount;
-    private double avgScore;
-    private long createTime;
-    private long updateTime;
-    private String nickname;
-    private String avatarUrl;
-    private boolean isLiked;
-    private String anonymousName;
-    private boolean isFollowed;
 
-    // 新增：图片路径列表（第一张是封面）
+    // ========== 服务端返回字段 ==========
+    @SerializedName("postId")
+    private int postId;
+
+    @SerializedName("title")
+    private String title;
+
+    @SerializedName("contentPreview")
+    private String contentPreview;
+
+    @SerializedName("content")
+    private String content;
+
+    @SerializedName("tags")
+    private String tags;
+
+    @SerializedName("postTime")
+    private long postTime;
+
+    @SerializedName("viewCount")
+    private int viewCount;
+
+    @SerializedName("isNewbie")
+    private boolean isNewbie;
+
+    @SerializedName("totalScore")
+    private double totalScore;
+
+    @SerializedName("replyCount")
+    private int replyCount;
+
+    @SerializedName("authorName")
+    private String authorName;
+
+    @SerializedName("isAnonymous")
+    private boolean isAnonymous;
+
+    // 帖子详情专用
+    @SerializedName("canUserRate")
+    private boolean canUserRate;
+
+    @SerializedName("userRatingTag")
+    private int userRatingTag;
+
+    @SerializedName("userRatingArticle")
+    private int userRatingArticle;
+
+    @SerializedName("replies")
+    private List<Reply> replies;
+
+    // 用户交互字段
+    @SerializedName("avatarUrl")
+    private String avatarUrl;
+
+    // ========== 本地扩展字段 ==========
+    private int userId;
+    private long updateTime;
+    private int collectCount;
+    private boolean isFollowed;
     private List<String> imagePaths;
-    // 新增：封面图片URL（用于列表展示）
     private String coverImageUrl;
 
-    // ==================== 原有getters/setters ====================
+    // ==================== Getters and Setters ====================
 
     public int getPostId() { return postId; }
     public void setPostId(int postId) { this.postId = postId; }
 
-    public int getUserId() { return userId; }
-    public void setUserId(int userId) { this.userId = userId; }
-
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
+
+    public String getContentPreview() { return contentPreview; }
+    public void setContentPreview(String contentPreview) { this.contentPreview = contentPreview; }
 
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
@@ -49,106 +88,85 @@ public class Post {
     public String getTags() { return tags; }
     public void setTags(String tags) { this.tags = tags; }
 
-    public boolean isAnonymous() { return isAnonymous; }
-    public void setAnonymous(boolean anonymous) { isAnonymous = anonymous; }
-
-    public int getStatus() { return status; }
-    public void setStatus(int status) { this.status = status; }
+    public long getPostTime() { return postTime; }
+    public void setPostTime(long postTime) { this.postTime = postTime; }
 
     public int getViewCount() { return viewCount; }
     public void setViewCount(int viewCount) { this.viewCount = viewCount; }
 
-    public int getLikeCount() { return likeCount; }
-    public void setLikeCount(int likeCount) { this.likeCount = likeCount; }
+    public boolean isNewbie() { return isNewbie; }
+    public void setNewbie(boolean newbie) { isNewbie = newbie; }
+
+    public double getTotalScore() { return totalScore; }
+    public void setTotalScore(double totalScore) { this.totalScore = totalScore; }
 
     public int getReplyCount() { return replyCount; }
     public void setReplyCount(int replyCount) { this.replyCount = replyCount; }
 
-    public int getCollectCount() { return collectCount; }
-    public void setCollectCount(int collectCount) { this.collectCount = collectCount; }
+    public String getAuthorName() { return authorName; }
+    public void setAuthorName(String authorName) { this.authorName = authorName; }
 
-    public int getRatingCount() { return ratingCount; }
-    public void setRatingCount(int ratingCount) { this.ratingCount = ratingCount; }
+    public boolean isAnonymous() { return isAnonymous; }
+    public void setAnonymous(boolean anonymous) { isAnonymous = anonymous; }
 
-    public double getAvgScore() { return avgScore; }
-    public void setAvgScore(double avgScore) { this.avgScore = avgScore; }
+    public boolean isCanUserRate() { return canUserRate; }
+    public void setCanUserRate(boolean canUserRate) { this.canUserRate = canUserRate; }
 
-    public long getCreateTime() { return createTime; }
-    public void setCreateTime(long createTime) { this.createTime = createTime; }
+    public int getUserRatingTag() { return userRatingTag; }
+    public void setUserRatingTag(int userRatingTag) { this.userRatingTag = userRatingTag; }
 
-    public long getUpdateTime() { return updateTime; }
-    public void setUpdateTime(long updateTime) { this.updateTime = updateTime; }
+    public int getUserRatingArticle() { return userRatingArticle; }
+    public void setUserRatingArticle(int userRatingArticle) { this.userRatingArticle = userRatingArticle; }
 
-    public String getNickname() { return nickname; }
-    public void setNickname(String nickname) { this.nickname = nickname; }
+    public List<Reply> getReplies() { return replies; }
+    public void setReplies(List<Reply> replies) { this.replies = replies; }
 
     public String getAvatarUrl() { return avatarUrl; }
     public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
 
-    public boolean isLiked() { return isLiked; }
-    public void setLiked(boolean liked) { isLiked = liked; }
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
 
-    public String getAnonymousName() { return anonymousName; }
-    public void setAnonymousName(String anonymousName) { this.anonymousName = anonymousName; }
+    public long getUpdateTime() { return updateTime; }
+    public void setUpdateTime(long updateTime) { this.updateTime = updateTime; }
 
-    public String getDisplayName() {
-        if (isAnonymous && anonymousName != null) {
-            return anonymousName;
-        }
-        return nickname != null ? nickname : "用户" + userId;
-    }
+    public int getCollectCount() { return collectCount; }
+    public void setCollectCount(int collectCount) { this.collectCount = collectCount; }
 
-    public boolean isProfileAccessible() {
-        return !isAnonymous;
-    }
     public boolean isFollowed() { return isFollowed; }
     public void setFollowed(boolean followed) { isFollowed = followed; }
-    // ==================== 新增图片相关 ====================
 
-    /**
-     * 获取所有图片路径
-     */
-    public List<String> getImagePaths() {
-        return imagePaths;
-    }
-
+    public List<String> getImagePaths() { return imagePaths; }
     public void setImagePaths(List<String> imagePaths) {
         this.imagePaths = imagePaths;
-        // 自动设置第一张为封面
         if (imagePaths != null && !imagePaths.isEmpty()) {
             this.coverImageUrl = imagePaths.get(0);
         }
     }
 
-    /**
-     * 获取封面图片URL（用于列表展示）
-     */
-    public String getCoverImageUrl() {
-        if (coverImageUrl != null && !coverImageUrl.isEmpty()) {
-            return coverImageUrl;
-        }
-        // 兜底：取第一张
-        if (imagePaths != null && !imagePaths.isEmpty()) {
-            return imagePaths.get(0);
-        }
-        return null;
+    public String getCoverImageUrl() { return coverImageUrl; }
+    public void setCoverImageUrl(String coverImageUrl) { this.coverImageUrl = coverImageUrl; }
+
+    // ==================== 辅助方法 ====================
+
+    public String getDisplayName() {
+        if (isAnonymous) return "匿名用户";
+        if (authorName != null && !authorName.isEmpty()) return authorName;
+        return "用户" + userId;
     }
 
-    public void setCoverImageUrl(String coverImageUrl) {
-        this.coverImageUrl = coverImageUrl;
+    public boolean isProfileAccessible() {
+        return !isAnonymous;
     }
 
-    /**
-     * 判断是否有图片
-     */
     public boolean hasImages() {
         return imagePaths != null && !imagePaths.isEmpty();
     }
 
-    /**
-     * 获取图片数量
-     */
     public int getImageCount() {
         return imagePaths != null ? imagePaths.size() : 0;
     }
+
+    public long getCreateTime() { return postTime; }
+    public void setCreateTime(long createTime) { this.postTime = createTime; }
 }
