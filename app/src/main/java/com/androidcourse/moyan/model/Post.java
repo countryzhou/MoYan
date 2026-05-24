@@ -26,7 +26,9 @@ public class Post {
     private String tags;
 
     @SerializedName("postTime")
-    private long postTime;
+    private String postTimeString;
+
+    private transient long postTime;
 
     @SerializedName("viewCount")
     private int viewCount;
@@ -87,9 +89,6 @@ public class Post {
 
     public String getTags() { return tags; }
     public void setTags(String tags) { this.tags = tags; }
-
-    public long getPostTime() { return postTime; }
-    public void setPostTime(long postTime) { this.postTime = postTime; }
 
     public int getViewCount() { return viewCount; }
     public void setViewCount(int viewCount) { this.viewCount = viewCount; }
@@ -169,4 +168,41 @@ public class Post {
 
     public long getCreateTime() { return postTime; }
     public void setCreateTime(long createTime) { this.postTime = createTime; }
+
+    public long getPostTime() {
+        if (postTime == 0 && postTimeString != null) {
+            postTime = parseTimeString(postTimeString);
+        }
+        return postTime;
+    }
+
+    public void setPostTime(long postTime) {
+        this.postTime = postTime;
+    }
+
+    public String getPostTimeString() {
+        return postTimeString;
+    }
+
+    public void setPostTimeString(String postTimeString) {
+        this.postTimeString = postTimeString;
+        this.postTime = 0;
+    }
+
+    private long parseTimeString(String timeString) {
+        if (timeString == null || timeString.isEmpty()) {
+            return System.currentTimeMillis();
+        }
+
+        try {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
+                    "MMM dd, yyyy, h:mm:ss a", java.util.Locale.ENGLISH);
+            java.util.Date date = sdf.parse(timeString);
+            return date != null ? date.getTime() : System.currentTimeMillis();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return System.currentTimeMillis();
+        }
+    }
+
 }

@@ -42,7 +42,7 @@ public class SocketClient {
             Log.d("SocketClient", "发送请求: " + jsonRequest);
 
             socket = new Socket(SERVER_IP, SERVER_PORT);
-            socket.setSoTimeout(10000);
+            socket.setSoTimeout(30000);
 
             output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
             input = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
