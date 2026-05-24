@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,8 +60,6 @@ public class CreateReplyActivity extends AppCompatActivity {
 
     private void setupListeners() {
         sendButtonContainer.setOnClickListener(v -> submitReply());
-
-        // 可选：其他按钮（图片、键盘、添加、表情）可以保持原有 Toast 提示
     }
 
     private void setupBackHandler() {
@@ -85,7 +82,7 @@ public class CreateReplyActivity extends AppCompatActivity {
 
         boolean isAnonymous = anonymousCheckBox.isChecked();
 
-        viewModel.submitReply(this, postId, content, isAnonymous, new PostDetailViewModel.SubmitCallback() {
+        viewModel.submitReply(postId, content, isAnonymous, new PostDetailViewModel.SubmitCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(CreateReplyActivity.this, "回复成功", Toast.LENGTH_SHORT).show();

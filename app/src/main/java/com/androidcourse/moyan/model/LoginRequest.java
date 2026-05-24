@@ -8,18 +8,18 @@ public class LoginRequest {
     private Params params;
 
 
-    public LoginRequest(String phone, String password) {
+    public LoginRequest(String phone, String code) {
         this.action = "login";
-        this.params = new Params(phone, password);
+        this.params = new Params(phone, code);
     }
 
     private static class Params {
         private String phone;
-        private String password;
+        private String code;
 
-        public Params(String phone, String password) {
+        public Params(String phone, String code) {
             this.phone = phone;
-            this.password = password;
+            this.code = code;
         }
     }
 }

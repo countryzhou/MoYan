@@ -24,17 +24,17 @@ public class UserNetworkManager {
     /**
      * 用户登录
      * @param phone 手机号
-     * @param password 密码
+     * @param code 密码
      * @return 服务端响应JSON字符串
      */
-    public String login(String phone, String password) {
+    public String login(String phone, String code) {
         try {
             JSONObject request = new JSONObject();
             request.put("action", "login");
 
             JSONObject params = new JSONObject();
             params.put("phone", phone);
-            params.put("password", password);
+            params.put("code", code);
             request.put("params", params);
 
             return SocketClient.getInstance().sendRequest(request.toString());

@@ -96,6 +96,31 @@ public class PostRepository {
         }).start();
     }
 
+    /**
+     * 搜索帖子
+     */
+    public void searchPosts(String keyword, String tag, String sortBy, int page,
+                            RepositoryCallback<List<Post>> callback) {
+        new Thread(() -> {
+            String response = networkManager.searchPosts(keyword, tag, sortBy, page);
+            try {
+                JSONObject jsonResponse = new JSONObject(response);
+                if (jsonResponse.getInt("code") == 0) {
+                    JSONArray postsArray = jsonResponse.getJSONArray("data");
+                    Type listType = new TypeToken<List<Post>>() {}.getType();
+                    List<Post> postList = gson.fromJson(postsArray.toString(), listType);
+                    if (callback != null) callback.onResult(postList);
+                } else {
+                    String errorMsg = jsonResponse.optString("msg", "搜索失败");
+                    if (callback != null) callback.onError(errorMsg);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (callback != null) callback.onError("解析搜索结果失败：" + e.getMessage());
+            }
+        }).start();
+    }
+
     public interface RepositoryCallback<T> {
         void onResult(T result);
         void onError(String error);
