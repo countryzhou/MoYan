@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- ... existing code ... -->
+
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -6,277 +7,279 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <ScrollView
-        android:id="@+id/scrollView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:clipToPadding="false"
-        android:scrollbars="none"
+        android:orientation="vertical"
         android:fitsSystemWindows="true">
 
-        <LinearLayout
+        <!-- 顶部栏 -->
+        <RelativeLayout
+            android:id="@+id/topBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginTop="20dp"
+            android:background="@color/white"
+            android:elevation="2dp">
 
-            <!-- 文章图片 -->
+            <!-- 返回按钮 - 固定在左边 -->
             <ImageView
-                android:id="@+id/ivPostImage"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/img_car_placeholder" />
+                android:id="@+id/btnBack"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:padding="0dp"
+                android:src="@drawable/ic_back" />
 
-            <!-- 文章标题 -->
+            <!-- 作者头像 - 在返回按钮右边 -->
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ivAuthorAvatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/btnBack"
+                android:src="@drawable/ic_avatar_placeholder" />
+
+            <!-- 作者名称 - 在头像右边 -->
             <TextView
-                android:id="@+id/tvPostTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="21dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="21dp"
-                android:text="这是一个文章的标题"
-                android:textColor="@color/text_main"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <!-- 文章内容 -->
-
-            <!-- 话题标签 -->
-            <TextView
-                android:id="@+id/tvPostContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="21dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="21dp"
-                android:lineSpacingExtra="4dp"
-                android:text="北京时间1月10日消息，林丹在老家福建的别墅曝光，这套豪宅位于富人区，均价11万！而从面积来看，在600-800平方米，因此，这套豪宅在7000万人民币左右。当然，豪宅内部装修也相当豪华，就像是皇宫一样。当然，林丹打了20年球，靠打球的收入就超过2亿。因此，7000万对林丹来说不算什么。当然，豪宅内部装修也相当豪华，就像是皇宫一样。当然，林丹打了20年球，靠打球的收入就超过2亿。"
-                android:textColor="@color/text_main"
-                android:textSize="15sp" />
-
-            <LinearLayout
-                android:id="@+id/layoutTags"
+                android:id="@+id/tvAuthorName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="21dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="21dp"
-                android:orientation="horizontal">
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@+id/ivAuthorAvatar"
+                android:ellipsize="end"
+                android:maxWidth="150dp"
+                android:maxLines="1"
+                android:textColor="@color/text_main"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tvTag1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_nav_active"
-                    android:paddingStart="10dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="10dp"
-                    android:paddingBottom="4dp"
-                    android:text="#标签1"
-                    android:textColor="@color/black"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tvTag2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_badge"
-                    android:paddingStart="10dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="10dp"
-                    android:paddingBottom="4dp"
-                    android:text="#标签2"
-                    android:textColor="@color/black"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tvTag3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_nav_active"
-                    android:paddingStart="10dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="10dp"
-                    android:paddingBottom="4dp"
-                    android:text="#标签3"
-                    android:textColor="@color/black"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tvTag4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_badge"
-                    android:paddingStart="10dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="10dp"
-                    android:paddingBottom="4dp"
-                    android:text="#标签4"
-                    android:textColor="@color/black"
-                    android:textSize="13sp" />
-
-            </LinearLayout>
-
-            <!-- 编辑信息 -->
-            <TextView
-                android:id="@+id/tvEditInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="21dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="21dp"
-                android:text="编辑于今天12：00 上海"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
-
-            <!-- 分割线 -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="20dp"
-                android:background="@color/divider" />
-
-            <!-- 互动统计栏 -->
+            <!-- 分享按钮 - 固定在右边 -->
             <LinearLayout
-                android:id="@+id/layoutStats"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="21dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="21dp"
+                android:id="@+id/layoutShare"
+                android:layout_width="50dp"
+                android:layout_height="70dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="16dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_comment_all" />
+                    android:id="@+id/btnShareTop"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_share" />
 
                 <TextView
-                    android:id="@+id/tvCommentCount"
+                    android:id="@+id/btnshareCountBottom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:text="共18条评论"
+                    android:layout_marginStart="4dp"
+                    android:text="27"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- 关注按钮 - 在分享按钮左边 -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnFollow"
+                android:layout_width="90dp"
+                android:layout_height="32dp"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="12dp"
+                android:layout_toStartOf="@+id/layoutShare"
+                android:background="@drawable/bg_btn_follow_selector"
+                android:drawableStart="@drawable/selector_follow_icon"
+                android:drawablePadding="4dp"
+                android:gravity="center"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="关注"
+                android:textColor="@drawable/selector_follow_text_color"
+                android:textSize="12sp"
+                tools:ignore="TouchTargetSizeCheck" />
+
+        </RelativeLayout>
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:clipToPadding="false"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:orientation="vertical">
+
+                <!-- 文章图片 -->
+                <ImageView
+                    android:id="@+id/ivPostImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/img_car_placeholder" />
+
+                <!-- 文章标题 -->
+                <TextView
+                    android:id="@+id/tvPostTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="21dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="21dp"
+                    android:textColor="@color/text_main"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <!-- 文章内容 -->
+
+                <!-- 话题标签 -->
+                <TextView
+                    android:id="@+id/tvPostContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="21dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="21dp"
+                    android:lineSpacingExtra="4dp"
+                    android:textColor="@color/text_main"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:id="@+id/layoutTags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="21dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="21dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvTag1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_nav_active"
+                        android:paddingStart="10dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="4dp"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvTag2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_badge"
+                        android:paddingStart="10dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="4dp"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvTag3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_nav_active"
+                        android:paddingStart="10dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="4dp"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvTag4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_badge"
+                        android:paddingStart="10dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="4dp"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+                <!-- 编辑信息 -->
+                <TextView
+                    android:id="@+id/tvEditInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="21dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="21dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <!-- 分割线 -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/divider" />
+
+                <!-- 互动统计栏 -->
+                <LinearLayout
+                    android:id="@+id/layoutStats"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="21dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="21dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_comment_all" />
+
+                    <TextView
+                        android:id="@+id/tvCommentCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="共0条评论"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+
+                <!-- 评论列表 -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvComments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:nestedScrollingEnabled="false" />
+
+                <!-- 底部留白，避免被底部输入栏遮挡 -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp" />
 
             </LinearLayout>
 
+        </ScrollView>
 
-            <!-- 评论列表 -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvComments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:nestedScrollingEnabled="false" />
-
-            <!-- 底部留白，避免被底部输入栏遮挡 -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="60dp" />
-
-        </LinearLayout>
-
-    </ScrollView>
-
-    <!-- 顶部栏 -->
-    <RelativeLayout
-        android:id="@+id/topBar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
-        android:elevation="2dp">
-
-        <!-- 返回按钮 - 固定在左边 -->
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="16dp"
-            android:padding="0dp"
-            android:src="@drawable/ic_back" />
-
-        <!-- 作者头像 - 在返回按钮右边 -->
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/ivAuthorAvatar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
-            android:layout_toEndOf="@+id/btnBack"
-            android:src="@drawable/ic_avatar_placeholder" />
-
-        <!-- 作者名称 - 在头像右边 -->
-        <TextView
-            android:id="@+id/tvAuthorName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="8dp"
-            android:layout_toEndOf="@+id/ivAuthorAvatar"
-            android:maxWidth="150dp"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:text="郭敬明"
-            android:textColor="@color/text_main"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <!-- 分享按钮 - 固定在右边 -->
-        <LinearLayout
-            android:id="@+id/layoutShare"
-            android:layout_width="50dp"
-            android:layout_height="70dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:id="@+id/btnShareTop"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/ic_share" />
-
-            <TextView
-                android:id="@+id/btnshareCountBottom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:text="27"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
-        </LinearLayout>
-
-        <!-- 关注按钮 - 在分享按钮左边 -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnFollow"
-            android:layout_width="90dp"
-            android:layout_height="32dp"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="12dp"
-            android:layout_toStartOf="@+id/layoutShare"
-            android:background="@drawable/bg_btn_follow_selector"
-            android:drawableStart="@drawable/selector_follow_icon"
-            android:drawablePadding="4dp"
-            android:gravity="center"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:text="关注"
-            android:textColor="@drawable/selector_follow_text_color"
-            android:textSize="12sp"
-            tools:ignore="TouchTargetSizeCheck" />
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <!-- 底部输入栏 -->
     <RelativeLayout
@@ -284,6 +287,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_gravity="bottom"
+        android:layout_marginBottom="20dp"
         android:background="@color/white"
         android:elevation="8dp">
 
@@ -317,8 +321,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/ivLikeBottom"
@@ -341,8 +345,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/ivCommentBottom"
@@ -365,8 +369,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/ivCollect"

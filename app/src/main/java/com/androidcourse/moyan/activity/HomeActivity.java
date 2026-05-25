@@ -2,6 +2,8 @@ package com.androidcourse.moyan.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -13,7 +15,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
 import com.androidcourse.moyan.R;
 import com.androidcourse.moyan.adapter.NewsAdapter;
@@ -42,6 +46,14 @@ public class HomeActivity extends AppCompatActivity {
     private HomeViewModel homeViewModel;
     private SharedPrefsHelper sharedPrefsHelper;
 
+    private Handler autoScrollHandler;
+    private Runnable autoScrollRunnable;
+    private List<TrendCard> trendCards;
+    private static final long AUTO_SCROLL_DELAY = 3000;
+    private int currentScrollPosition = 0;
+    private boolean isUserScrolling = false;
+    private LinearLayoutManager layoutManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +61,7 @@ public class HomeActivity extends AppCompatActivity {
 
         sharedPrefsHelper = SharedPrefsHelper.getInstance();
         homeViewModel = new HomeViewModel();
+        autoScrollHandler = new Handler(Looper.getMainLooper());
 
         initViews();
         setupListeners();
@@ -109,6 +122,20 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (trendCards != null && !trendCards.isEmpty()) {
+            startAutoScroll();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopAutoScroll();
+    }
+
     private boolean checkLogin() {
         if (!sharedPrefsHelper.isLogin()) {
             Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
@@ -162,8 +189,13 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void displayTrendCards(List<TrendCard> cards) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        this.trendCards = cards;
+
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvTrendCards.setLayoutManager(layoutManager);
+
+        SnapHelper snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(rvTrendCards);
 
         trendCardAdapter = new TrendCardAdapter(this, cards, trendCard -> {
             Intent intent = new Intent(HomeActivity.this, PostdetailActivity.class);
@@ -172,16 +204,62 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         rvTrendCards.setAdapter(trendCardAdapter);
-        rvTrendCards.post(() -> createDotIndicators(cards.size()));
+
+        int count = cards == null ? 0 : cards.size();
+        rvTrendCards.post(() -> createDotIndicators(count));
+
+        currentScrollPosition = 0;
+        rvTrendCards.scrollToPosition(currentScrollPosition);
+
         rvTrendCards.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    isUserScrolling = true;
+                    stopAutoScroll();
+                } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    isUserScrolling = false;
+                    updateCurrentPositionByCenter();
                     updateDotByScroll();
+                    startAutoScroll();
                 }
             }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
         });
+
+        startAutoScroll();
+    }
+
+    private void updateCurrentPositionByCenter() {
+        if (layoutManager == null || trendCards == null || trendCards.isEmpty()) return;
+
+        int recyclerViewCenterX = rvTrendCards.getWidth() / 2;
+        int minDistance = Integer.MAX_VALUE;
+        int closestPosition = 0;
+
+        for (int i = 0; i < trendCards.size(); i++) {
+            View itemView = layoutManager.findViewByPosition(i);
+            if (itemView == null) continue;
+
+            int itemCenterX = (itemView.getLeft() + itemView.getRight()) / 2;
+            int distance = Math.abs(recyclerViewCenterX - itemCenterX);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestPosition = i;
+            }
+        }
+
+        if (currentScrollPosition != closestPosition) {
+            currentScrollPosition = closestPosition;
+            Log.d("HomeActivity", "Position updated by center to: " + currentScrollPosition);
+        }
     }
 
     private void displayNewsList(List<NewsItem> news) {
@@ -218,6 +296,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private void selectDot(int position) {
         if (dotIndicator == null || dotIndicator.getChildCount() == 0) return;
+
+        Log.d("HomeActivity", "Selecting dot at position: " + position);
+
         for (int i = 0; i < dotIndicator.getChildCount(); i++) {
             View dot = dotIndicator.getChildAt(i);
             if (i == position) {
@@ -229,11 +310,51 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void updateDotByScroll() {
-        LinearLayoutManager layoutManager = (LinearLayoutManager) rvTrendCards.getLayoutManager();
-        if (layoutManager == null) return;
-        int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
-        if (firstVisiblePosition != RecyclerView.NO_POSITION) {
-            selectDot(firstVisiblePosition);
+        if (trendCards == null || trendCards.size() <= 1) return;
+
+        Log.d("HomeActivity", "Updating dot, current position: " + currentScrollPosition);
+        selectDot(currentScrollPosition);
+    }
+
+    private void startAutoScroll() {
+        if (trendCards == null || trendCards.size() <= 1) {
+            return;
+        }
+
+        stopAutoScroll();
+
+        autoScrollRunnable = () -> {
+            if (isUserScrolling) {
+                Log.d("HomeActivity", "Skipping auto scroll - user is scrolling");
+                return;
+            }
+
+            int itemCount = trendCards.size();
+            int nextPosition = currentScrollPosition + 1;
+
+            Log.d("HomeActivity", "Auto scroll from " + currentScrollPosition + " to " + nextPosition + " (total: " + itemCount + ")");
+
+            if (nextPosition >= itemCount) {
+                nextPosition = 0;
+                rvTrendCards.smoothScrollToPosition(nextPosition);
+                currentScrollPosition = nextPosition;
+                updateDotByScroll();
+            } else {
+                rvTrendCards.smoothScrollToPosition(nextPosition);
+                currentScrollPosition = nextPosition;
+            }
+
+            autoScrollHandler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY);
+        };
+
+        autoScrollHandler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY);
+        Log.d("HomeActivity", "Auto scroll started");
+    }
+
+    private void stopAutoScroll() {
+        if (autoScrollRunnable != null) {
+            autoScrollHandler.removeCallbacks(autoScrollRunnable);
+            Log.d("HomeActivity", "Auto scroll stopped");
         }
     }
 

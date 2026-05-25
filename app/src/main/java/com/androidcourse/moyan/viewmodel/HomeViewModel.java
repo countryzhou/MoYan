@@ -57,14 +57,16 @@ public class HomeViewModel {
     }
 
     /**
-     * 加载新闻列表
+     * 加载新闻列表（舍弃前4条，避免与趋势卡片重复）
      */
     public void loadNewsList(NewsListCallback callback) {
-        postRepository.getPostList(1, 20, new PostRepository.RepositoryCallback<List<Post>>() {
+        postRepository.getPostList(1, 14, new PostRepository.RepositoryCallback<List<Post>>() {
             @Override
             public void onResult(List<Post> result) {
                 List<NewsItem> newsList = new ArrayList<>();
-                for (Post post : result) {
+                int startIndex = Math.min(4, result.size());
+                for (int i = startIndex; i < result.size(); i++) {
+                    Post post = result.get(i);
                     NewsItem item = new NewsItem();
                     item.setId(post.getPostId());
                     item.setTitle(post.getTitle());

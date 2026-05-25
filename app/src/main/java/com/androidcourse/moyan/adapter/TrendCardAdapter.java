@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * 趋势卡片适配器
- * 用于首页横向滚动推荐区域
+ * 用于首页横向滚动推荐区域（支持无限循环）
  */
 public class TrendCardAdapter extends RecyclerView.Adapter<TrendCardAdapter.TrendViewHolder> {
 
@@ -83,6 +83,8 @@ public class TrendCardAdapter extends RecyclerView.Adapter<TrendCardAdapter.Tren
 
             if (trend.getImageResId() != 0) {
                 ivTrendImage.setImageResource(trend.getImageResId());
+            } else {
+                ivTrendImage.setImageResource(R.drawable.img_car_placeholder);
             }
 
             if (listener != null) {

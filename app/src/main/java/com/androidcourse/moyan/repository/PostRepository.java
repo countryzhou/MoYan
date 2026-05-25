@@ -31,10 +31,45 @@ public class PostRepository {
         new Thread(() -> {
             int userId = spHelper.getUserId();
             String response = networkManager.getPostList(page, size, userId);
+
+            // 添加空值检查
+            if (response == null || response.isEmpty()) {
+                if (callback != null) callback.onError("网络响应为空");
+                return;
+            }
+
             try {
                 JSONObject jsonResponse = new JSONObject(response);
                 if (jsonResponse.getInt("code") == 0) {
-                    JSONArray postsArray = jsonResponse.getJSONArray("data");
+                    // 检查 data 字段是否存在且为 JSONArray
+                    if (!jsonResponse.has("data")) {
+                        if (callback != null) callback.onError("响应数据格式错误：缺少data字段");
+                        return;
+                    }
+
+                    Object data = jsonResponse.get("data");
+                    JSONArray postsArray;
+
+                    // 根据数据类型处理
+                    if (data instanceof JSONArray) {
+                        postsArray = (JSONArray) data;
+                    } else if (data instanceof JSONObject) {
+                        // 如果 data 是对象，尝试获取其中的数组字段
+                        JSONObject dataObj = (JSONObject) data;
+                        if (dataObj.has("posts")) {
+                            postsArray = dataObj.getJSONArray("posts");
+                        } else if (dataObj.has("list")) {
+                            postsArray = dataObj.getJSONArray("list");
+                        } else {
+                            // 假设整个对象就是一个帖子详情，包装成数组
+                            postsArray = new JSONArray();
+                            postsArray.put(dataObj);
+                        }
+                    } else {
+                        if (callback != null) callback.onError("响应数据格式错误：data字段类型不正确");
+                        return;
+                    }
+
                     Type listType = new TypeToken<List<Post>>() {}.getType();
                     List<Post> postList = gson.fromJson(postsArray.toString(), listType);
                     if (callback != null) callback.onResult(postList);
@@ -56,9 +91,22 @@ public class PostRepository {
         new Thread(() -> {
             int userId = spHelper.getUserId();
             String response = networkManager.getPostDetail(postId, userId);
+
+            // 添加空值检查
+            if (response == null || response.isEmpty()) {
+                if (callback != null) callback.onError("网络响应为空");
+                return;
+            }
+
             try {
                 JSONObject jsonResponse = new JSONObject(response);
                 if (jsonResponse.getInt("code") == 0) {
+                    // 检查 data 字段是否存在
+                    if (!jsonResponse.has("data")) {
+                        if (callback != null) callback.onError("响应数据格式错误：缺少data字段");
+                        return;
+                    }
+
                     JSONObject data = jsonResponse.getJSONObject("data");
                     Post post = gson.fromJson(data.toString(), Post.class);
                     if (callback != null) callback.onResult(post);
@@ -103,10 +151,45 @@ public class PostRepository {
                             RepositoryCallback<List<Post>> callback) {
         new Thread(() -> {
             String response = networkManager.searchPosts(keyword, tag, sortBy, page);
+
+            // 添加空值检查
+            if (response == null || response.isEmpty()) {
+                if (callback != null) callback.onError("网络响应为空");
+                return;
+            }
+
             try {
                 JSONObject jsonResponse = new JSONObject(response);
                 if (jsonResponse.getInt("code") == 0) {
-                    JSONArray postsArray = jsonResponse.getJSONArray("data");
+                    // 检查 data 字段是否存在且为 JSONArray
+                    if (!jsonResponse.has("data")) {
+                        if (callback != null) callback.onError("响应数据格式错误：缺少data字段");
+                        return;
+                    }
+
+                    Object data = jsonResponse.get("data");
+                    JSONArray postsArray;
+
+                    // 根据数据类型处理
+                    if (data instanceof JSONArray) {
+                        postsArray = (JSONArray) data;
+                    } else if (data instanceof JSONObject) {
+                        // 如果 data 是对象，尝试获取其中的数组字段
+                        JSONObject dataObj = (JSONObject) data;
+                        if (dataObj.has("posts")) {
+                            postsArray = dataObj.getJSONArray("posts");
+                        } else if (dataObj.has("list")) {
+                            postsArray = dataObj.getJSONArray("list");
+                        } else {
+                            // 假设整个对象就是一个帖子详情，包装成数组
+                            postsArray = new JSONArray();
+                            postsArray.put(dataObj);
+                        }
+                    } else {
+                        if (callback != null) callback.onError("响应数据格式错误：data字段类型不正确");
+                        return;
+                    }
+
                     Type listType = new TypeToken<List<Post>>() {}.getType();
                     List<Post> postList = gson.fromJson(postsArray.toString(), listType);
                     if (callback != null) callback.onResult(postList);

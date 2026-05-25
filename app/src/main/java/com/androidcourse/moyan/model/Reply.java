@@ -16,7 +16,9 @@ public class Reply {
     private String content;
 
     @SerializedName("replyTime")
-    private long replyTime;
+    private String replyTimeString;
+
+    private transient long replyTime;
 
     @SerializedName("isAnonymous")
     private boolean isAnonymous;
@@ -43,8 +45,25 @@ public class Reply {
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
 
-    public long getReplyTime() { return replyTime; }
-    public void setReplyTime(long replyTime) { this.replyTime = replyTime; }
+    public long getReplyTime() {
+        if (replyTime == 0 && replyTimeString != null) {
+            replyTime = parseTimeString(replyTimeString);
+        }
+        return replyTime;
+    }
+
+    public void setReplyTime(long replyTime) {
+        this.replyTime = replyTime;
+    }
+
+    public String getReplyTimeString() {
+        return replyTimeString;
+    }
+
+    public void setReplyTimeString(String replyTimeString) {
+        this.replyTimeString = replyTimeString;
+        this.replyTime = 0;
+    }
 
     public boolean isAnonymous() { return isAnonymous; }
     public void setAnonymous(boolean anonymous) { isAnonymous = anonymous; }
@@ -84,6 +103,22 @@ public class Reply {
         return !isAnonymous;
     }
 
-    public long getCreateTime() { return replyTime; }
+    public long getCreateTime() { return getReplyTime(); }
     public void setCreateTime(long createTime) { this.replyTime = createTime; }
+
+    private long parseTimeString(String timeString) {
+        if (timeString == null || timeString.isEmpty()) {
+            return System.currentTimeMillis();
+        }
+
+        try {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
+                    "MMM dd, yyyy, h:mm:ss a", java.util.Locale.ENGLISH);
+            java.util.Date date = sdf.parse(timeString);
+            return date != null ? date.getTime() : System.currentTimeMillis();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return System.currentTimeMillis();
+        }
+    }
 }

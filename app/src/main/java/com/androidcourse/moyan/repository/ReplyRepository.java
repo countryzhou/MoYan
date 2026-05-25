@@ -27,10 +27,45 @@ public class ReplyRepository {
     public void getReplies(int postId, int page, RepositoryCallback<List<Reply>> callback) {
         new Thread(() -> {
             String response = networkManager.getReplies(postId, page);
+
+            // 添加空值检查
+            if (response == null || response.isEmpty()) {
+                if (callback != null) callback.onError("网络响应为空");
+                return;
+            }
+
             try {
                 JSONObject jsonResponse = new JSONObject(response);
                 if (jsonResponse.getInt("code") == 0) {
-                    JSONArray repliesArray = jsonResponse.getJSONArray("data");
+                    // 检查 data 字段是否存在
+                    if (!jsonResponse.has("data")) {
+                        if (callback != null) callback.onError("响应数据格式错误：缺少data字段");
+                        return;
+                    }
+
+                    Object data = jsonResponse.get("data");
+                    JSONArray repliesArray;
+
+                    // 根据数据类型处理
+                    if (data instanceof JSONArray) {
+                        repliesArray = (JSONArray) data;
+                    } else if (data instanceof JSONObject) {
+                        // 如果 data 是对象，尝试获取其中的数组字段
+                        JSONObject dataObj = (JSONObject) data;
+                        if (dataObj.has("replies")) {
+                            repliesArray = dataObj.getJSONArray("replies");
+                        } else if (dataObj.has("list")) {
+                            repliesArray = dataObj.getJSONArray("list");
+                        } else {
+                            // 假设整个对象就是一个回复详情，包装成数组
+                            repliesArray = new JSONArray();
+                            repliesArray.put(dataObj);
+                        }
+                    } else {
+                        if (callback != null) callback.onError("响应数据格式错误：data字段类型不正确");
+                        return;
+                    }
+
                     Type listType = new TypeToken<List<Reply>>() {}.getType();
                     List<Reply> replyList = gson.fromJson(repliesArray.toString(), listType);
                     if (callback != null) callback.onResult(replyList);
@@ -52,6 +87,13 @@ public class ReplyRepository {
                             RepositoryCallback<Integer> callback) {
         new Thread(() -> {
             String response = networkManager.createReply(postId, userId, isAnonymous, content);
+
+            // 添加空值检查
+            if (response == null || response.isEmpty()) {
+                if (callback != null) callback.onError("网络响应为空");
+                return;
+            }
+
             try {
                 JSONObject jsonResponse = new JSONObject(response);
                 if (jsonResponse.getInt("code") == 0) {

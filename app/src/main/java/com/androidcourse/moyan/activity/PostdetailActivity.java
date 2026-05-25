@@ -47,6 +47,9 @@ public class PostdetailActivity extends AppCompatActivity {
     private LinearLayout layoutTags;
     private TextView tvTag1, tvTag2, tvTag3, tvTag4;
 
+    // 互动统计区
+    private TextView tvCommentCount;
+
     // 互动区
     private ImageView ivCommentBottom;
     private TextView tvCommentCountBottom;
@@ -92,6 +95,7 @@ public class PostdetailActivity extends AppCompatActivity {
         tvTag3 = findViewById(R.id.tvTag3);
         tvTag4 = findViewById(R.id.tvTag4);
 
+        tvCommentCount = findViewById(R.id.tvCommentCount);
         ivCommentBottom = findViewById(R.id.ivCommentBottom);
         tvCommentCountBottom = findViewById(R.id.tvCommentCountBottom);
         ivCollect = findViewById(R.id.ivCollect);
@@ -133,10 +137,11 @@ public class PostdetailActivity extends AppCompatActivity {
             }
         });
 
-        etComment.setOnClickListener(v -> {
+        etComment.setOnTouchListener((v, event) -> {
             Intent intent = new Intent(PostdetailActivity.this, CreateReplyActivity.class);
             intent.putExtra("post_id", currentPost != null ? currentPost.getPostId() : -1);
             startActivity(intent);
+            return false;
         });
     }
 
@@ -187,7 +192,6 @@ public class PostdetailActivity extends AppCompatActivity {
         tvPostTitle.setText(currentPost.getTitle());
         tvPostContent.setText(currentPost.getContent());
 
-        tvCommentCountBottom.setText(String.valueOf(currentPost.getReplyCount()));
         tvCollectCountBottom.setText(String.valueOf(currentPost.getCollectCount()));
 
         tvEditInfo.setText("编辑于 " + TimeUtils.formatDateTime(currentPost.getUpdateTime()));
@@ -248,6 +252,9 @@ public class PostdetailActivity extends AppCompatActivity {
                 replyList.addAll(replies);
                 replyAdapter.updateReplies(replyList);
                 updateReplyCount(replies.size());
+                if (currentPost != null) {
+                    currentPost.setReplyCount(replies.size());
+                }
             }
 
             @Override
@@ -258,6 +265,7 @@ public class PostdetailActivity extends AppCompatActivity {
     }
 
     private void updateReplyCount(int count) {
+        tvCommentCount.setText("共" + count + "条评论");
         tvCommentCountBottom.setText(String.valueOf(count));
         if (currentPost != null) {
             currentPost.setReplyCount(count);
