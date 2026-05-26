@@ -24,17 +24,17 @@ public class UserNetworkManager {
     /**
      * 用户登录
      * @param phone 手机号
-     * @param code 密码
+     * @param password 密码
      * @return 服务端响应JSON字符串
      */
-    public String login(String phone, String code) {
+    public String login(String phone, String password) {
         try {
             JSONObject request = new JSONObject();
             request.put("action", "login");
 
             JSONObject params = new JSONObject();
             params.put("phone", phone);
-            params.put("code", code);
+            params.put("password", password);
             request.put("params", params);
 
             return SocketClient.getInstance().sendRequest(request.toString());
@@ -43,6 +43,7 @@ public class UserNetworkManager {
             return "{\"code\":1,\"msg\":\"请求构建失败：" + e.getMessage() + "\",\"data\":null}";
         }
     }
+
 
     /**
      * 用户注册

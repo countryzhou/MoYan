@@ -88,6 +88,12 @@
             android:name=".activity.EditprofileActivity"
             android:exported="false" />
 
+        <!-- 用户发帖记录 -->
+        <activity
+            android:name=".activity.UserPostsActivity"
+            android:exported="false"
+            android:label="我的发帖" />
+
         <!-- 用户主页（查看他人） -->
         <activity
             android:name=".activity.UserProfileActivity"

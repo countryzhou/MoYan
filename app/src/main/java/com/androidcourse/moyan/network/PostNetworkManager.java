@@ -259,6 +259,8 @@ public class PostNetworkManager {
         }
     }
 
+// ... existing code ...
+
     /**
      * 提交任务回答
      * @param taskId 任务ID
@@ -275,6 +277,31 @@ public class PostNetworkManager {
             params.put("taskId", taskId);
             params.put("userId", userId);
             params.put("content", content);
+            request.put("params", params);
+
+            return SocketClient.getInstance().sendRequest(request.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{\"code\":1,\"msg\":\"请求构建失败：" + e.getMessage() + "\",\"data\":null}";
+        }
+    }
+
+    /**
+     * 获取用户发布的帖子
+     * @param userId 用户ID
+     * @param page 页码（从1开始）
+     * @param size 每页数量
+     * @return 服务端响应JSON字符串
+     */
+    public String getPostsByUserId(int userId, int page, int size) {
+        try {
+            JSONObject request = new JSONObject();
+            request.put("action", "getPostsByUserId");
+
+            JSONObject params = new JSONObject();
+            params.put("userId", userId);
+            params.put("page", page);
+            params.put("size", size);
             request.put("params", params);
 
             return SocketClient.getInstance().sendRequest(request.toString());

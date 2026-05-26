@@ -268,6 +268,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:nestedScrollingEnabled="false" />
 
                 <!-- 底部留白，避免被底部输入栏遮挡 -->
@@ -304,12 +307,13 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <EditText
+            <TextView
                 android:id="@+id/etComment"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_comment_input"
+                android:gravity="center_vertical"
                 android:hint="写下你的评论..."
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"

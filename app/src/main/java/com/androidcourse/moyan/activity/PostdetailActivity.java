@@ -59,7 +59,7 @@ public class PostdetailActivity extends AppCompatActivity {
 
     // 回复区
     private RecyclerView rvReplies;
-    private EditText etComment;
+    private TextView etComment;
 
     private Post currentPost;
     private ReplyAdapter replyAdapter;
@@ -115,6 +115,11 @@ public class PostdetailActivity extends AppCompatActivity {
         btnFollow.setOnClickListener(v -> toggleFollow());
         ivCollect.setOnClickListener(v -> toggleCollect());
         ivCommentBottom.setOnClickListener(v -> scrollToReplies());
+        etComment.setOnClickListener(v -> {
+            Intent intent = new Intent(PostdetailActivity.this, CreateReplyActivity.class);
+            intent.putExtra("post_id", currentPost != null ? currentPost.getPostId() : -1);
+            startActivity(intent);
+        });
 
         replyAdapter.setOnReplyActionListener(new ReplyAdapter.OnReplyActionListener() {
             @Override
@@ -135,13 +140,6 @@ public class PostdetailActivity extends AppCompatActivity {
                     openUserProfile(reply.getUserId());
                 }
             }
-        });
-
-        etComment.setOnTouchListener((v, event) -> {
-            Intent intent = new Intent(PostdetailActivity.this, CreateReplyActivity.class);
-            intent.putExtra("post_id", currentPost != null ? currentPost.getPostId() : -1);
-            startActivity(intent);
-            return false;
         });
     }
 

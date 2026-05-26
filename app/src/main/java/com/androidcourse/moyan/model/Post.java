@@ -195,14 +195,31 @@ public class Post {
         }
 
         try {
+            // 替换可能的特殊空格字符为普通空格
+            String normalizedTime = timeString.replace('\u202F', ' ')  // 窄不换行空格
+                    .replace('\u00A0', ' ')  // 不换行空格
+                    .trim();
+
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
                     "MMM dd, yyyy, h:mm:ss a", java.util.Locale.ENGLISH);
-            java.util.Date date = sdf.parse(timeString);
+            java.util.Date date = sdf.parse(normalizedTime);
             return date != null ? date.getTime() : System.currentTimeMillis();
         } catch (Exception e) {
             e.printStackTrace();
-            return System.currentTimeMillis();
+            // 尝试另一种格式（不带秒）
+            try {
+                String normalizedTime = timeString.replace('\u202F', ' ')
+                        .replace('\u00A0', ' ')
+                        .trim();
+
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
+                        "MMM dd, yyyy, h:mm a", java.util.Locale.ENGLISH);
+                java.util.Date date = sdf.parse(normalizedTime);
+                return date != null ? date.getTime() : System.currentTimeMillis();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return System.currentTimeMillis();
+            }
         }
     }
-
 }

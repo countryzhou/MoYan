@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- 背景圆形 -->
+    <path
+        android:fillColor="#F5F5F5"
+        android:pathData="M60,60m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
+
+    <!-- 文档/纸张形状 -->
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M35,35 L70,35 L85,50 L85,90 L35,90 Z" />
+
+    <!-- 文档折叠角 -->
+    <path
+        android:fillColor="#D0D0D0"
+        android:pathData="M70,35 L85,50 L70,50 Z" />
+
+    <!-- 第一行文字线 -->
+    <path
+        android:fillColor="#C0C0C0"
+        android:pathData="M42,58 L78,58 L78,60 L42,60 Z" />
+
+    <!-- 第二行文字线 -->
+    <path
+        android:fillColor="#C0C0C0"
+        android:pathData="M42,66 L72,66 L72,68 L42,68 Z" />
+
+    <!-- 第三行文字线 -->
+    <path
+        android:fillColor="#C0C0C0"
+        android:pathData="M42,74 L65,74 L65,76 L42,76 Z" />
+
+    <!-- 铅笔图标 -->
+    <path
+        android:fillColor="#A0A0A0"
+        android:pathData="M75,70 L85,80 L80,85 L70,75 Z" />
+
+    <!-- 铅笔尖 -->
+    <path
+        android:fillColor="#909090"
+        android:pathData="M70,75 L72,73 L85,86 L83,88 Z" />
+
+</vector>

@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,7 +34,7 @@ import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private EditText etSearch;
+    private TextView etSearch;
     private ImageView ivAvatar;
     private RecyclerView rvTrendCards;
     private RecyclerView rvNewsList;
