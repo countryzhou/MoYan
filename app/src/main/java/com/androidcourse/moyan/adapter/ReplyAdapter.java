@@ -1,5 +1,7 @@
 package com.androidcourse.moyan.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidcourse.moyan.R;
+import com.androidcourse.moyan.activity.ReportActivity;
 import com.androidcourse.moyan.model.Reply;
 import com.androidcourse.moyan.utils.TimeUtils;
 
@@ -22,6 +25,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder> 
 
     private List<Reply> replyList;
     private int currentUserId;
+    private Context context;
     private OnReplyActionListener listener;
 
     public interface OnReplyActionListener {
@@ -33,6 +37,12 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder> 
     public ReplyAdapter(List<Reply> replyList, int currentUserId) {
         this.replyList = replyList;
         this.currentUserId = currentUserId;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        context = recyclerView.getContext();
     }
 
     public void setOnReplyActionListener(OnReplyActionListener listener) {
@@ -47,7 +57,8 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder> 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
+        context = parent.getContext();
+        View view = LayoutInflater.from(context)
                 .inflate(R.layout.activity_item_reply, parent, false);
         return new ViewHolder(view);
     }
@@ -69,6 +80,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder> 
         private TextView tvReplyContent;
         private TextView tvReplyTime;
         private TextView tvReplyDelete;
+        private TextView tvReportReply;  // ✅ 新增：举报按钮
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -77,6 +89,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder> 
             tvReplyContent = itemView.findViewById(R.id.tvReplyContent);
             tvReplyTime = itemView.findViewById(R.id.tvReplyTime);
             tvReplyDelete = itemView.findViewById(R.id.tvReplyDelete);
+            tvReportReply = itemView.findViewById(R.id.tvReportReply);  // ✅ 新增
         }
 
         public void bind(Reply reply, int position) {
@@ -106,6 +119,19 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder> 
                 });
             } else {
                 tvReplyDelete.setVisibility(View.GONE);
+            }
+
+            // ✅ 新增：举报按钮点击事件
+            if (tvReportReply != null) {
+                tvReportReply.setVisibility(View.VISIBLE);
+                tvReportReply.setOnClickListener(v -> {
+                    if (context != null) {
+                        Intent intent = new Intent(context, ReportActivity.class);
+                        intent.putExtra("target_type", 2);  // 2 = 回复
+                        intent.putExtra("target_id", reply.getReplyId());
+                        context.startActivity(intent);
+                    }
+                });
             }
 
             itemView.setOnClickListener(v -> {

@@ -2,23 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="#FFFFFF">
 
     <!-- 顶部栏 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:elevation="2dp"
-        android:background="@color/white">
+        android:elevation="2dp">
 
         <ImageView
-            android:id="@+id/iv_back"
+            android:id="@+id/ivBack"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_back"
@@ -31,27 +29,20 @@
             android:layout_marginStart="8dp"
             android:text="举报"
             android:textSize="18sp"
-            android:textColor="@color/text_main"
+            android:textColor="#000000"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_submit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="提交"
-            android:textSize="16sp"
-            android:textColor="@color/primary_blue" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/divider" />
+        android:background="#E0E0E0" />
 
+    <!-- 内容区域 -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
         android:padding="16dp">
 
         <LinearLayout
@@ -59,88 +50,33 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- 举报对象提示 -->
-            <TextView
-                android:id="@+id/tv_target_hint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="举报对象："
-                android:textSize="14sp"
-                android:textColor="@color/text_secondary"
-                android:layout_marginBottom="16dp" />
-
-            <!-- 举报原因标题 -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="请选择举报原因"
+                android:text="举报原因"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="@color/text_main"
                 android:layout_marginBottom="12dp" />
 
-            <!-- 举报原因选项 -->
-            <RadioGroup
-                android:id="@+id/rg_reason"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
-
-                <RadioButton
-                    android:id="@+id/rb_spam"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="垃圾广告"
-                    android:gravity="center_vertical"
-                    android:textSize="14sp" />
-
-                <RadioButton
-                    android:id="@+id/rb_abuse"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="辱骂攻击"
-                    android:gravity="center_vertical"
-                    android:textSize="14sp" />
-
-                <RadioButton
-                    android:id="@+id/rb_porn"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="色情低俗"
-                    android:gravity="center_vertical"
-                    android:textSize="14sp" />
-
-                <RadioButton
-                    android:id="@+id/rb_political"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="政治敏感"
-                    android:gravity="center_vertical"
-                    android:textSize="14sp" />
-
-                <RadioButton
-                    android:id="@+id/rb_other"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="其他"
-                    android:gravity="center_vertical"
-                    android:textSize="14sp" />
-
-            </RadioGroup>
-
-            <!-- 自定义原因输入框 -->
             <EditText
-                android:id="@+id/et_custom_reason"
+                android:id="@+id/etReason"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="请填写具体原因（选填）"
-                android:textSize="14sp"
+                android:layout_height="120dp"
+                android:hint="请描述举报原因（必填）"
+                android:gravity="top"
+                android:inputType="textMultiLine"
                 android:background="@drawable/bg_comment_input"
                 android:padding="12dp"
-                android:maxLines="5"
-                android:minHeight="100dp"
-                android:gravity="top"
-                android:visibility="gone" />
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/btnSubmit"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="24dp"
+                android:text="提交举报"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#D32F2F" />
 
         </LinearLayout>
 

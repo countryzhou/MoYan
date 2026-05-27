@@ -391,7 +391,23 @@
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp" />
             </LinearLayout>
+            <!-- 举报按钮 -->
+            <LinearLayout
+                android:id="@+id/layoutReport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:gravity="center"
+                android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/tvReport"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="举报"
+                    android:textColor="#D32F2F"
+                    android:textSize="12sp" />
+            </LinearLayout>
         </LinearLayout>
 
     </RelativeLayout>

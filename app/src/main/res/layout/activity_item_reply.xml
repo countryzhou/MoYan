@@ -116,6 +116,17 @@
 
         </LinearLayout>
 
+        <!-- ✅ 新增：举报按钮 -->
+        <TextView
+            android:id="@+id/tvReportReply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="举报"
+            android:textColor="#D32F2F"
+            android:textSize="11sp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
+
     </LinearLayout>
 
     <TextView

@@ -56,6 +56,7 @@ public class PostdetailActivity extends AppCompatActivity {
     private ImageView ivCollect;
     private TextView tvCollectCountBottom;
     private LinearLayout layoutShare;
+    private LinearLayout layoutReport;  // ✅ 新增：举报按钮容器
 
     // 回复区
     private RecyclerView rvReplies;
@@ -101,6 +102,7 @@ public class PostdetailActivity extends AppCompatActivity {
         ivCollect = findViewById(R.id.ivCollect);
         tvCollectCountBottom = findViewById(R.id.ivCollectCountBottom);
         layoutShare = findViewById(R.id.layoutShare);
+        layoutReport = findViewById(R.id.layoutReport);  // ✅ 新增
 
         rvReplies = findViewById(R.id.rvComments);
         rvReplies.setLayoutManager(new LinearLayoutManager(this));
@@ -115,6 +117,19 @@ public class PostdetailActivity extends AppCompatActivity {
         btnFollow.setOnClickListener(v -> toggleFollow());
         ivCollect.setOnClickListener(v -> toggleCollect());
         ivCommentBottom.setOnClickListener(v -> scrollToReplies());
+
+        // ✅ 新增：举报按钮点击事件
+        layoutReport.setOnClickListener(v -> {
+            if (currentPost == null) {
+                Toast.makeText(this, "帖子信息异常", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent intent = new Intent(PostdetailActivity.this, ReportActivity.class);
+            intent.putExtra("target_type", 1);  // 1 = 帖子
+            intent.putExtra("target_id", currentPost.getPostId());
+            startActivity(intent);
+        });
+
         etComment.setOnClickListener(v -> {
             Intent intent = new Intent(PostdetailActivity.this, CreateReplyActivity.class);
             intent.putExtra("post_id", currentPost != null ? currentPost.getPostId() : -1);

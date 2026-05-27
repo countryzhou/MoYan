@@ -1,19 +1,10 @@
-//调用方式new
-//Intent intent = new Intent(context, ReportActivity.class);
-//intent.putExtra("target_type", 1);  // 1=帖子，2=回复
-//intent.putExtra("target_id", postId);
-//startActivity(intent);
-
 package com.androidcourse.moyan.activity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,13 +18,10 @@ import org.json.JSONObject;
 public class ReportActivity extends AppCompatActivity {
 
     private ImageView ivBack;
-    private TextView tvSubmit;
-    private TextView tvTargetHint;
-    private RadioGroup rgReason;
-    private EditText etCustomReason;
-    private RadioButton rbOther;
+    private EditText etReason;
+    private Button btnSubmit;
 
-    private int targetType;  // 1=帖子，2=回复
+    private int targetType; // 1:帖子 2:回复
     private int targetId;
 
     @Override
@@ -41,7 +29,6 @@ public class ReportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
 
-        // 获取传入参数
         targetType = getIntent().getIntExtra("target_type", 1);
         targetId = getIntent().getIntExtra("target_id", -1);
 
@@ -51,57 +38,21 @@ public class ReportActivity extends AppCompatActivity {
             return;
         }
 
-        initViews();
-        setupListeners();
-        updateTargetHint();
-    }
+        ivBack = findViewById(R.id.ivBack);
+        etReason = findViewById(R.id.etReason);
+        btnSubmit = findViewById(R.id.btnSubmit);
 
-    private void initViews() {
-        ivBack = findViewById(R.id.iv_back);
-        tvSubmit = findViewById(R.id.tv_submit);
-        tvTargetHint = findViewById(R.id.tv_target_hint);
-        rgReason = findViewById(R.id.rg_reason);
-        etCustomReason = findViewById(R.id.et_custom_reason);
-        rbOther = findViewById(R.id.rb_other);
-    }
-
-    private void setupListeners() {
         ivBack.setOnClickListener(v -> finish());
-        tvSubmit.setOnClickListener(v -> submitReport());
 
-        // 当选择"其他"时显示自定义输入框
-        rgReason.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.rb_other) {
-                etCustomReason.setVisibility(View.VISIBLE);
-            } else {
-                etCustomReason.setVisibility(View.GONE);
-                etCustomReason.setText("");
-            }
-        });
-    }
-
-    private void updateTargetHint() {
-        String targetText = targetType == 1 ? "帖子" : "回复";
-        tvTargetHint.setText("举报对象：" + targetText + " (ID: " + targetId + ")");
+        btnSubmit.setOnClickListener(v -> submitReport());
     }
 
     private void submitReport() {
-        int selectedId = rgReason.getCheckedRadioButtonId();
-        String reason;
+        String reason = etReason.getText().toString().trim();
 
-        if (selectedId == R.id.rb_other) {
-            reason = etCustomReason.getText().toString().trim();
-            if (TextUtils.isEmpty(reason)) {
-                Toast.makeText(this, "请填写举报原因", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        } else {
-            RadioButton selectedButton = findViewById(selectedId);
-            if (selectedButton == null) {
-                Toast.makeText(this, "请选择举报原因", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            reason = selectedButton.getText().toString();
+        if (TextUtils.isEmpty(reason)) {
+            Toast.makeText(this, "请填写举报原因", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         int reporterId = SharedPrefsHelper.getInstance().getUserId();
@@ -110,31 +61,32 @@ public class ReportActivity extends AppCompatActivity {
             return;
         }
 
-        // 显示加载状态
-        tvSubmit.setEnabled(false);
-        tvSubmit.setText("提交中...");
+        btnSubmit.setEnabled(false);
+        btnSubmit.setText("提交中...");
 
-        // 发送举报请求
         new Thread(() -> {
-            String response = PostNetworkManager.getInstance()
-                    .report(reporterId, targetType, targetId, reason);
+            String response = PostNetworkManager.getInstance().report(
+                    reporterId,
+                    targetType,
+                    targetId,
+                    reason
+            );
 
             runOnUiThread(() -> {
-                tvSubmit.setEnabled(true);
-                tvSubmit.setText("提交");
+                btnSubmit.setEnabled(true);
+                btnSubmit.setText("提交举报");
 
                 try {
                     JSONObject json = new JSONObject(response);
                     if (json.getInt("code") == 0) {
-                        Toast.makeText(ReportActivity.this, "举报成功，我们会尽快处理", Toast.LENGTH_LONG).show();
+                        Toast.makeText(ReportActivity.this, "举报成功", Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
                         String msg = json.optString("msg", "举报失败");
                         Toast.makeText(ReportActivity.this, msg, Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(ReportActivity.this, "举报失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ReportActivity.this, "请求失败", Toast.LENGTH_SHORT).show();
                 }
             });
         }).start();
