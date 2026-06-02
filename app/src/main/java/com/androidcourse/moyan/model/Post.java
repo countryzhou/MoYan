@@ -1,5 +1,7 @@
 package com.androidcourse.moyan.model;
 
+import android.util.Log;
+
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
@@ -149,9 +151,9 @@ public class Post {
     // ==================== 辅助方法 ====================
 
     public String getDisplayName() {
+        Log.d("匿名测试", "isAnonymous=" + isAnonymous + ", authorName=" + authorName);
         if (isAnonymous) return "匿名用户";
-        if (authorName != null && !authorName.isEmpty()) return authorName;
-        return "用户" + userId;
+        return authorName != null ? authorName : "用户" + userId;
     }
 
     public boolean isProfileAccessible() {
