@@ -90,6 +90,9 @@ dependencies {
     implementation "androidx.room:room-runtime:2.5.2"
     annotationProcessor "androidx.room:room-compiler:2.5.2"
 
+    // WebSocket
+    implementation 'org.java-websocket:Java-WebSocket:1.5.3'
+
     // ========== 单元测试 ==========
     testImplementation 'junit:junit:4.13.2'
 
