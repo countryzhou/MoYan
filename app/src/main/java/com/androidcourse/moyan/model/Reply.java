@@ -2,13 +2,8 @@ package com.androidcourse.moyan.model;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * 回复实体类
- * 完全对应服务端 ReplyDTO
- */
 public class Reply {
 
-    // ========== 服务端返回字段 ==========
     @SerializedName("replyId")
     private int replyId;
 
@@ -32,12 +27,9 @@ public class Reply {
     @SerializedName("avatarUrl")
     private String avatarUrl;
 
-    // ========== 本地扩展字段 ==========
     private int postId;
     private int userId;
     private Reply replyTo;
-
-    // ==================== Getters and Setters ====================
 
     public int getReplyId() { return replyId; }
     public void setReplyId(int replyId) { this.replyId = replyId; }
@@ -86,8 +78,6 @@ public class Reply {
     public Reply getReplyTo() { return replyTo; }
     public void setReplyTo(Reply replyTo) { this.replyTo = replyTo; }
 
-    // ==================== 辅助方法 ====================
-
     public String getDisplayName() {
         if (isAnonymous) {
             if (anonymousNum != null) {
@@ -112,10 +102,18 @@ public class Reply {
         }
 
         try {
-            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
-                    "MMM dd, yyyy, h:mm:ss a", java.util.Locale.ENGLISH);
-            java.util.Date date = sdf.parse(timeString);
-            return date != null ? date.getTime() : System.currentTimeMillis();
+            if (timeString.contains("T")) {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
+                        "yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.ENGLISH);
+                java.util.Date date = sdf.parse(timeString);
+                return date != null ? date.getTime() : System.currentTimeMillis();
+            } else {
+                String cleanedTime = timeString.replace("\u202F", " ").replace("\u00A0", " ");
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
+                        "MMM dd, yyyy, h:mm:ss a", java.util.Locale.ENGLISH);
+                java.util.Date date = sdf.parse(cleanedTime);
+                return date != null ? date.getTime() : System.currentTimeMillis();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return System.currentTimeMillis();

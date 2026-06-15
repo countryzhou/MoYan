@@ -7,7 +7,6 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,13 +15,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SnapHelper;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.androidcourse.moyan.R;
-import com.androidcourse.moyan.adapter.NewsAdapter;
-import com.androidcourse.moyan.adapter.TrendCardAdapter;
+import com.androidcourse.moyan.adapter.HomeUnifiedAdapter;
 import com.androidcourse.moyan.model.NewsItem;
 import com.androidcourse.moyan.model.TrendCard;
 import com.androidcourse.moyan.model.User;
@@ -30,29 +27,27 @@ import com.androidcourse.moyan.utils.SharedPrefsHelper;
 import com.androidcourse.moyan.viewmodel.HomeViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
     private TextView etSearch;
     private ImageView ivAvatar;
-    private RecyclerView rvTrendCards;
-    private RecyclerView rvNewsList;
+    private RecyclerView rvHomeUnified;
     private FloatingActionButton fabWrite;
-    private LinearLayout dotIndicator;
     private LinearLayout navHome, navExplore, navMessages, navProfile;
+    private SwipeRefreshLayout swipeRefresh;
 
-    private TrendCardAdapter trendCardAdapter;
-    private NewsAdapter newsAdapter;
+    private HomeUnifiedAdapter unifiedAdapter;
     private HomeViewModel homeViewModel;
     private SharedPrefsHelper sharedPrefsHelper;
 
-    private Handler autoScrollHandler;
-    private Runnable autoScrollRunnable;
-    private List<TrendCard> trendCards;
-    private static final long AUTO_SCROLL_DELAY = 3000;
-    private int currentScrollPosition = 0;
-    private boolean isUserScrolling = false;
+    private List<TrendCard> trendCards = new ArrayList<>();
+    private List<NewsItem> newsList = new ArrayList<>();
+
+    private boolean isLoadingMore = false;
+    private boolean hasMoreData = true;
     private LinearLayoutManager layoutManager;
 
     @Override
@@ -62,10 +57,10 @@ public class HomeActivity extends AppCompatActivity {
 
         sharedPrefsHelper = SharedPrefsHelper.getInstance();
         homeViewModel = new HomeViewModel();
-        autoScrollHandler = new Handler(Looper.getMainLooper());
 
         initViews();
         setupListeners();
+        setupRecyclerView();
         loadData();
         showWelcomeMessage();
     }
@@ -73,14 +68,13 @@ public class HomeActivity extends AppCompatActivity {
     private void initViews() {
         etSearch = findViewById(R.id.et_search);
         ivAvatar = findViewById(R.id.iv_avatar);
-        rvTrendCards = findViewById(R.id.rv_trend_cards);
-        rvNewsList = findViewById(R.id.rv_news_list);
+        rvHomeUnified = findViewById(R.id.rv_home_unified);
         fabWrite = findViewById(R.id.fab_write);
-        dotIndicator = findViewById(R.id.dot_indicator);
         navHome = findViewById(R.id.nav_home);
         navExplore = findViewById(R.id.nav_explore);
         navMessages = findViewById(R.id.nav_messages);
         navProfile = findViewById(R.id.nav_profile);
+        swipeRefresh = findViewById(R.id.swipe_refresh);
     }
 
     private void setupListeners() {
@@ -121,20 +115,53 @@ public class HomeActivity extends AppCompatActivity {
             }
             startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
         });
+
+        swipeRefresh.setOnRefreshListener(() -> {
+            refreshData();
+        });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (trendCards != null && !trendCards.isEmpty()) {
-            startAutoScroll();
-        }
-    }
+    private void setupRecyclerView() {
+        layoutManager = new LinearLayoutManager(this);
+        rvHomeUnified.setLayoutManager(layoutManager);
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        stopAutoScroll();
+        unifiedAdapter = new HomeUnifiedAdapter(this, trendCards, newsList, new HomeUnifiedAdapter.OnItemClickListener() {
+            @Override
+            public void onTrendCardClick(TrendCard trendCard) {
+                Intent intent = new Intent(HomeActivity.this, PostdetailActivity.class);
+                intent.putExtra("post_id", trendCard.getPostId());
+                startActivity(intent);
+            }
+
+            @Override
+            public void onNewsItemClick(NewsItem newsItem) {
+                Intent intent = new Intent(HomeActivity.this, PostdetailActivity.class);
+                intent.putExtra("post_id", newsItem.getId());
+                startActivity(intent);
+            }
+        });
+
+        rvHomeUnified.setAdapter(unifiedAdapter);
+
+        rvHomeUnified.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy > 0) {
+                    int visibleItemCount = layoutManager.getChildCount();
+                    int totalItemCount = layoutManager.getItemCount();
+                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                    if (!isLoadingMore && hasMoreData) {
+                        if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                                && firstVisibleItemPosition >= 0) {
+                            loadMoreData();
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private boolean checkLogin() {
@@ -167,7 +194,9 @@ public class HomeActivity extends AppCompatActivity {
         homeViewModel.loadTrendCards(new HomeViewModel.TrendCardCallback() {
             @Override
             public void onSuccess(List<TrendCard> cards) {
-                displayTrendCards(cards);
+                trendCards.clear();
+                trendCards.addAll(cards);
+                updateAdapter();
             }
 
             @Override
@@ -176,10 +205,12 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        homeViewModel.loadNewsList(new HomeViewModel.NewsListCallback() {
+        homeViewModel.loadNewsList(1, 14, new HomeViewModel.NewsListCallback() {
             @Override
             public void onSuccess(List<NewsItem> news) {
-                displayNewsList(news);
+                newsList.clear();
+                newsList.addAll(news);
+                updateAdapter();
             }
 
             @Override
@@ -189,182 +220,58 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    private void displayTrendCards(List<TrendCard> cards) {
-        this.trendCards = cards;
+    private void loadMoreData() {
+        isLoadingMore = true;
+        homeViewModel.incrementPage();
 
-        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        rvTrendCards.setLayoutManager(layoutManager);
-
-        SnapHelper snapHelper = new LinearSnapHelper();
-        snapHelper.attachToRecyclerView(rvTrendCards);
-
-        trendCardAdapter = new TrendCardAdapter(this, cards, trendCard -> {
-            Intent intent = new Intent(HomeActivity.this, PostdetailActivity.class);
-            intent.putExtra("post_id", trendCard.getPostId());
-            startActivity(intent);
-        });
-
-        rvTrendCards.setAdapter(trendCardAdapter);
-
-        int count = cards == null ? 0 : cards.size();
-        rvTrendCards.post(() -> createDotIndicators(count));
-
-        currentScrollPosition = 0;
-        rvTrendCards.scrollToPosition(currentScrollPosition);
-
-        rvTrendCards.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        homeViewModel.loadMoreNews(homeViewModel.getCurrentPage(), new HomeViewModel.NewsListCallback() {
             @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                    isUserScrolling = true;
-                    stopAutoScroll();
-                } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    isUserScrolling = false;
-                    updateCurrentPositionByCenter();
-                    updateDotByScroll();
-                    startAutoScroll();
+            public void onSuccess(List<NewsItem> news) {
+                isLoadingMore = false;
+                if (news == null || news.isEmpty()) {
+                    hasMoreData = false;
+                } else {
+                    newsList.addAll(news);
+                    updateAdapter();
                 }
             }
 
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
+            public void onError(String error) {
+                isLoadingMore = false;
+                Log.e("HomeActivity", "加载更多失败: " + error);
+                Toast.makeText(HomeActivity.this, "加载更多失败", Toast.LENGTH_SHORT).show();
             }
         });
-
-        startAutoScroll();
     }
 
-    private void updateCurrentPositionByCenter() {
-        if (layoutManager == null || trendCards == null || trendCards.isEmpty()) return;
-
-        int recyclerViewCenterX = rvTrendCards.getWidth() / 2;
-        int minDistance = Integer.MAX_VALUE;
-        int closestPosition = 0;
-
-        for (int i = 0; i < trendCards.size(); i++) {
-            View itemView = layoutManager.findViewByPosition(i);
-            if (itemView == null) continue;
-
-            int itemCenterX = (itemView.getLeft() + itemView.getRight()) / 2;
-            int distance = Math.abs(recyclerViewCenterX - itemCenterX);
-
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestPosition = i;
-            }
+    private void updateAdapter() {
+        if (unifiedAdapter != null) {
+            unifiedAdapter.updateData(trendCards, newsList);
         }
-
-        if (currentScrollPosition != closestPosition) {
-            currentScrollPosition = closestPosition;
-            Log.d("HomeActivity", "Position updated by center to: " + currentScrollPosition);
-        }
-    }
-
-    private void displayNewsList(List<NewsItem> news) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        rvNewsList.setLayoutManager(layoutManager);
-
-        newsAdapter = new NewsAdapter(this, news, newsItem -> {
-            Intent intent = new Intent(HomeActivity.this, PostdetailActivity.class);
-            intent.putExtra("post_id", newsItem.getId());
-            startActivity(intent);
-        });
-
-        rvNewsList.setAdapter(newsAdapter);
-    }
-
-    private void createDotIndicators(int count) {
-        if (count <= 1) {
-            dotIndicator.setVisibility(View.GONE);
-            return;
-        }
-        dotIndicator.removeAllViews();
-        for (int i = 0; i < count; i++) {
-            View dot = new View(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dpToPx(8), dpToPx(8));
-            params.setMarginEnd(dpToPx(8));
-            params.setMarginStart(dpToPx(8));
-            dot.setLayoutParams(params);
-            dot.setBackgroundResource(R.drawable.bg_dot_inactive);
-            dotIndicator.addView(dot);
-        }
-        dotIndicator.setVisibility(View.VISIBLE);
-        selectDot(0);
-    }
-
-    private void selectDot(int position) {
-        if (dotIndicator == null || dotIndicator.getChildCount() == 0) return;
-
-        Log.d("HomeActivity", "Selecting dot at position: " + position);
-
-        for (int i = 0; i < dotIndicator.getChildCount(); i++) {
-            View dot = dotIndicator.getChildAt(i);
-            if (i == position) {
-                dot.setBackgroundResource(R.drawable.bg_dot_active);
-            } else {
-                dot.setBackgroundResource(R.drawable.bg_dot_inactive);
-            }
-        }
-    }
-
-    private void updateDotByScroll() {
-        if (trendCards == null || trendCards.size() <= 1) return;
-
-        Log.d("HomeActivity", "Updating dot, current position: " + currentScrollPosition);
-        selectDot(currentScrollPosition);
-    }
-
-    private void startAutoScroll() {
-        if (trendCards == null || trendCards.size() <= 1) {
-            return;
-        }
-
-        stopAutoScroll();
-
-        autoScrollRunnable = () -> {
-            if (isUserScrolling) {
-                Log.d("HomeActivity", "Skipping auto scroll - user is scrolling");
-                return;
-            }
-
-            int itemCount = trendCards.size();
-            int nextPosition = currentScrollPosition + 1;
-
-            Log.d("HomeActivity", "Auto scroll from " + currentScrollPosition + " to " + nextPosition + " (total: " + itemCount + ")");
-
-            if (nextPosition >= itemCount) {
-                nextPosition = 0;
-                rvTrendCards.smoothScrollToPosition(nextPosition);
-                currentScrollPosition = nextPosition;
-                updateDotByScroll();
-            } else {
-                rvTrendCards.smoothScrollToPosition(nextPosition);
-                currentScrollPosition = nextPosition;
-            }
-
-            autoScrollHandler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY);
-        };
-
-        autoScrollHandler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY);
-        Log.d("HomeActivity", "Auto scroll started");
-    }
-
-    private void stopAutoScroll() {
-        if (autoScrollRunnable != null) {
-            autoScrollHandler.removeCallbacks(autoScrollRunnable);
-            Log.d("HomeActivity", "Auto scroll stopped");
-        }
-    }
-
-    private int dpToPx(int dp) {
-        return (int) (dp * getResources().getDisplayMetrics().density);
     }
 
     private void refreshData() {
-        Toast.makeText(this, "刷新中...", Toast.LENGTH_SHORT).show();
+        homeViewModel.resetPagination();
+        hasMoreData = true;
+        isLoadingMore = false;
+
         loadData();
+
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (swipeRefresh != null) {
+                swipeRefresh.setRefreshing(false);
+            }
+        }, 1000);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }

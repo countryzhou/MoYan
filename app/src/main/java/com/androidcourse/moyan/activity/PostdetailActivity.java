@@ -12,8 +12,10 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.androidcourse.moyan.R;
 import com.androidcourse.moyan.adapter.ReplyAdapter;
@@ -56,11 +58,16 @@ public class PostdetailActivity extends AppCompatActivity {
     private ImageView ivCollect;
     private TextView tvCollectCountBottom;
     private LinearLayout layoutShare;
-    private LinearLayout layoutReport;  // ✅ 新增：举报按钮容器
+    private LinearLayout layoutReport;
+    private ImageView ivLikeBottom;
+    private TextView tvLikeCountBottom;
 
     // 回复区
     private RecyclerView rvReplies;
     private TextView etComment;
+    private TextView tvLoadMoreHint;
+    private SwipeRefreshLayout swipeRefresh;
+    private NestedScrollView scrollView;
 
     private Post currentPost;
     private ReplyAdapter replyAdapter;
@@ -68,6 +75,10 @@ public class PostdetailActivity extends AppCompatActivity {
     private PostDetailViewModel viewModel;
 
     private boolean isCollected = false;
+    private boolean isLoading = false;      // 是否正在加载
+    private boolean hasMore = true;         // 是否还有更多数据
+    private int currentPage = 1;            // 当前页码
+    private static final int PAGE_SIZE = 10; // 每页大小
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +88,7 @@ public class PostdetailActivity extends AppCompatActivity {
         viewModel = new PostDetailViewModel();
         initViews();
         setupListeners();
+        setupScrollListener();
         loadPostData();
     }
 
@@ -102,13 +114,18 @@ public class PostdetailActivity extends AppCompatActivity {
         ivCollect = findViewById(R.id.ivCollect);
         tvCollectCountBottom = findViewById(R.id.ivCollectCountBottom);
         layoutShare = findViewById(R.id.layoutShare);
-        layoutReport = findViewById(R.id.layoutReport);  // ✅ 新增
+        layoutReport = findViewById(R.id.layoutReport);
+        ivLikeBottom = findViewById(R.id.ivLikeBottom);
+        tvLikeCountBottom = findViewById(R.id.tvLikeCountBottom);
 
         rvReplies = findViewById(R.id.rvComments);
         rvReplies.setLayoutManager(new LinearLayoutManager(this));
         replyAdapter = new ReplyAdapter(replyList, getCurrentUserId());
         rvReplies.setAdapter(replyAdapter);
         etComment = findViewById(R.id.etComment);
+        tvLoadMoreHint = findViewById(R.id.tvLoadMoreHint);
+        swipeRefresh = findViewById(R.id.swipeRefresh);
+        scrollView = findViewById(R.id.scrollView);
     }
 
     private void setupListeners() {
@@ -118,14 +135,19 @@ public class PostdetailActivity extends AppCompatActivity {
         ivCollect.setOnClickListener(v -> toggleCollect());
         ivCommentBottom.setOnClickListener(v -> scrollToReplies());
 
-        // ✅ 新增：举报按钮点击事件
+        // 下拉刷新
+        swipeRefresh.setOnRefreshListener(() -> {
+            refreshReplies();
+        });
+
+        // 举报按钮
         layoutReport.setOnClickListener(v -> {
             if (currentPost == null) {
                 Toast.makeText(this, "帖子信息异常", Toast.LENGTH_SHORT).show();
                 return;
             }
             Intent intent = new Intent(PostdetailActivity.this, ReportActivity.class);
-            intent.putExtra("target_type", 1);  // 1 = 帖子
+            intent.putExtra("target_type", 1);
             intent.putExtra("target_id", currentPost.getPostId());
             startActivity(intent);
         });
@@ -141,6 +163,7 @@ public class PostdetailActivity extends AppCompatActivity {
             public void onReplyClick(Reply reply) {
                 Intent intent = new Intent(PostdetailActivity.this, CreateReplyActivity.class);
                 intent.putExtra("post_id", currentPost != null ? currentPost.getPostId() : -1);
+                intent.putExtra("parent_reply_id", reply.getReplyId());
                 startActivity(intent);
             }
 
@@ -158,6 +181,19 @@ public class PostdetailActivity extends AppCompatActivity {
         });
     }
 
+    // 设置滚动监听，实现上拉加载更多
+    private void setupScrollListener() {
+        scrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            // 判断是否滚动到底部
+            View view = scrollView.getChildAt(scrollView.getChildCount() - 1);
+            int diff = view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY());
+
+            if (diff <= 0 && !isLoading && hasMore) {
+                loadMoreReplies();
+            }
+        });
+    }
+
     private void loadPostData() {
         int postId = getIntent().getIntExtra("post_id", 1);
         viewModel.loadPostDetail(postId, new PostDetailViewModel.PostDetailCallback() {
@@ -165,19 +201,18 @@ public class PostdetailActivity extends AppCompatActivity {
             public void onSuccess(Post post) {
                 currentPost = post;
                 displayPostData();
-                if (post.getReplies() != null && !post.getReplies().isEmpty()) {
-                    replyList.clear();
-                    replyList.addAll(post.getReplies());
-                    replyAdapter.updateReplies(replyList);
-                    updateReplyCount(post.getReplies().size());
-                } else {
-                    loadReplies();
-                }
+                // 加载第一页回复
+                currentPage = 1;
+                hasMore = true;
+                loadReplies(currentPage);
             }
 
             @Override
             public void onFailure(String error) {
                 Toast.makeText(PostdetailActivity.this, error, Toast.LENGTH_SHORT).show();
+                if (swipeRefresh.isRefreshing()) {
+                    swipeRefresh.setRefreshing(false);
+                }
             }
         });
     }
@@ -206,6 +241,7 @@ public class PostdetailActivity extends AppCompatActivity {
         tvPostContent.setText(currentPost.getContent());
 
         tvCollectCountBottom.setText(String.valueOf(currentPost.getCollectCount()));
+        //tvLikeCountBottom.setText(String.valueOf(currentPost.getLikeCount()));
 
         tvEditInfo.setText("编辑于 " + TimeUtils.formatDateTime(currentPost.getUpdateTime()));
         displayTags(currentPost.getTags());
@@ -256,25 +292,75 @@ public class PostdetailActivity extends AppCompatActivity {
         }
     }
 
-    private void loadReplies() {
+    // 加载回复列表（分页）
+    private void loadReplies(int page) {
+        if (isLoading) return;
+        isLoading = true;
+
         int postId = getIntent().getIntExtra("post_id", 1);
-        viewModel.loadReplies(postId, new PostDetailViewModel.ReplyListCallback() {
+        viewModel.loadReplies(postId, page, new PostDetailViewModel.ReplyListCallback() {
             @Override
             public void onSuccess(List<Reply> replies) {
-                replyList.clear();
+                isLoading = false;
+                if (swipeRefresh.isRefreshing()) {
+                    swipeRefresh.setRefreshing(false);
+                }
+
+                // 判断是否还有更多数据
+                if (replies == null || replies.isEmpty()) {
+                    hasMore = false;
+                    tvLoadMoreHint.setText("没有更多评论了");
+                    tvLoadMoreHint.setVisibility(View.VISIBLE);
+                } else if (replies.size() < PAGE_SIZE) {
+                    hasMore = false;
+                    tvLoadMoreHint.setText("已加载全部评论");
+                    tvLoadMoreHint.setVisibility(View.VISIBLE);
+                } else {
+                    hasMore = true;
+                    tvLoadMoreHint.setText("上滑加载更多评论");
+                    tvLoadMoreHint.setVisibility(View.VISIBLE);
+                }
+
+                if (page == 1) {
+                    // 第一页，清空列表
+                    replyList.clear();
+                }
+
                 replyList.addAll(replies);
                 replyAdapter.updateReplies(replyList);
-                updateReplyCount(replies.size());
+                updateReplyCount(replyList.size());
+
                 if (currentPost != null) {
-                    currentPost.setReplyCount(replies.size());
+                    currentPost.setReplyCount(replyList.size());
                 }
             }
 
             @Override
             public void onFailure(String error) {
-                Toast.makeText(PostdetailActivity.this, error, Toast.LENGTH_SHORT).show();
+                isLoading = false;
+                if (swipeRefresh.isRefreshing()) {
+                    swipeRefresh.setRefreshing(false);
+                }
+                Toast.makeText(PostdetailActivity.this, "加载评论失败: " + error, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    // 加载更多回复
+    private void loadMoreReplies() {
+        if (!hasMore) {
+            return;
+        }
+        currentPage++;
+        loadReplies(currentPage);
+    }
+
+    // 刷新回复列表
+    private void refreshReplies() {
+        currentPage = 1;
+        hasMore = true;
+        tvLoadMoreHint.setText("加载中...");
+        loadReplies(currentPage);
     }
 
     private void updateReplyCount(int count) {
@@ -342,5 +428,14 @@ public class PostdetailActivity extends AppCompatActivity {
 
     private int getCurrentUserId() {
         return com.androidcourse.moyan.utils.SharedPrefsHelper.getInstance().getUserId();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 从发布页面返回时刷新评论列表
+        if (currentPost != null) {
+            refreshReplies();
+        }
     }
 }

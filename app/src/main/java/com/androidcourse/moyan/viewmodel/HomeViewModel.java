@@ -19,15 +19,14 @@ public class HomeViewModel {
 
     private PostRepository postRepository;
     private Handler mainHandler;
+    private int currentPage = 1;
+    private static final int PAGE_SIZE = 10;
 
     public HomeViewModel() {
         postRepository = new PostRepository();
         mainHandler = new Handler(Looper.getMainLooper());
     }
 
-    /**
-     * 加载趋势卡片（前4条热门帖子）
-     */
     public void loadTrendCards(TrendCardCallback callback) {
         postRepository.getPostList(1, 4, new PostRepository.RepositoryCallback<List<Post>>() {
             @Override
@@ -56,11 +55,8 @@ public class HomeViewModel {
         });
     }
 
-    /**
-     * 加载新闻列表（舍弃前4条，避免与趋势卡片重复）
-     */
-    public void loadNewsList(NewsListCallback callback) {
-        postRepository.getPostList(1, 14, new PostRepository.RepositoryCallback<List<Post>>() {
+    public void loadNewsList(int page, int size, NewsListCallback callback) {
+        postRepository.getPostList(page, size, new PostRepository.RepositoryCallback<List<Post>>() {
             @Override
             public void onResult(List<Post> result) {
                 List<NewsItem> newsList = new ArrayList<>();
@@ -87,6 +83,46 @@ public class HomeViewModel {
                 });
             }
         });
+    }
+
+    public void loadMoreNews(int nextPage, NewsListCallback callback) {
+        postRepository.getPostList(nextPage, PAGE_SIZE, new PostRepository.RepositoryCallback<List<Post>>() {
+            @Override
+            public void onResult(List<Post> result) {
+                List<NewsItem> newsList = new ArrayList<>();
+                for (Post post : result) {
+                    NewsItem item = new NewsItem();
+                    item.setId(post.getPostId());
+                    item.setTitle(post.getTitle());
+                    item.setAuthor(post.getDisplayName());
+                    item.setPublishTime(post.getPostTime());
+                    item.setCommentCount(post.getReplyCount());
+                    newsList.add(item);
+                }
+                mainHandler.post(() -> {
+                    if (callback != null) callback.onSuccess(newsList);
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                mainHandler.post(() -> {
+                    if (callback != null) callback.onError(error);
+                });
+            }
+        });
+    }
+
+    public void resetPagination() {
+        currentPage = 1;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void incrementPage() {
+        currentPage++;
     }
 
     public interface TrendCardCallback {

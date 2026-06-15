@@ -16,6 +16,8 @@ public class PostDetailViewModel {
     private PostRepository postRepository;
     private ReplyRepository replyRepository;
     private Handler mainHandler;
+    private int currentPage = 1;
+    private static final int PAGE_SIZE = 10;
 
     public PostDetailViewModel() {
         postRepository = new PostRepository();
@@ -23,9 +25,6 @@ public class PostDetailViewModel {
         mainHandler = new Handler(Looper.getMainLooper());
     }
 
-    /**
-     * 加载帖子详情
-     */
     public void loadPostDetail(int postId, PostDetailCallback callback) {
         postRepository.getPostDetail(postId, new PostRepository.RepositoryCallback<Post>() {
             @Override
@@ -44,9 +43,6 @@ public class PostDetailViewModel {
         });
     }
 
-    /**
-     * 发表回复
-     */
     public void submitReply(int postId, String content, boolean isAnonymous, SubmitCallback callback) {
         int userId = SharedPrefsHelper.getInstance().getUserId();
         replyRepository.createReply(postId, userId, isAnonymous, content,
@@ -67,11 +63,8 @@ public class PostDetailViewModel {
                 });
     }
 
-    /**
-     * 获取回复列表
-     */
-    public void loadReplies(int postId, ReplyListCallback callback) {
-        replyRepository.getReplies(postId, 1, new ReplyRepository.RepositoryCallback<List<Reply>>() {
+    public void loadReplies(int postId, int page, ReplyListCallback callback) {
+        replyRepository.getReplies(postId, page, new ReplyRepository.RepositoryCallback<List<Reply>>() {
             @Override
             public void onResult(List<Reply> result) {
                 mainHandler.post(() -> {
@@ -88,7 +81,18 @@ public class PostDetailViewModel {
         });
     }
 
-    // ==================== 回调接口 ====================
+    public void loadMoreReplies(int postId, ReplyListCallback callback) {
+        currentPage++;
+        loadReplies(postId, currentPage, callback);
+    }
+
+    public void resetPagination() {
+        currentPage = 1;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
 
     public interface PostDetailCallback {
         void onSuccess(Post post);
